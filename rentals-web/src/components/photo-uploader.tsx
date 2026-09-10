@@ -1,6 +1,8 @@
 "use client";
 
 import { Camera, Loader2, X } from "lucide-react";
+
+import { photoSrc } from "@/lib/photos";
 import { useRef, useState } from "react";
 
 /**
@@ -63,7 +65,11 @@ export const PhotoUploader = ({
         {photos.map((url, index) => (
           <div key={url} className="relative">
             {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img src={url} alt={`Photo ${index + 1}`} className="size-24 rounded-xl border border-line object-cover" />
+            <img
+              src={photoSrc(url)}
+              alt={`Photo ${index + 1}`}
+              className="size-24 rounded-xl border border-line object-cover"
+            />
             <button
               type="button"
               onClick={() => onChange(photos.filter((_, i) => i !== index))}

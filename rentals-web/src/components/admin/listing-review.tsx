@@ -6,6 +6,7 @@ import { useState } from "react";
 
 import { Badge, Field, Input, Textarea } from "@/components/ui";
 import { asObject, type AdminListing } from "@/lib/admin-types";
+import { photoSrc } from "@/lib/photos";
 import { pkr, shortDate } from "@/lib/format";
 
 /**
@@ -125,7 +126,7 @@ export const ListingReview = ({ listing }: { listing: AdminListing }) => {
             // eslint-disable-next-line @next/next/no-img-element
             <img
               key={photo}
-              src={photo}
+              src={photoSrc(photo)}
               alt=""
               className="h-24 w-32 shrink-0 rounded-lg border border-line object-cover"
             />

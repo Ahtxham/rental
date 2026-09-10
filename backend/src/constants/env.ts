@@ -3,7 +3,9 @@ import dotenv from "dotenv";
 // the PM2 logs on each restart and says nothing useful about a healthy boot.
 dotenv.config({ quiet: true });
 
-export const PORT = process.env.PORT || 4000;
+// 5013 rather than 4000: it is the port this product is actually deployed
+// on, and a default that matches production is one less thing to discover.
+export const PORT = process.env.PORT || 5013;
 export const MODE = process.env.MODE || "development";
 export const DB_URI = process.env.DB_URI || "mongodb://localhost:27017/musafir";
 export const JWT_SECRET = process.env.JWT_SECRET || "";

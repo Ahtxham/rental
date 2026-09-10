@@ -134,10 +134,28 @@ const seedDemo = async () => {
     await agency.save();
   }
 
+  /**
+   * Add what is missing, and put back what was removed.
+   *
+   * Soft-deleted demo cars are restored rather than skipped: a local database
+   * gets poked at, and a seed that silently declines to recreate the car you
+   * deleted five minutes ago is a seed you stop trusting. Only the two fields
+   * that hide a car are reset; anything else you edited is left alone, because
+   * re-running this must not undo work.
+   */
   let added = 0;
+  let restored = 0;
   for (const car of CARS) {
     const exists = await Car.findOne({ owner, registrationNumber: car.registrationNumber });
-    if (exists) continue;
+    if (exists) {
+      if (exists.isDeleted) {
+        exists.isDeleted = false;
+        exists.listed = true;
+        await exists.save();
+        restored += 1;
+      }
+      continue;
+    }
     await Car.create({ ...car, owner, listed: true, currentOdometer: 40_000 });
     added += 1;
   }
@@ -191,7 +209,9 @@ const seedDemo = async () => {
     });
   }
 
-  console.log(`Demo data ready: ${added} car(s) added, driver ${driver.fullName}, 1 partner car.`);
+  console.log(
+    `Demo data ready: ${added} car(s) added, ${restored} restored, driver ${driver.fullName}, 1 partner car.`,
+  );
   console.log(`Lender login: owner@example.com / Owner@12345`);
 
   await mongoose.connection.close();

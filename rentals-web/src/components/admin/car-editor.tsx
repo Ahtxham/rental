@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { useState } from "react";
 
 import { PhotoUploader } from "@/components/photo-uploader";
+import { photoSrc } from "@/lib/photos";
 import { Badge, Field, Input, Switch, Textarea } from "@/components/ui";
 import { cn } from "@/lib/cn";
 import type { AdminCar } from "@/lib/admin-types";
@@ -413,7 +414,7 @@ export const CarManager = ({ cars }: { cars: AdminCar[] }) => {
               {car.photos[0] ? (
                 // eslint-disable-next-line @next/next/no-img-element
                 <img
-                  src={car.photos[0]}
+                  src={photoSrc(car.photos[0])}
                   alt=""
                   className="size-12 shrink-0 rounded-lg border border-line object-cover"
                 />

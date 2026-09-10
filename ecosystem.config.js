@@ -1,23 +1,30 @@
 /**
- * PM2 deployment config, runs the API and the website as two managed
- * processes.
+ * PM2 deployment config, two managed processes.
  *
- * Ports are NOT hardcoded here: they're read from each project's .env,
- * backend/.env PORT (API) and rentals-web/.env PORT (Next). The app names carry
- * the port (musafir-BE-<port> / musafir-FE-<port>) following the server's
- * naming convention.
+ * Ports are NOT hardcoded here: they are read from each project's .env,
+ * `backend/.env` PORT (API) and `rentals-web/.env` PORT (Next). The app names
+ * carry the port, following the convention every other app on the box uses.
+ *
+ *   musafir-BE-5013   ->  api.musafircars.com
+ *   musafir-FE-8013   ->  musafircars.com and www.musafircars.com
+ *
+ * **These ports are deliberately not the fleet's.** InvoDrive runs
+ * `mydriver-BE-5012` and `mydriver-FE-8012` on the same droplet; two processes
+ * bound to one port means whichever starts second dies on EADDRINUSE, and the
+ * one that survives is whichever PM2 happened to bring up first. Before adding
+ * an app here, check `ss -ltn` on the box rather than trusting this comment.
  *
  *   # one-time build
- *   cd backend      && yarn install --frozen-lockfile && yarn build
+ *   cd backend        && yarn install --frozen-lockfile && yarn build
  *   cd ../rentals-web && npm ci && npm run build
  *
- *   # start / manage
+ *   # start / manage, FROM THIS DIRECTORY so the .env files resolve
  *   pm2 start ecosystem.config.js
- *   pm2 restart musafir-BE-5012
- *   pm2 logs musafir-FE-8100
+ *   pm2 restart musafir-BE-5013
+ *   pm2 logs musafir-FE-8013
  *   pm2 save && pm2 startup     # survive server reboots
  *
- * Backend env comes from backend/.env (dotenv), set JWT_SECRET, DB_URI,
+ * Backend env comes from backend/.env (dotenv): set JWT_SECRET, DB_URI,
  * MODE=production and PUBLIC_AGENCY_ID there. Without PUBLIC_AGENCY_ID the
  * public site answers 404 for every car; see backend/src/constants/env.ts.
  */
@@ -40,8 +47,10 @@ const readEnv = (file) => {
 const backendEnv = readEnv("backend/.env");
 const webEnv = readEnv("rentals-web/.env");
 
-const BE_PORT = Number(backendEnv.PORT) || 5012;
-const FE_PORT = Number(webEnv.PORT) || 8100;
+const BE_PORT = Number(backendEnv.PORT) || 5013;
+const FE_PORT = Number(webEnv.PORT) || 8013;
+// Loopback, not a public hostname: the website calls the API from its own
+// server, so this never leaves the box and never needs a certificate.
 const API_URL = webEnv.API_URL || `http://127.0.0.1:${BE_PORT}`;
 
 module.exports = {

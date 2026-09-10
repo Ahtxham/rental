@@ -10,6 +10,7 @@ import { LenderEarnings, type LenderEarning, type LenderTotals } from "@/compone
 import { Container, Eyebrow } from "@/components/ui";
 import { cn } from "@/lib/cn";
 import { pkr, shortDate } from "@/lib/format";
+import { photoSrc } from "@/lib/photos";
 
 export interface LenderCar {
   _id: string;
@@ -166,7 +167,11 @@ export const LenderDashboard = ({
                 <div className="flex flex-wrap gap-4 p-5">
                   {car.photos[0] ? (
                     // eslint-disable-next-line @next/next/no-img-element
-                    <img src={car.photos[0]} alt="" className="size-24 shrink-0 rounded-xl object-cover" />
+                    <img
+                      src={photoSrc(car.photos[0])}
+                      alt=""
+                      className="size-24 shrink-0 rounded-xl object-cover"
+                    />
                   ) : (
                     <div className="flex size-24 shrink-0 items-center justify-center rounded-xl bg-paper-deep">
                       <span className="font-display text-lg text-forest/25">Musafir</span>

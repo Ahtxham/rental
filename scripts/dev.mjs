@@ -68,7 +68,7 @@ let fatal = false;
 
 const backendEnv = readEnv("backend/.env");
 const webEnv = readEnv("rentals-web/.env");
-const BE_PORT = Number(backendEnv.PORT) || 5012;
+const BE_PORT = Number(backendEnv.PORT) || 5013;
 
 if (wanted("backend")) {
   if (!existsSync(resolve(ROOT, "backend/.env"))) {
