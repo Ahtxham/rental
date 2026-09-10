@@ -1,0 +1,19 @@
+{
+  "name": "musafir",
+  "private": true,
+  "scripts": {
+    "dev": "node scripts/dev.mjs",
+    "dev:api": "node scripts/dev.mjs --only=backend",
+    "dev:web": "node scripts/dev.mjs --only=web",
+    "build:backend": "cd backend && rm -rf dist && yarn build",
+    "build:web": "cd rentals-web && rm -rf .next && npm run build",
+    "deploy": "node scripts/deploy.mjs",
+    "db:pull": "node scripts/pull-db.mjs",
+    "typecheck": "cd backend && yarn build && yarn typecheck && cd ../rentals-web && npx tsc --noEmit",
+    "seed": "cd backend && yarn seed:agency"
+  },
+  "devDependencies": {
+    "concurrently": "^9.1.2"
+  },
+  "description": "Musafir Rent A Car \u2014 musafircars.com"
+}

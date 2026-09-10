@@ -1,0 +1,9 @@
+export * as carController from "./car-controller";
+export * as driverController from "./driver-controller";
+export * as fileController from "./file-controller";
+export * as lenderController from "./lender-controller";
+export * as notificationController from "./notification-controller";
+export * as publicRentalController from "./public-rental-controller";
+export * as rentalController from "./rental-controller";
+export * as teamController from "./team-controller";
+export * as uploadController from "./upload-controller";

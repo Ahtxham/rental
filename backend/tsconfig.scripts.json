@@ -1,0 +1,14 @@
+// Type-checks the maintenance scripts alongside src/.
+//
+// The build tsconfig has `rootDir: ./src` and only includes `src/**`, so
+// `yarn build` never looked at scripts/ — which is how Mongoose 9's stricter
+// `create()` types silently broke `yarn seed` without any build failing. This
+// config exists purely so `yarn typecheck` covers them too; it emits nothing.
+{
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    "noEmit": true,
+    "rootDir": "."
+  },
+  "include": ["src/**/*.ts", "scripts/**/*.ts"]
+}

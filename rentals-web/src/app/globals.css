@@ -1,0 +1,269 @@
+@import "tailwindcss";
+
+/**
+ * Musafir Rent A Car, one committed look, painted explicitly.
+ *
+ * A single visual world rather than a light/dark pair: this is a brand's own
+ * site, not a tool somebody lives inside all day, and the identity is the
+ * point. Every surface and every colour is stated outright, so a phone set to
+ * dark mode gets the same warm paper and bottle green as everyone else instead
+ * of a half-inverted page.
+ *
+ * The palette is the subject's: the warm off-white of a printed card, the
+ * bottle green of an old registration plate, and brass, the colour of
+ * headlamp bezels, of the fittings on a GT Road signboard, and of the light in
+ * Lahore about an hour before sunset.
+ */
+:root {
+  --paper: #faf7f2;
+  --paper-deep: #f2ebe0;
+  --card: #ffffff;
+  --ink: #17140f;
+  --ink-soft: #4a443b;
+  --muted: #756c60;
+  --line: #e5ddd0;
+  --forest: #0f3a2f;
+  --forest-mid: #1b5545;
+  --forest-soft: #d9e6df;
+  --brass: #a8781c;
+  --brass-bright: #d2a244;
+  --brass-wash: #f6ecd8;
+  --alert: #9c3b21;
+}
+
+@theme inline {
+  --color-paper: var(--paper);
+  --color-paper-deep: var(--paper-deep);
+  --color-card: var(--card);
+  --color-ink: var(--ink);
+  --color-ink-soft: var(--ink-soft);
+  --color-muted: var(--muted);
+  --color-line: var(--line);
+  --color-forest: var(--forest);
+  --color-forest-mid: var(--forest-mid);
+  --color-forest-soft: var(--forest-soft);
+  --color-brass: var(--brass);
+  --color-brass-bright: var(--brass-bright);
+  --color-brass-wash: var(--brass-wash);
+  --color-alert: var(--alert);
+  --font-display: var(--font-fraunces);
+  --font-body: var(--font-public-sans);
+}
+
+html {
+  color-scheme: light;
+  scroll-behavior: smooth;
+}
+
+body {
+  background-color: var(--paper);
+  color: var(--ink);
+  font-family: var(--font-body), ui-sans-serif, system-ui, sans-serif;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* Fraunces carries the voice; it is set tight and dark, and never at body size. */
+.font-display {
+  font-family: var(--font-display), ui-serif, Georgia, serif;
+  font-optical-sizing: auto;
+  letter-spacing: -0.015em;
+  text-wrap: balance;
+}
+
+/* Prices, distances and dates line up in columns all over this site. */
+.tnum {
+  font-variant-numeric: tabular-nums;
+}
+
+/**
+ * The traffic drifting across the hero. See `components/hero-traffic.tsx`.
+ *
+ * `translate3d` and nothing else, so each vehicle is a compositor layer the
+ * browser can move without laying out or painting anything. It starts and ends
+ * well outside the viewport so no vehicle ever pops into or out of existence at
+ * the edge.
+ *
+ * `left: 0` is deliberate rather than a logical property: this is a physical
+ * direction, and a right-to-left page must not send the traffic backwards
+ * through its own silhouettes.
+ */
+.hero-drive {
+  left: 0;
+  animation-name: hero-drive;
+  animation-timing-function: linear;
+  animation-iteration-count: infinite;
+  will-change: transform;
+}
+
+@keyframes hero-drive {
+  from {
+    transform: translate3d(-30vw, 0, 0);
+  }
+  to {
+    transform: translate3d(130vw, 0, 0);
+  }
+}
+
+/* The hairline that separates a section from the next without a heavy rule. */
+.rule {
+  background-image: linear-gradient(to right, var(--line), transparent);
+}
+
+/**
+ * The stand-in for a car with no photograph yet.
+ *
+ * Not a grey box: an empty slot on a rental site reads as a business that has
+ * not got round to it, and there will always be a car photographed last. This
+ * is the brass-on-forest of the rest of the brand, so a card without a picture
+ * still looks like it belongs to the same company.
+ */
+.car-placeholder {
+  background-color: var(--forest);
+  background-image:
+    radial-gradient(circle at 78% 18%, rgba(210, 162, 68, 0.28) 0, transparent 42%),
+    radial-gradient(circle at 12% 88%, rgba(210, 162, 68, 0.16) 0, transparent 46%),
+    repeating-linear-gradient(
+      -45deg,
+      rgba(250, 247, 242, 0.035) 0 2px,
+      transparent 2px 9px
+    );
+}
+
+/* A dark panel's own hairline, the light one disappears on forest. */
+.hairline-light {
+  border-color: rgba(250, 247, 242, 0.16);
+}
+
+:focus-visible {
+  outline: 2px solid var(--brass);
+  outline-offset: 3px;
+}
+
+/* ── Motion ────────────────────────────────────────────────────────────────
+ *
+ * Two kinds, and both are pure CSS.
+ *
+ * 1. The hero introduces itself once, on load.
+ * 2. Everything below reveals as it is scrolled into view, driven by
+ *    `animation-timeline: view()` rather than a scroll listener. The browser
+ *    runs these off the main thread, so a fast scroll cannot make them stutter
+ *    and there is no JavaScript to ship, hydrate or get wrong.
+ *
+ * The whole block is wrapped in `@supports`, so a browser without scroll-driven
+ * animations simply shows the content. That ordering matters: the hidden state
+ * only ever exists where the animation that undoes it is guaranteed to run.
+ * Getting it the wrong way round is how a page ships blank.
+ */
+
+/** The easing everything uses. Slow out, quick settle. */
+:root {
+  --ease-out-soft: cubic-bezier(0.22, 0.61, 0.36, 1);
+}
+
+@keyframes rise-in {
+  from {
+    opacity: 0;
+    transform: translate3d(0, 26px, 0);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  /**
+   * The hero, on first paint.
+   *
+   * Staggered by hand rather than by a loop: there are five of them, they are
+   * the first thing anybody sees, and the exact rhythm is worth choosing.
+   */
+  .intro {
+    animation: rise-in 0.9s var(--ease-out-soft) both;
+  }
+  .intro-1 {
+    animation-delay: 0.05s;
+  }
+  .intro-2 {
+    animation-delay: 0.14s;
+  }
+  .intro-3 {
+    animation-delay: 0.23s;
+  }
+  .intro-4 {
+    animation-delay: 0.34s;
+  }
+  .intro-5 {
+    animation-delay: 0.46s;
+  }
+}
+
+@supports (animation-timeline: view()) {
+  @media (prefers-reduced-motion: no-preference) {
+    .reveal {
+      animation: rise-in linear both;
+      animation-timeline: view();
+      /* Finished well before the element reaches the middle of the screen:
+         content that is still animating when you are trying to read it is an
+         effect happening TO the reader rather than for them. */
+      animation-range: entry 4% cover 26%;
+    }
+
+    /* Stagger by finishing later, not by starting later. A delay on a
+       scroll-driven animation is measured in scroll distance, so a row of
+       cards staggered this way holds together at any scroll speed. */
+    .reveal-2 {
+      animation-range: entry 4% cover 32%;
+    }
+    .reveal-3 {
+      animation-range: entry 4% cover 38%;
+    }
+    .reveal-4 {
+      animation-range: entry 4% cover 44%;
+    }
+
+    /**
+     * The hero's traffic drifts up as the page scrolls away, at a different
+     * rate from the text over it. Depth, for the price of one transform.
+     */
+    .hero-parallax {
+      animation: hero-parallax linear both;
+      /* `scroll(root)`, not a bare `scroll()`. The hero is `overflow-hidden`,
+         which makes it a scroll container in its own right, so the unqualified
+         form binds to a box that never scrolls and the animation sits at 0%
+         for ever. The document scroller is the one that moves. */
+      animation-timeline: scroll(root);
+      animation-range: 0 100vh;
+    }
+  }
+}
+
+@keyframes hero-parallax {
+  to {
+    transform: translate3d(0, 14%, 0);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+  }
+
+  /**
+   * The traffic goes away entirely rather than being slowed to a stop.
+   *
+   * The rule above would otherwise snap every vehicle to the end of its
+   * journey, leaving five silhouettes parked in a heap off the right edge, and
+   * a hero that is quietly broken for exactly the people who asked for less
+   * movement. Removing the layer returns the hero to what it is without it.
+   */
+  .hero-drive {
+    display: none;
+  }
+}

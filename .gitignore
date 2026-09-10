@@ -1,0 +1,11 @@
+.claude
+CLAUDE*
+.DS_Store
+node_modules
+.env.*
+# ...but the templates must ship — the setup docs tell people to copy them
+!.env.example
+
+# Database snapshots pulled from production with `npm run db:pull`. Real
+# driver records — names, CNICs, phone numbers — never belong in git.
+backups/

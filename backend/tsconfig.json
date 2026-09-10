@@ -1,0 +1,23 @@
+{
+  // ts-node only loads explicitly-imported files by default; "files": true makes
+  // it honor `include`, so the global Express Request augmentation
+  // (src/types/express.d.ts) is registered in dev like it is under tsc.
+  "ts-node": {
+    "files": true
+  },
+  "compilerOptions": {
+    "target": "ES6",
+    "module": "commonjs",
+    "outDir": "./dist",
+    "rootDir": "./src",
+    "strict": true,
+    "esModuleInterop": true,
+    "skipLibCheck": true,
+    "forceConsistentCasingInFileNames": true,
+    "paths": {
+      "@/*": ["./src/*"]
+    }
+  },
+  "include": ["src/**/*.ts"],
+  "exclude": ["node_modules", "dist"]
+}
