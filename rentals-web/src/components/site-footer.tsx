@@ -151,7 +151,12 @@ export const SiteFooter = ({ contact }: { contact: Contact }) => {
 
       <div className="border-t border-paper/15">
         <Container className="flex flex-wrap items-center justify-between gap-2 py-5 text-xs text-paper/60">
-          <p>© {new Date().getFullYear()} Musafir Rent A Car · Lahore, Pakistan</p>
+          {/* The address comes from Settings like everything else here. Hardcoding
+              the city meant the one line on the site the office could not
+              change. */}
+          <p>
+            © {new Date().getFullYear()} Musafir Rent A Car · {contact.address}
+          </p>
           <Link href="/policies" className="hover:text-brass-bright">
             Terms and charges
           </Link>

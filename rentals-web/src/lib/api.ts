@@ -63,7 +63,7 @@ export interface Quote {
 
 export const publicApi = async <T>(
   path: string,
-  init?: RequestInit & { revalidate?: number },
+  init?: RequestInit & { revalidate?: number; tags?: string[] },
 ): Promise<T | null> => {
   try {
     const response = await fetch(`${API_URL}/api/public/rentals${path}`, {
@@ -73,7 +73,7 @@ export const publicApi = async <T>(
       // of which is often. A minute is short enough that a car booked this
       // morning is gone from the site by lunch, and long enough that a page of
       // traffic does not become a page of database reads.
-      next: { revalidate: init?.revalidate ?? 60 },
+      next: { revalidate: init?.revalidate ?? 60, tags: init?.tags },
     });
     if (!response.ok) return null;
     return (await response.json()) as T;
@@ -95,15 +95,26 @@ export const getCar = async (id: string): Promise<PublicCar | null> => {
   return body?.data ?? null;
 };
 
+/** The cache tag the office's settings screen clears when it saves. */
+export const SITE_CONFIG_TAG = "site-config";
+
 /**
  * The business's own public details, so a phone number lives in one place.
  *
- * Cached for an hour rather than a minute: this is the sort of thing that
- * changes twice a year, and every page in the site renders the footer.
+ * Cached for an hour, because this changes twice a year and every page in the
+ * site renders the footer. The hour is only a backstop though: saving in
+ * Settings clears this tag, so a corrected phone number is live on the next
+ * request rather than up to an hour later. Without that, somebody changes
+ * their number, reloads, sees the old one and reasonably concludes the field
+ * does nothing.
+ *
  * Callers fall back to env when it is unreachable, see `lib/config.ts`.
  */
 export const getSiteConfig = async (): Promise<SiteConfig | null> => {
-  const body = await publicApi<{ data: SiteConfig }>("/config", { revalidate: 3600 });
+  const body = await publicApi<{ data: SiteConfig }>("/config", {
+    revalidate: 3600,
+    tags: [SITE_CONFIG_TAG],
+  });
   return body?.data ?? null;
 };
 
