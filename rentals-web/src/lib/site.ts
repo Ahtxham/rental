@@ -23,6 +23,8 @@ export const getContact = async (): Promise<Contact> => {
     whatsapp: config.whatsapp || null,
     email: config.email || null,
     address: [config.address, config.city].filter(Boolean).join(", ") || null,
+    streetAddress: config.address || null,
+    city: config.city || null,
     selfDriveEnabled: config.selfDriveEnabled,
   };
 };

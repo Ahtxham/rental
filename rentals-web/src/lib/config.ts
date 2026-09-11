@@ -18,7 +18,18 @@ export interface Contact {
   phone: string | null;
   whatsapp: string | null;
   email: string | null;
+  /** For display: street and city joined, e.g. "Gulberg III, Lahore". */
   address: string | null;
+  /**
+   * The street on its own, for structured data.
+   *
+   * Kept apart from `address` because the display string folds the city in,
+   * and feeding that to `streetAddress` told search engines the street was
+   * called "Lahore". A wrong address in JSON-LD is one an assistant will read
+   * back to somebody trying to find you.
+   */
+  streetAddress: string | null;
+  city: string | null;
   /** Whether the business offers self-drive at all. Hides every self-drive price. */
   selfDriveEnabled: boolean;
 }
@@ -38,6 +49,8 @@ export const FALLBACK_CONTACT: Contact = {
   whatsapp: process.env.NEXT_PUBLIC_CONTACT_WHATSAPP || null,
   email: process.env.NEXT_PUBLIC_CONTACT_EMAIL || null,
   address: process.env.NEXT_PUBLIC_CONTACT_ADDRESS || null,
+  streetAddress: null,
+  city: null,
   selfDriveEnabled: false,
 };
 

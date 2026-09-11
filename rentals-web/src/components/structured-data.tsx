@@ -51,10 +51,14 @@ export const BusinessSchema = ({
   /** Drives `priceRange`. Omitted entirely when no car is published yet. */
   cheapestPerDay?: number | null;
 }) => {
+  /**
+   * The street only. `contact.address` is the display string with the city
+   * folded in, and using it here announced that the street is named "Lahore".
+   */
   const address = compact({
     "@type": "PostalAddress",
-    streetAddress: contact.address ?? undefined,
-    addressLocality: "Lahore",
+    streetAddress: contact.streetAddress ?? undefined,
+    addressLocality: contact.city ?? "Lahore",
     addressRegion: "Punjab",
     addressCountry: "PK",
   });

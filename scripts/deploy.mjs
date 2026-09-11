@@ -282,6 +282,11 @@ if [ "$5" = "1" ]; then
     cd rentals-web && npm ci && cd ..
   fi
   step "web: build"
+  # Clear the ISR cache first. A rebuild alone leaves it in place, and a
+  # prerendered page keeps being served with the OLD markup: a deploy that
+  # changes metadata or structured data appears to do nothing, which cost an
+  # hour of confusion the first time it happened.
+  rm -rf rentals-web/.next/cache
   cd rentals-web && npm run build && cd ..
 fi
 `;

@@ -77,9 +77,15 @@ Or by hand on the box:
 ```bash
 cd /var/code/musafir && git pull
 cd backend      && yarn install --frozen-lockfile && yarn build
-cd ../rentals-web && npm ci && npm run build
+cd ../rentals-web && npm ci && rm -rf .next/cache && npm run build
 cd .. && pm2 restart musafir-BE-5013 musafir-FE-8013
 ```
+
+**`rm -rf .next/cache` is not optional.** A rebuild does not clear the ISR
+cache, so prerendered pages keep being served with the markup from the previous
+build. A deploy that changes metadata, structured data or anything else in the
+`<head>` then appears to have done nothing at all, while the route files it also
+added work fine, which is a genuinely confusing way to lose an hour.
 
 ### Builds need the swap file
 
