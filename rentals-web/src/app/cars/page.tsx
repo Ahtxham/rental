@@ -1,5 +1,6 @@
 import { KeyRound } from "lucide-react";
 import type { Metadata } from "next";
+import Link from "next/link";
 import { Suspense } from "react";
 
 import { CarCard } from "@/components/car-card";
@@ -81,8 +82,16 @@ const CarsPage = async ({
           <div className="rounded-2xl border border-dashed border-line p-12 text-center">
             <p className="font-display text-2xl text-ink">Nothing to show for those dates</p>
             <p className="mx-auto mt-2 max-w-md text-sm text-muted">
-              Call or WhatsApp us with your dates and we will tell you exactly what
-              is free, the phone is faster than this page on a busy week anyway.
+              {contact.phone || contact.whatsapp ? (
+                "Call or WhatsApp us with your dates and we will tell you exactly what is free, the phone is faster than this page on a busy week anyway."
+              ) : (
+                <>
+                  <Link href="/book" className="font-semibold text-forest underline underline-offset-4">
+                    Send us your dates
+                  </Link>{" "}
+                  and we will come back with exactly what is free.
+                </>
+              )}
             </p>
           </div>
         ) : (

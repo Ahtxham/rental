@@ -177,9 +177,21 @@ const Home = async () => {
           {featured.length === 0 ? (
             <div className="mt-8 rounded-2xl border border-dashed border-line p-10 text-center">
               <CarFront className="mx-auto size-6 text-muted" aria-hidden />
+              {/* Only offers to be called if there is a number to call. An
+                  empty state that points at a contact method the site is not
+                  showing is a dead end. */}
               <p className="mt-3 text-sm text-muted">
-                Our list is being updated. Call or WhatsApp us and we will tell you
-                what is free.
+                Our list is being updated.{" "}
+                {contact.phone || contact.whatsapp ? (
+                  "Call or WhatsApp us and we will tell you what is free."
+                ) : (
+                  <>
+                    <Link href="/book" className="font-semibold text-forest underline underline-offset-4">
+                      Send us your dates
+                    </Link>{" "}
+                    and we will come back with what is free.
+                  </>
+                )}
               </p>
             </div>
           ) : (

@@ -211,7 +211,7 @@ const RentYourCarPage = () => (
                 href="/contact"
                 className="font-semibold text-forest underline underline-offset-4"
               >
-                Call or WhatsApp us
+                Get in touch
               </Link>
               .
             </p>
