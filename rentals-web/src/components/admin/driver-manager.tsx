@@ -88,7 +88,7 @@ export const DriverManager = ({ drivers }: { drivers: AdminDriver[] }) => {
             Who can be sent out with a car. They have no login here.
           </p>
         </div>
-        <button
+        <button data-pressable="control"
           type="button"
           onClick={() => setAdding((value) => !value)}
           className="inline-flex items-center gap-2 rounded-full bg-action px-5 py-2.5 text-sm font-semibold text-white hover:bg-action-deep"
@@ -99,7 +99,7 @@ export const DriverManager = ({ drivers }: { drivers: AdminDriver[] }) => {
       </div>
 
       {error ? (
-        <p className="rounded-xl border border-alert/30 bg-alert/5 p-3 text-sm text-alert" role="alert">
+        <p className="note-enter rounded-xl border border-alert/30 bg-alert/5 p-3 text-sm text-alert" role="alert">
           <AlertCircle className="me-1.5 inline size-4" aria-hidden />
           {error}
         </p>
@@ -146,7 +146,7 @@ export const DriverManager = ({ drivers }: { drivers: AdminDriver[] }) => {
               />
             </Field>
           </div>
-          <button
+          <button data-pressable="control"
             type="submit"
             disabled={busy}
             className="mt-5 inline-flex items-center gap-2 rounded-full bg-night px-5 py-2.5 text-sm font-semibold text-paper hover:bg-action-deep disabled:opacity-60"
@@ -182,7 +182,7 @@ export const DriverManager = ({ drivers }: { drivers: AdminDriver[] }) => {
                 </Badge>
               ) : null}
               <Badge tone={driver.status === "active" ? "good" : "neutral"}>{driver.status}</Badge>
-              <button
+              <button data-pressable="control"
                 type="button"
                 disabled={busy}
                 onClick={() => void remove(driver._id)}

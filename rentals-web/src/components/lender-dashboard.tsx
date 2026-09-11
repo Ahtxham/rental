@@ -114,7 +114,7 @@ export const LenderDashboard = ({
           </h1>
         </div>
         <div className="flex items-center gap-3">
-          <button type="button" onClick={signOut} className="text-sm font-medium text-muted hover:text-ink">
+          <button data-pressable="control" type="button" onClick={signOut} className="text-sm font-medium text-muted hover:text-ink">
             Sign out
           </button>
           <Link
@@ -212,7 +212,7 @@ export const LenderDashboard = ({
                     </h3>
                     {!isEditing ? (
                       <div className="flex gap-2">
-                        <button
+                        <button data-pressable="control"
                           type="button"
                           onClick={() => {
                             setEditing(car._id);
@@ -223,7 +223,7 @@ export const LenderDashboard = ({
                           Change dates
                         </button>
                         {car.status !== "paused" ? (
-                          <button
+                          <button data-pressable="control"
                             type="button"
                             onClick={() => void withdraw(car._id)}
                             disabled={busy === car._id}
@@ -240,7 +240,7 @@ export const LenderDashboard = ({
                     <div className="mt-4">
                       <AvailabilityEditor windows={draft} onChange={setDraft} />
                       <div className="mt-4 flex gap-2">
-                        <button
+                        <button data-pressable="control"
                           type="button"
                           onClick={() => void saveDates(car._id)}
                           disabled={busy === car._id}
@@ -253,7 +253,7 @@ export const LenderDashboard = ({
                           )}
                           Save dates
                         </button>
-                        <button
+                        <button data-pressable="control"
                           type="button"
                           onClick={() => setEditing(null)}
                           className="rounded-full border border-line px-5 py-2.5 text-sm font-semibold text-ink-soft"

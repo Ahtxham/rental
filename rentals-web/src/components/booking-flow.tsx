@@ -297,7 +297,7 @@ export const BookingFlow = ({
                       className={cn(
                         "rounded-full px-4 py-1.5 text-sm font-semibold",
                         withDriver === option.value
-                          ? "bg-card text-ink shadow-[0_1px_2px_rgba(16, 22, 20,0.16)]"
+                          ? "bg-card text-ink shadow-[0_1px_2px_rgba(16,22,20,0.16)]"
                           : "text-ink-soft hover:text-ink",
                         disabled && "cursor-not-allowed opacity-40",
                       )}
@@ -484,7 +484,7 @@ export const BookingFlow = ({
 
             {error ? (
               <p
-                className="mt-4 flex gap-2 rounded-xl border border-alert/30 bg-alert/5 p-3 text-xs text-alert"
+                className="note-enter mt-4 flex gap-2 rounded-xl border border-alert/30 bg-alert/5 p-3 text-xs text-alert"
                 role="alert"
               >
                 <AlertCircle className="mt-0.5 size-4 shrink-0" aria-hidden />
@@ -492,7 +492,7 @@ export const BookingFlow = ({
               </p>
             ) : null}
 
-            <button
+            <button data-pressable="control"
               type="submit"
               disabled={sending}
               className="mt-5 inline-flex w-full items-center justify-center gap-2 rounded-full bg-action px-6 py-3 text-sm font-semibold text-white transition-colors duration-150 hover:bg-action-deep disabled:cursor-not-allowed disabled:opacity-60"

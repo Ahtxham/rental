@@ -160,7 +160,7 @@ export const BookingDetail = ({
 
       {error ? (
         <p
-          className="flex gap-2 rounded-xl border border-alert/30 bg-alert/5 p-3 text-sm text-alert"
+          className="note-enter flex gap-2 rounded-xl border border-alert/30 bg-alert/5 p-3 text-sm text-alert"
           role="alert"
         >
           <AlertCircle className="mt-0.5 size-4 shrink-0" aria-hidden />
@@ -223,7 +223,7 @@ export const BookingDetail = ({
                       { value: true, label: "With one of our drivers" },
                       { value: false, label: "Self-drive" },
                     ].map((option) => (
-                      <button
+                      <button data-pressable="control"
                         key={String(option.value)}
                         type="button"
                         onClick={() => setWithDriver(option.value)}
@@ -326,7 +326,7 @@ export const BookingDetail = ({
               </div>
 
               <div className="mt-5 flex flex-wrap gap-3">
-                <button
+                <button data-pressable="control"
                   type="button"
                   disabled={busy !== null}
                   onClick={() => void call(rental._id, "PATCH", priceBody(), "save")}
@@ -337,7 +337,7 @@ export const BookingDetail = ({
                 </button>
 
                 {rental.status === "enquiry" ? (
-                  <button
+                  <button data-pressable="control"
                     type="button"
                     disabled={busy !== null}
                     onClick={() =>
@@ -397,7 +397,7 @@ export const BookingDetail = ({
                 </Field>
               </div>
 
-              <button
+              <button data-pressable="control"
                 type="button"
                 disabled={busy !== null || odometer.trim() === ""}
                 onClick={() =>
@@ -526,7 +526,7 @@ export const BookingDetail = ({
                     ? "The car is on the road. Record the return instead."
                     : "This frees the car for anybody else."}
               </p>
-              <button
+              <button data-pressable="control"
                 type="button"
                 disabled={busy !== null || rental.status === "out"}
                 onClick={() =>

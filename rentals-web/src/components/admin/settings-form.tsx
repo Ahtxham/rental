@@ -217,14 +217,14 @@ export const SettingsForm = ({ agency }: { agency: Agency }) => {
       </section>
 
       {error ? (
-        <p className="flex gap-2 rounded-xl border border-alert/30 bg-alert/5 p-3 text-sm text-alert" role="alert">
+        <p className="note-enter flex gap-2 rounded-xl border border-alert/30 bg-alert/5 p-3 text-sm text-alert" role="alert">
           <AlertCircle className="mt-0.5 size-4 shrink-0" aria-hidden />
           {error}
         </p>
       ) : null}
 
       <div className="flex items-center gap-4">
-        <button
+        <button data-pressable="control"
           type="submit"
           disabled={busy}
           className="inline-flex items-center gap-2 rounded-full bg-night px-6 py-3 text-sm font-semibold text-paper hover:bg-action-deep disabled:opacity-60"

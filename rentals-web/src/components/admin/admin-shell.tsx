@@ -53,7 +53,7 @@ export const AdminShell = ({
   return (
     <div className="min-h-screen bg-paper-deep">
       <header className="sticky top-0 z-30 flex items-center gap-3 border-b border-line bg-paper px-4 py-3 lg:hidden">
-        <button
+        <button data-pressable="control"
           type="button"
           onClick={() => setOpen((value) => !value)}
           aria-expanded={open}
@@ -112,7 +112,7 @@ export const AdminShell = ({
                 View the website
               </Link>
               <p className="px-3 pt-2 text-xs text-muted">{name}</p>
-              <button
+              <button data-pressable="control"
                 type="button"
                 onClick={signOut}
                 className="flex w-full items-center gap-3 rounded-lg px-3 py-2 text-sm text-ink-soft hover:bg-ink/5"

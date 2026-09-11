@@ -288,14 +288,14 @@ export const CarEditor = ({
       </div>
 
       {error ? (
-        <p className="mt-4 flex gap-2 text-sm text-alert" role="alert">
+        <p className="note-enter mt-4 flex gap-2 text-sm text-alert" role="alert">
           <AlertCircle className="mt-0.5 size-4 shrink-0" aria-hidden />
           {error}
         </p>
       ) : null}
 
       <div className="mt-5 flex gap-3">
-        <button
+        <button data-pressable="control"
           type="submit"
           disabled={busy}
           className="inline-flex items-center gap-2 rounded-full bg-night px-5 py-2.5 text-sm font-semibold text-paper hover:bg-action-deep disabled:opacity-60"
@@ -303,7 +303,7 @@ export const CarEditor = ({
           {busy ? <Loader2 className="size-4 animate-spin" aria-hidden /> : null}
           {car ? "Save" : "Add the car"}
         </button>
-        <button
+        <button data-pressable="control"
           type="button"
           onClick={onDone}
           className="rounded-full border border-ink/20 px-5 py-2.5 text-sm font-semibold text-ink hover:bg-ink/5"
@@ -382,7 +382,7 @@ export const CarManager = ({ cars }: { cars: AdminCar[] }) => {
             {cars.filter((car) => car.listed).length} of {cars.length} on the website.
           </p>
         </div>
-        <button
+        <button data-pressable="control"
           type="button"
           onClick={() => setEditing(editing === "new" ? null : "new")}
           className="inline-flex items-center gap-2 rounded-full bg-action px-5 py-2.5 text-sm font-semibold text-white hover:bg-action-deep"
@@ -393,7 +393,7 @@ export const CarManager = ({ cars }: { cars: AdminCar[] }) => {
       </div>
 
       {error ? (
-        <p className="rounded-xl border border-alert/30 bg-alert/5 p-3 text-sm text-alert" role="alert">
+        <p className="note-enter rounded-xl border border-alert/30 bg-alert/5 p-3 text-sm text-alert" role="alert">
           {error}
         </p>
       ) : null}
@@ -467,14 +467,14 @@ export const CarManager = ({ cars }: { cars: AdminCar[] }) => {
                 </Badge>
               ) : null}
               <div className="flex gap-2">
-                <button
+                <button data-pressable="control"
                   type="button"
                   onClick={() => setEditing(car._id)}
                   className="rounded-full border border-ink/20 px-4 py-1.5 text-xs font-semibold text-ink hover:bg-ink/5"
                 >
                   Edit
                 </button>
-                <button
+                <button data-pressable="control"
                   type="button"
                   disabled={removing === car._id}
                   onClick={() => void remove(car._id)}

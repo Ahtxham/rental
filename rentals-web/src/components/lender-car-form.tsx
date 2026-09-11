@@ -129,7 +129,7 @@ export const LenderCarForm = () => {
                 <span className={label}>Transmission</span>
                 <div className="mt-1.5 flex gap-2">
                   {(["manual", "automatic"] as const).map((option) => (
-                    <button
+                    <button data-pressable="control"
                       key={option}
                       type="button"
                       onClick={() => setTransmission(option)}
@@ -217,7 +217,7 @@ export const LenderCarForm = () => {
                       { value: "owner", label: "I will drive it" },
                     ] as const
                   ).map((option) => (
-                    <button
+                    <button data-pressable="control"
                       key={option.value}
                       type="button"
                       onClick={() => setDriverBy(option.value)}
@@ -238,13 +238,13 @@ export const LenderCarForm = () => {
           </section>
 
           {error ? (
-            <p className="flex gap-2 rounded-xl border border-alert/30 bg-alert/5 p-3 text-sm text-alert" role="alert">
+            <p className="note-enter flex gap-2 rounded-xl border border-alert/30 bg-alert/5 p-3 text-sm text-alert" role="alert">
               <AlertCircle className="mt-0.5 size-4 shrink-0" aria-hidden />
               {error}
             </p>
           ) : null}
 
-          <button
+          <button data-pressable="control"
             type="submit"
             disabled={busy}
             className="inline-flex w-full items-center justify-center gap-2 rounded-full bg-action px-6 py-3 text-sm font-semibold text-white transition-colors hover:bg-action-deep disabled:opacity-60 sm:w-auto"

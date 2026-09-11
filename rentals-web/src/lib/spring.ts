@@ -36,6 +36,16 @@ export const SPRING = {
   fling: { damping: 0.82, response: 0.4 },
   /** Sheets and drawers arriving. */
   sheet: { damping: 0.82, response: 0.3 },
+  /**
+   * Sheets leaving.
+   *
+   * Quicker than the way in, and with the bounce taken out. Arriving is the
+   * system introducing something and can afford a moment; leaving is the
+   * system answering a decision already made, and anything that lingers there
+   * reads as the interface not having heard you. Overshoot on the way out is
+   * worse still: it puts a wobble on a thing you asked to go away.
+   */
+  sheetOut: { damping: 1, response: 0.24 },
   /** Small, immediate feedback: a press, a hover lift. */
   press: { damping: 1, response: 0.22 },
 } as const satisfies Record<string, SpringConfig>;

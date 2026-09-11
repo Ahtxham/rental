@@ -70,7 +70,7 @@ export const PhotoUploader = ({
               alt={`Photo ${index + 1}`}
               className="size-24 rounded-xl border border-line object-cover"
             />
-            <button
+            <button data-pressable="control"
               type="button"
               onClick={() => onChange(photos.filter((_, i) => i !== index))}
               aria-label={`Remove photo ${index + 1}`}
@@ -93,7 +93,7 @@ export const PhotoUploader = ({
           : null}
 
         {photos.length + busy < max ? (
-          <button
+          <button data-pressable="control"
             type="button"
             onClick={() => input.current?.click()}
             className="flex size-24 flex-col items-center justify-center gap-1 rounded-xl border border-dashed border-line text-muted transition-colors hover:border-line hover:text-ink"
@@ -114,7 +114,7 @@ export const PhotoUploader = ({
       />
 
       {error ? (
-        <p className="mt-2 text-xs text-alert" role="alert">
+        <p className="note-enter mt-2 text-xs text-alert" role="alert">
           {error}
         </p>
       ) : null}

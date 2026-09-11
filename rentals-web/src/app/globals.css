@@ -208,9 +208,25 @@ body {
  * Getting it the wrong way round is how a page ships blank.
  */
 
-/** The easing everything uses. Slow out, quick settle. */
+/**
+ * The curves everything uses.
+ *
+ * Built-in `ease-out` and friends are too weak to read as intentional: they
+ * sit so close to linear that an animation using one looks like it is simply
+ * taking a while rather than moving with purpose. These are the strong
+ * variants, and the difference is visible at 200ms.
+ *
+ * There is deliberately no ease-in. It starts slow, which delays exactly the
+ * frames the user is watching hardest, and the result feels sluggish at any
+ * duration you give it.
+ */
 :root {
-  --ease-out-soft: cubic-bezier(0.22, 0.61, 0.36, 1);
+  /* Things arriving and leaving. Fast out of the gate, long settle. */
+  --ease-out: cubic-bezier(0.23, 1, 0.32, 1);
+  /* Things moving from one place to another on screen. */
+  --ease-in-out: cubic-bezier(0.77, 0, 0.175, 1);
+  /* An alias, so older rules did not have to be hunted down. */
+  --ease-out-soft: var(--ease-out);
 }
 
 @keyframes rise-in {
@@ -301,11 +317,22 @@ body {
   html {
     scroll-behavior: auto;
   }
+  /**
+   * Less motion, not none.
+   *
+   * Keyframe animations go, because those are the ones that travel. Transitions
+   * stay, shortened: a colour or an opacity settling over 120ms is not motion
+   * anybody asked to be spared, and killing it outright takes away the feedback
+   * that tells somebody their press registered. What causes trouble is things
+   * moving across the screen, and every large movement here is driven from
+   * JavaScript, which checks this same preference itself.
+   */
   *,
   *::before,
   *::after {
     animation-duration: 0.01ms !important;
-    transition-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 120ms !important;
   }
 
   /**
@@ -509,33 +536,50 @@ body {
  *
  * Feedback on the way down, at the cost of one transform.
  *
- * A press is a discrete event rather than a continuous gesture, so a short
- * transition is the honest tool here; springs are for the things a finger
- * stays in contact with. The release is slower than the press because that is
- * how a physical button behaves: it gives instantly and returns at its own
- * pace.
+ * Two selectors, and both are needed. `:active` is free and covers every
+ * pressable thing on the site, including the forty-odd buttons in the office
+ * and the car owner's portal. `[data-pressed]` is set by `usePress` on the
+ * handful of controls where it is worth knowing that the finger drifted off
+ * the target and came back, which `:active` alone gets wrong.
+ *
+ * A press is a discrete event, so a transition is the honest tool here;
+ * springs are for the things a finger stays in contact with. The release is
+ * slower than the press because that is how a physical button behaves: it
+ * gives instantly and returns at its own pace.
  */
 [data-pressable] {
   transition:
-    transform 220ms var(--ease-out-soft),
-    opacity 220ms var(--ease-out-soft),
+    transform 170ms var(--ease-out),
+    opacity 170ms var(--ease-out),
     background-color 150ms linear,
     border-color 150ms linear,
     color 150ms linear;
   touch-action: manipulation;
+  /* The grey flash iOS paints over a tapped control, which fights the scale. */
+  -webkit-tap-highlight-color: transparent;
 }
 
+[data-pressable]:active,
 [data-pressable][data-pressed="true"] {
   transform: scale(0.968);
   transition-duration: 90ms;
 }
 
-/* A card is bigger, so the same scale would read as a lurch. */
+/* A card is bigger, so the same ratio moves its edges several times further,
+   and the press stops reading as a press and starts reading as a jolt. */
+[data-pressable="card"]:active,
 [data-pressable="card"][data-pressed="true"] {
   transform: scale(0.986);
 }
 
+/* Nothing that cannot be pressed should look like it just was. */
+[data-pressable]:disabled:active,
+[data-pressable][aria-disabled="true"]:active {
+  transform: none;
+}
+
 @media (prefers-reduced-motion: reduce) {
+  [data-pressable]:active,
   [data-pressable][data-pressed="true"] {
     transform: none;
     opacity: 0.72;
@@ -551,15 +595,97 @@ body {
  * is.
  */
 .lean {
-  transition: transform 260ms var(--ease-out-soft);
+  transition: transform 260ms var(--ease-out);
 }
-.group:hover .lean,
+
+/**
+ * Gated, and this is not pedantry.
+ *
+ * A touch device fires hover on tap and then leaves it stuck there, so on a
+ * phone this arrow would shunt sideways when you pressed the link and stay
+ * shunted until you pressed something else. Every transform-on-hover in this
+ * codebase sits behind this query for the same reason.
+ */
+@media (hover: hover) and (pointer: fine) {
+  .group:hover .lean {
+    transform: translate3d(0.2rem, 0, 0);
+  }
+}
+
 .group:focus-visible .lean {
   transform: translate3d(0.2rem, 0, 0);
 }
+
 @media (prefers-reduced-motion: reduce) {
   .lean {
     transition: none;
+  }
+}
+
+/**
+ * The slow push into a car's photograph on hover.
+ *
+ * A class rather than a `group-hover:` utility, because a utility cannot be
+ * put behind a media query and this one has to be.
+ */
+.photo-zoom {
+  transition: transform 450ms var(--ease-out);
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .group:hover .photo-zoom {
+    transform: scale(1.04);
+  }
+}
+
+/**
+ * A line of text that appears because something went wrong.
+ *
+ * It arrives rather than simply being there, because an error blinking into
+ * existence under a form is the one moment a page most needs to look like it
+ * is answering you. Entry only: by the time it leaves, the thing it was
+ * complaining about has been fixed and nobody needs to watch it go.
+ */
+.note-enter {
+  transition:
+    opacity 220ms var(--ease-out),
+    transform 220ms var(--ease-out);
+}
+
+@starting-style {
+  .note-enter {
+    opacity: 0;
+    transform: translateY(-4px);
+  }
+}
+
+/**
+ * The menu behind the hamburger.
+ *
+ * Kept in the DOM and toggled with `hidden` rather than mounted and unmounted,
+ * so there is something left to animate on the way out as well as on the way
+ * in. `allow-discrete` is what lets `display` wait for the transition to
+ * finish instead of yanking the element away on the first frame. Where it is
+ * unsupported the menu simply appears and disappears, which is where this was
+ * before.
+ */
+.menu-sheet {
+  transition:
+    opacity 200ms var(--ease-out),
+    transform 200ms var(--ease-out),
+    display 200ms allow-discrete;
+}
+
+.menu-sheet[hidden] {
+  display: none;
+  opacity: 0;
+  transform: translateY(-8px);
+}
+
+@starting-style {
+  .menu-sheet:not([hidden]) {
+    opacity: 0;
+    transform: translateY(-8px);
   }
 }
 

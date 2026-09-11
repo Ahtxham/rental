@@ -94,7 +94,7 @@ export const PayoutRow = ({ payout }: { payout: AdminPayout }) => {
             placeholder="Transfer reference"
             className="py-2 text-xs"
           />
-          <button
+          <button data-pressable="control"
             type="button"
             disabled={busy}
             onClick={() => void settle()}
@@ -107,7 +107,7 @@ export const PayoutRow = ({ payout }: { payout: AdminPayout }) => {
       )}
 
       {error ? (
-        <p className="w-full text-xs text-alert" role="alert">
+        <p className="note-enter w-full text-xs text-alert" role="alert">
           {error}
         </p>
       ) : null}

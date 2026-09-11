@@ -68,14 +68,14 @@ export const Sheet = ({
 
   const dismiss = useCallback(
     (velocity: number) => {
-      spring.to(height.current || 600, { velocity, config: SPRING.sheet });
+      spring.to(height.current || 600, { velocity, config: SPRING.sheetOut });
       // Long enough for the spring to have arrived, and it is the unmount that
       // is being delayed rather than the motion, so a slow frame shows a
       // settled sheet rather than a stutter.
       window.setTimeout(() => {
         setMounted(false);
         onClose();
-      }, 340);
+      }, 260);
     },
     [onClose, spring],
   );

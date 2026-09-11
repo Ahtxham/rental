@@ -156,7 +156,7 @@ export const SearchForm = ({
                   withDriver === option.value
                     ? dark
                       ? "bg-paper text-night shadow-sm"
-                      : "bg-card text-ink shadow-[0_1px_2px_rgba(16, 22, 20,0.16)]"
+                      : "bg-card text-ink shadow-[0_1px_2px_rgba(16,22,20,0.16)]"
                     : dark
                       ? "text-paper/70 hover:text-paper"
                       : "text-ink-soft hover:text-ink",

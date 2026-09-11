@@ -51,18 +51,18 @@ export const Button = ({
 
   if (href) {
     return (
-      <Link href={href} className={classes}>
+      <Link href={href} data-pressable="control" className={classes}>
         {props.children}
       </Link>
     );
   }
-  return <button className={classes} {...props} />;
+  return <button data-pressable="control" className={classes} {...props} />;
 };
 
 export const Card = ({ className, ...props }: ComponentProps<"div">) => (
   <div
     className={cn(
-      "rounded-2xl border border-line bg-card p-6 shadow-[0_1px_2px_rgba(16, 22, 20,0.04)]",
+      "rounded-2xl border border-line bg-card p-6 shadow-[0_1px_2px_rgba(16,22,20,0.04)]",
       className,
     )}
     {...props}
@@ -151,7 +151,7 @@ export const SectionHeading = ({
 /**
  * An on/off switch for a single setting.
  *
- * A real `<button role="switch">` rather than a styled checkbox: this fires an
+ * A real `<button data-pressable="control" role="switch">` rather than a styled checkbox: this fires an
  * action the moment it is pressed, and a checkbox implies a form that will be
  * submitted later. `aria-checked` is what a screen reader announces, and
  * `disabled` is what stops a second press landing while the first is in flight.
@@ -170,7 +170,7 @@ export const Switch = ({
   disabled?: boolean;
   busy?: boolean;
 }) => (
-  <button
+  <button data-pressable="control"
     type="button"
     role="switch"
     aria-checked={checked}

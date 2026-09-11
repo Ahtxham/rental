@@ -62,7 +62,7 @@ export const CarCard = ({
             draggable={false}
             loading="lazy"
             decoding="async"
-            className="size-full select-none object-cover transition-transform duration-[600ms] ease-[cubic-bezier(0.22,0.61,0.36,1)] group-hover:scale-[1.04]"
+            className="photo-zoom size-full select-none object-cover"
           />
         ) : (
           <div className="car-placeholder flex size-full flex-col items-center justify-center gap-1">

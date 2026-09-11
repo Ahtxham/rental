@@ -78,7 +78,7 @@ export const AdminLoginForm = () => {
 
         {error ? (
           <p
-            className="mt-4 flex gap-2 rounded-xl border border-alert/30 bg-alert/5 p-3 text-xs text-alert"
+            className="note-enter mt-4 flex gap-2 rounded-xl border border-alert/30 bg-alert/5 p-3 text-xs text-alert"
             role="alert"
           >
             <AlertCircle className="mt-0.5 size-4 shrink-0" aria-hidden />
@@ -86,7 +86,7 @@ export const AdminLoginForm = () => {
           </p>
         ) : null}
 
-        <button
+        <button data-pressable="control"
           type="submit"
           disabled={busy}
           className="mt-6 inline-flex w-full items-center justify-center gap-2 rounded-full bg-night px-6 py-3 text-sm font-semibold text-paper transition-colors duration-150 hover:bg-action-deep disabled:opacity-60"

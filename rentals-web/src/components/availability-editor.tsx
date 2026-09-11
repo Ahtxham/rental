@@ -66,7 +66,7 @@ export const AvailabilityEditor = ({
               className="mt-1.5 w-full rounded-lg border border-line bg-paper px-3 py-2 text-sm outline-none focus:border-ink/20 tnum"
             />
           </label>
-          <button
+          <button data-pressable="control"
             type="button"
             onClick={() => onChange(windows.filter((_, i) => i !== index))}
             aria-label="Remove these dates"
@@ -77,7 +77,7 @@ export const AvailabilityEditor = ({
         </div>
       ))}
 
-      <button
+      <button data-pressable="control"
         type="button"
         onClick={() => onChange([...windows, { from: "", to: "" }])}
         className="inline-flex items-center gap-2 rounded-full border border-line px-4 py-2 text-sm font-semibold text-ink transition-colors hover:bg-ink hover:text-paper"

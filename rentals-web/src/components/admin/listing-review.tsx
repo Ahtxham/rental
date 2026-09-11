@@ -180,14 +180,14 @@ export const ListingReview = ({ listing }: { listing: AdminListing }) => {
       </div>
 
       {error ? (
-        <p className="mt-4 flex gap-2 text-sm text-alert" role="alert">
+        <p className="note-enter mt-4 flex gap-2 text-sm text-alert" role="alert">
           <AlertCircle className="mt-0.5 size-4 shrink-0" aria-hidden />
           {error}
         </p>
       ) : null}
 
       <div className="mt-5 flex flex-wrap gap-3">
-        <button
+        <button data-pressable="control"
           type="button"
           disabled={busy !== null || publicRate.trim() === ""}
           onClick={() => void decide("approved")}
@@ -197,7 +197,7 @@ export const ListingReview = ({ listing }: { listing: AdminListing }) => {
           {listing.status === "approved" ? "Save and keep published" : "Approve and publish"}
         </button>
         {listing.status === "approved" ? (
-          <button
+          <button data-pressable="control"
             type="button"
             disabled={busy !== null}
             onClick={() => void decide("paused")}
@@ -207,7 +207,7 @@ export const ListingReview = ({ listing }: { listing: AdminListing }) => {
             Take it off the site
           </button>
         ) : null}
-        <button
+        <button data-pressable="control"
           type="button"
           disabled={busy !== null}
           onClick={() => void decide("rejected")}

@@ -107,7 +107,7 @@ export const InstallPrompt = () => {
       <p className="flex-1 text-sm text-ink-soft">
         Add Musafir to your home screen for one-tap booking.
       </p>
-      <button
+      <button data-pressable="control"
         type="button"
         onClick={async () => {
           await prompt.prompt();
@@ -118,7 +118,7 @@ export const InstallPrompt = () => {
       >
         Add
       </button>
-      <button
+      <button data-pressable="control"
         type="button"
         onClick={() => setHidden(true)}
         aria-label="Not now"
