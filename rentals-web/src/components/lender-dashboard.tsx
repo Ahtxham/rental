@@ -35,17 +35,17 @@ export interface LenderUser {
 const STATUS: Record<LenderCar["status"], { label: string; tone: string; help: string }> = {
   pending: {
     label: "With the office",
-    tone: "bg-brass-wash text-brass border-brass/30",
+    tone: "bg-paper-deep text-muted border-line",
     help: "Somebody is looking at it. We will call you to agree a rate.",
   },
   approved: {
     label: "On the website",
-    tone: "bg-forest-soft text-forest border-forest/20",
+    tone: "bg-paper-deep text-ink border-ink/15",
     help: "Customers can see it on the dates you have offered.",
   },
   rejected: {
     label: "Not listed",
-    tone: "bg-alert/10 text-alert border-alert/30",
+    tone: "bg-alert-wash text-alert border-alert/30",
     help: "We could not list this one.",
   },
   paused: {
@@ -119,7 +119,7 @@ export const LenderDashboard = ({
           </button>
           <Link
             href="/lender/cars/new"
-            className="inline-flex items-center gap-2 rounded-full bg-brass px-5 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-brass-bright"
+            className="inline-flex items-center gap-2 rounded-full bg-action px-5 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-action-deep"
           >
             <Plus className="size-4" aria-hidden />
             Add a car
@@ -130,7 +130,7 @@ export const LenderDashboard = ({
       {/* A pending OWNER is different from a pending CAR, and saying so here
           stops the obvious wrong conclusion, that nothing is happening. */}
       {user.status === "pending" ? (
-        <p className="mt-6 rounded-2xl border border-brass/30 bg-brass-wash p-4 text-sm leading-relaxed text-ink-soft">
+        <p className="mt-6 rounded-2xl border border-line bg-paper-deep p-4 text-sm leading-relaxed text-ink-soft">
           Your account is new, so somebody from the office will call you before your
           first car goes on the website. You can add cars and dates in the meantime.
         </p>
@@ -151,7 +151,7 @@ export const LenderDashboard = ({
           </p>
           <Link
             href="/lender/cars/new"
-            className="mt-6 inline-flex items-center gap-2 rounded-full bg-forest px-5 py-2.5 text-sm font-semibold text-paper"
+            className="mt-6 inline-flex items-center gap-2 rounded-full bg-night px-5 py-2.5 text-sm font-semibold text-paper"
           >
             <Plus className="size-4" aria-hidden />
             Add a car
@@ -174,7 +174,7 @@ export const LenderDashboard = ({
                     />
                   ) : (
                     <div className="flex size-24 shrink-0 items-center justify-center rounded-xl bg-paper-deep">
-                      <span className="font-display text-lg text-forest/25">Musafir</span>
+                      <span className="font-display text-lg text-ink/20">Musafir</span>
                     </div>
                   )}
 
@@ -207,7 +207,7 @@ export const LenderDashboard = ({
                 <div className="border-t border-line bg-paper/40 p-5">
                   <div className="flex flex-wrap items-center justify-between gap-3">
                     <h3 className="flex items-center gap-2 text-sm font-semibold">
-                      <CalendarRange className="size-4 text-brass" aria-hidden />
+                      <CalendarRange className="size-4 text-muted" aria-hidden />
                       Free dates
                     </h3>
                     {!isEditing ? (
@@ -218,7 +218,7 @@ export const LenderDashboard = ({
                             setEditing(car._id);
                             setDraft(car.availability.length ? car.availability : [{ from: "", to: "" }]);
                           }}
-                          className="rounded-full border border-line px-4 py-2 text-xs font-semibold text-forest transition-colors hover:bg-forest hover:text-paper"
+                          className="rounded-full border border-line px-4 py-2 text-xs font-semibold text-ink transition-colors hover:bg-ink hover:text-paper"
                         >
                           Change dates
                         </button>
@@ -244,7 +244,7 @@ export const LenderDashboard = ({
                           type="button"
                           onClick={() => void saveDates(car._id)}
                           disabled={busy === car._id}
-                          className="inline-flex items-center gap-2 rounded-full bg-forest px-5 py-2.5 text-sm font-semibold text-paper disabled:opacity-60"
+                          className="inline-flex items-center gap-2 rounded-full bg-night px-5 py-2.5 text-sm font-semibold text-paper disabled:opacity-60"
                         >
                           {busy === car._id ? (
                             <Loader2 className="size-4 animate-spin" aria-hidden />

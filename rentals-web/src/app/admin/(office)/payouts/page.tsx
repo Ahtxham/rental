@@ -44,7 +44,7 @@ const PayoutsPage = async ({
             <span className="block text-[11px] font-semibold uppercase tracking-[0.14em] text-muted">
               Total to send
             </span>
-            <span className="font-display text-3xl font-semibold text-forest tnum">
+            <span className="font-display text-3xl font-semibold text-ink tnum">
               {pkr(totalPayable)}
             </span>
           </p>
@@ -61,7 +61,7 @@ const PayoutsPage = async ({
             href={tab.href}
             className={
               tab.active
-                ? "rounded-full bg-forest px-4 py-1.5 text-xs font-semibold text-paper"
+                ? "rounded-full bg-night px-4 py-1.5 text-xs font-semibold text-paper"
                 : "rounded-full px-4 py-1.5 text-xs font-semibold text-ink-soft hover:text-ink"
             }
           >

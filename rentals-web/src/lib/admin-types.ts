@@ -171,8 +171,11 @@ export const STATUS_LABEL: Record<RentalStatus, string> = {
   cancelled: "Cancelled",
 };
 
-export const STATUS_TONE: Record<RentalStatus, "neutral" | "good" | "warn" | "brass"> = {
-  enquiry: "brass",
+export const STATUS_TONE: Record<RentalStatus, "neutral" | "good" | "warn"> = {
+  // An enquiry holds nothing, so it gets the quietest chip there is. It used
+  // to have a colour of its own; the palette no longer has one to give it, and
+  // the word "Enquiry" is written on the chip either way.
+  enquiry: "neutral",
   confirmed: "good",
   out: "warn",
   returned: "neutral",

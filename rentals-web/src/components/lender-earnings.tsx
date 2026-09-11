@@ -60,7 +60,7 @@ export const LenderEarnings = ({
             <span className="block text-[11px] font-semibold uppercase tracking-[0.14em] text-muted">
               Waiting to be sent
             </span>
-            <span className="font-display text-2xl font-semibold text-forest tnum">
+            <span className="font-display text-2xl font-semibold text-ink tnum">
               {pkr(totals.due)}
             </span>
           </p>
@@ -88,7 +88,7 @@ export const LenderEarnings = ({
             </div>
 
             {earning.status === "returned" ? (
-              <p className="min-w-28 text-end font-display text-lg font-semibold text-forest tnum">
+              <p className="min-w-28 text-end font-display text-lg font-semibold text-ink tnum">
                 {pkr(earning.amount)}
               </p>
             ) : (
@@ -103,7 +103,7 @@ export const LenderEarnings = ({
                 {earning.reference ? ` · ${earning.reference}` : ""}
               </Badge>
             ) : earning.status === "returned" ? (
-              <Badge tone="brass">Being sent</Badge>
+              <Badge tone="neutral">Being sent</Badge>
             ) : (
               <Badge>Not final yet</Badge>
             )}

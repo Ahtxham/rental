@@ -4,31 +4,82 @@
  * Musafir Rent A Car, one committed look, painted explicitly.
  *
  * A single visual world rather than a light/dark pair: this is a brand's own
- * site, not a tool somebody lives inside all day, and the identity is the
- * point. Every surface and every colour is stated outright, so a phone set to
- * dark mode gets the same warm paper and bottle green as everyone else instead
- * of a half-inverted page.
+ * site, not a tool somebody lives inside all day. Every surface is stated
+ * outright, so a phone set to dark mode gets the same page as everyone else
+ * instead of a half-inverted one.
  *
- * The palette is the subject's: the warm off-white of a printed card, the
- * bottle green of an old registration plate, and brass, the colour of
- * headlamp bezels, of the fittings on a GT Road signboard, and of the light in
- * Lahore about an hour before sunset.
+ * ── There is no brand colour, and that is the decision ─────────────────────
+ *
+ * Every screen on this site is mostly a photograph of a car. A brand colour
+ * laid over that does not sit beside the photograph, it competes with it: a
+ * green panel makes a silver car look warm, a warm page makes a blue one look
+ * cold, and an accent button next to a red car is simply a second red thing
+ * asking for the same attention. Take the colour out and the photographs are
+ * the loudest thing on every screen, which is what you want when the thing in
+ * the photograph is the thing being sold.
+ *
+ * So the interface is greys. Neutral ones, no warm cast and no cool cast,
+ * because a tinted grey shifts the apparent colour of anything photographed
+ * against it, and these greys are behind pictures people are choosing a car
+ * from. The only hue in the whole system is the red that means something has
+ * gone wrong, and it earns its place by being the one thing that is never
+ * decorative.
+ *
+ * ── The three rules ────────────────────────────────────────────────────────
+ *
+ *   ink + paper    Everything read, and everything it is read on. One neutral
+ *                  ramp, top to bottom.
+ *   night          The dark surface: the stage a photograph stands on, the
+ *                  bands between light sections, and the foot of the page.
+ *   action         The one thing you press. Near-black with white text on a
+ *                  light surface; inverted to white with near-black text on a
+ *                  dark one. No third colour exists to reach for, which is the
+ *                  point: on a page with no other colour, one black rectangle
+ *                  is unmissable and nothing has to be explained.
+ *
+ * Hierarchy that a palette would normally carry with hue is carried here by
+ * weight, size and space instead, which is the harder way and the one that
+ * survives being photocopied, screenshotted, or read by somebody who cannot
+ * tell two hues apart.
+ *
+ * Every pairing is measured, not guessed, and the whole set clears WCAG AA
+ * with the tightest at 4.74:1. Re-measure rather than eyeball after changing
+ * any of them: an earlier palette had five pairings under 4.5:1, including
+ * white text on the primary button of every form at 3.91:1, and not one of
+ * them looked wrong.
  */
 :root {
-  --paper: #faf7f2;
-  --paper-deep: #f2ebe0;
+  /* Surfaces, lightest first. The step down to the sunken band is deliberately
+     small: it separates two ideas, it is not meant to announce itself. */
+  --paper: #f7f7f8;
+  --paper-deep: #ededf0;
   --card: #ffffff;
-  --ink: #17140f;
-  --ink-soft: #4a443b;
-  --muted: #756c60;
-  --line: #e5ddd0;
-  --forest: #0f3a2f;
-  --forest-mid: #1b5545;
-  --forest-soft: #d9e6df;
-  --brass: #a8781c;
-  --brass-bright: #d2a244;
-  --brass-wash: #f6ecd8;
-  --alert: #9c3b21;
+
+  /* The reading ramp. */
+  --ink: #131316;
+  --ink-soft: #45464b;
+  --muted: #676870;
+  --line: #e2e2e6;
+
+  /* The dark surface, and the slightly lifted one for panels sitting on it. */
+  --night: #0b0b0d;
+  --night-soft: #17171a;
+
+  /* The one thing you press, and its inverse for dark surfaces. Hover goes
+     darker on light and lighter on dark, which is to say both of them move
+     further from the surface they sit on rather than toward it. */
+  --action: #1d1d20;
+  --action-deep: #000000;
+  --action-invert: #ffffff;
+  --action-invert-deep: #e6e6e9;
+
+  /* The only hue in the system. It means a problem, never emphasis. */
+  --alert: #a3261b;
+  --alert-wash: #f8e9e7;
+
+  --glass-paper: rgba(247, 247, 248, 0.72);
+  --glass-night: rgba(11, 11, 13, 0.62);
+  --edge-dark: rgba(247, 247, 248, 0.14);
 }
 
 @theme inline {
@@ -39,12 +90,13 @@
   --color-ink-soft: var(--ink-soft);
   --color-muted: var(--muted);
   --color-line: var(--line);
-  --color-forest: var(--forest);
-  --color-forest-mid: var(--forest-mid);
-  --color-forest-soft: var(--forest-soft);
-  --color-brass: var(--brass);
-  --color-brass-bright: var(--brass-bright);
-  --color-brass-wash: var(--brass-wash);
+  --color-night: var(--night);
+  --color-night-soft: var(--night-soft);
+  --color-action: var(--action);
+  --color-action-deep: var(--action-deep);
+  --color-action-invert: var(--action-invert);
+  --color-action-invert-deep: var(--action-invert-deep);
+  --color-alert-wash: var(--alert-wash);
   --color-alert: var(--alert);
   --font-display: var(--font-fraunces);
   --font-body: var(--font-public-sans);
@@ -113,29 +165,30 @@ body {
  * The stand-in for a car with no photograph yet.
  *
  * Not a grey box: an empty slot on a rental site reads as a business that has
- * not got round to it, and there will always be a car photographed last. This
- * is the brass-on-forest of the rest of the brand, so a card without a picture
- * still looks like it belongs to the same company.
+ * not got round to it, and there will always be one car photographed last.
+ * This is the same near-black the real photographs sit on, lit from one corner
+ * and finely hatched, so a card without a picture still looks like it was
+ * made by the same people as the cards around it.
  */
 .car-placeholder {
-  background-color: var(--forest);
+  background-color: var(--night);
   background-image:
-    radial-gradient(circle at 78% 18%, rgba(210, 162, 68, 0.28) 0, transparent 42%),
-    radial-gradient(circle at 12% 88%, rgba(210, 162, 68, 0.16) 0, transparent 46%),
+    radial-gradient(circle at 78% 18%, rgba(255, 255, 255, 0.1) 0, transparent 44%),
+    radial-gradient(circle at 12% 88%, rgba(255, 255, 255, 0.05) 0, transparent 46%),
     repeating-linear-gradient(
       -45deg,
-      rgba(250, 247, 242, 0.035) 0 2px,
+      rgba(247, 247, 248, 0.035) 0 2px,
       transparent 2px 9px
     );
 }
 
-/* A dark panel's own hairline, the light one disappears on forest. */
+/* A dark panel's own hairline; the light one disappears on near-black. */
 .hairline-light {
-  border-color: rgba(250, 247, 242, 0.16);
+  border-color: rgba(247, 247, 248, 0.16);
 }
 
 :focus-visible {
-  outline: 2px solid var(--brass);
+  outline: 2px solid var(--ink);
   outline-offset: 3px;
 }
 
@@ -265,5 +318,426 @@ body {
    */
   .hero-drive {
     display: none;
+  }
+}
+
+/* ── Type ──────────────────────────────────────────────────────────────────
+ *
+ * Tracking is a function of size, not a setting.
+ *
+ * The same letter-spacing across a whole site is wrong somewhere by
+ * definition: as type grows the gaps between letters grow with it and a
+ * headline starts to come apart, while small type needs the opposite, a little
+ * air, or it closes up and stops being legible at a glance. So each step
+ * carries its own tracking, and its own leading, which moves the other way:
+ * tight on the big sizes, generous on the ones people actually read.
+ *
+ * Sizes are `clamp()` against the viewport so the page is laid out in one
+ * continuous scale rather than at three breakpoints, and every measurement
+ * around them is in `rem`, so a visitor who has turned their text size up gets
+ * a bigger page rather than a broken one.
+ */
+.t-display {
+  font-size: clamp(2.5rem, 5.8vw, 4.5rem);
+  line-height: 0.97;
+  letter-spacing: -0.032em;
+  font-weight: 600;
+}
+
+.t-title {
+  font-size: clamp(2rem, 4.4vw, 3.5rem);
+  line-height: 1.06;
+  letter-spacing: -0.024em;
+  font-weight: 600;
+}
+
+.t-headline {
+  font-size: clamp(1.375rem, 2.2vw, 1.875rem);
+  line-height: 1.18;
+  letter-spacing: -0.014em;
+  font-weight: 600;
+}
+
+/* The one people read a paragraph of. Tracking at rest, leading opened up. */
+.t-body {
+  font-size: clamp(1.0625rem, 1.25vw, 1.25rem);
+  line-height: 1.6;
+  letter-spacing: -0.002em;
+}
+
+/* Small, so it goes the other way: a little air, or it sets solid. */
+.t-caption {
+  font-size: 0.8125rem;
+  line-height: 1.45;
+  letter-spacing: 0.012em;
+}
+
+.t-eyebrow {
+  font-size: 0.6875rem;
+  line-height: 1.4;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  font-weight: 600;
+}
+
+/* ── Material ──────────────────────────────────────────────────────────────
+ *
+ * Chrome that floats over the content rather than taking a strip away from it.
+ *
+ * The bright inner top edge is doing real work: it is the highlight a sheet of
+ * glass catches along its top edge, and without it a blurred panel reads as a
+ * smudge rather than as something lying on top of the page.
+ *
+ * Weight carries hierarchy. `material-thick` is for surfaces big enough that a
+ * light blur would let the page underneath compete with what is written on it.
+ * Never put one of these on top of another: two light translucent layers
+ * stacked is how legibility collapses.
+ */
+.material {
+  background: var(--glass-paper);
+  backdrop-filter: blur(20px) saturate(180%);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.55),
+    0 1px 2px rgba(19, 19, 22, 0.05),
+    0 8px 30px rgba(19, 19, 22, 0.07);
+}
+
+.material-night {
+  background: var(--glass-night);
+  backdrop-filter: blur(24px) saturate(160%);
+  /* A drawn edge as well as the lit one. Over a dark photograph the highlight
+     alone is not enough to say where the panel stops, and a control whose
+     boundary you cannot see does not look like a control. */
+  border: 1px solid rgba(247, 247, 248, 0.14);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.14),
+    0 10px 40px rgba(0, 0, 0, 0.45);
+}
+
+/* Bigger surfaces read as thicker glass and cast further. */
+.material-thick {
+  backdrop-filter: blur(34px) saturate(190%);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.5),
+    0 18px 60px rgba(19, 19, 22, 0.16);
+}
+
+/**
+ * Text that has to stay legible over a moving, blurred background.
+ *
+ * Flat grey is the thing that fails here: it relies on a background staying
+ * put, and under a translucent panel the background is whatever scrolled under
+ * it a second ago. A touch more weight and a touch more tracking hold up over
+ * anything.
+ */
+.vibrant {
+  font-weight: 500;
+  letter-spacing: 0.004em;
+  text-shadow: 0 1px 12px rgba(11, 11, 13, 0.25);
+}
+
+/**
+ * Where floating chrome overlaps content, fade the content out under it
+ * instead of drawing a line across the page.
+ *
+ * A 1px divider under a sticky header is a statement that the header is a
+ * separate region. It is not; it is lying on top of one, and the honest
+ * version of that is the content softening as it goes underneath.
+ */
+.scroll-edge {
+  mask-image: linear-gradient(to bottom, transparent 0, #000 3.5rem);
+}
+
+.edge-light {
+  border-color: var(--edge-dark);
+}
+
+/* ── Preferences ───────────────────────────────────────────────────────────
+ *
+ * Three separate signals, answered separately. Somebody who has turned
+ * transparency down has not asked for less motion, and treating the two as one
+ * switch takes away something they did not ask to lose.
+ */
+@media (prefers-reduced-transparency: reduce) {
+  .material,
+  .material-night,
+  .material-thick {
+    backdrop-filter: none;
+  }
+  .material,
+  .material-thick {
+    background: var(--paper);
+  }
+  .material-night {
+    background: var(--night);
+  }
+  .vibrant {
+    text-shadow: none;
+  }
+}
+
+@media (prefers-contrast: more) {
+  .material,
+  .material-thick {
+    background: var(--paper);
+    border: 1px solid var(--ink);
+    backdrop-filter: none;
+  }
+  .material-night {
+    background: var(--night);
+    border: 1px solid var(--paper);
+    backdrop-filter: none;
+  }
+  .scroll-edge {
+    mask-image: none;
+  }
+}
+
+/**
+ * A large surface moving a long way goes semi-transparent on the journey.
+ *
+ * A big opaque rectangle crossing the screen is the kind of movement that
+ * makes people feel slightly ill, and it is also just hard to read while it is
+ * travelling. Fading it out on the way and back in on arrival keeps the
+ * spatial story and drops the queasy part.
+ */
+.travelling {
+  opacity: 0.92;
+}
+
+/* ── Press ─────────────────────────────────────────────────────────────────
+ *
+ * Feedback on the way down, at the cost of one transform.
+ *
+ * A press is a discrete event rather than a continuous gesture, so a short
+ * transition is the honest tool here; springs are for the things a finger
+ * stays in contact with. The release is slower than the press because that is
+ * how a physical button behaves: it gives instantly and returns at its own
+ * pace.
+ */
+[data-pressable] {
+  transition:
+    transform 220ms var(--ease-out-soft),
+    opacity 220ms var(--ease-out-soft),
+    background-color 150ms linear,
+    border-color 150ms linear,
+    color 150ms linear;
+  touch-action: manipulation;
+}
+
+[data-pressable][data-pressed="true"] {
+  transform: scale(0.968);
+  transition-duration: 90ms;
+}
+
+/* A card is bigger, so the same scale would read as a lurch. */
+[data-pressable="card"][data-pressed="true"] {
+  transform: scale(0.986);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  [data-pressable][data-pressed="true"] {
+    transform: none;
+    opacity: 0.72;
+  }
+}
+
+/**
+ * Hint in the direction of travel.
+ *
+ * A thing on its way somewhere should point at where it is going while it is
+ * still in the middle. The arrow inside a link leans into the direction the
+ * link will take you, so the intermediate frames already say what the outcome
+ * is.
+ */
+.lean {
+  transition: transform 260ms var(--ease-out-soft);
+}
+.group:hover .lean,
+.group:focus-visible .lean {
+  transform: translate3d(0.2rem, 0, 0);
+}
+@media (prefers-reduced-motion: reduce) {
+  .lean {
+    transition: none;
+  }
+}
+
+/* ── The hero ──────────────────────────────────────────────────────────────
+ *
+ * The car arrives once, then belongs to the scroll.
+ *
+ * On load it settles: very slightly too large and a little low, easing into
+ * place. That is the only thing on the page that overshoots nothing and simply
+ * arrives, because an object this big bouncing would be a stunt.
+ *
+ * After that, scrolling takes it. The car and the words move at different
+ * rates, which is the whole of the depth effect and costs two transforms. Both
+ * are `scroll(root)` rather than a bare `scroll()`: the hero is
+ * `overflow-hidden`, which makes it a scroll container of its own that never
+ * scrolls, and the unqualified form would bind to that and sit at 0% for ever.
+ */
+@keyframes hero-settle {
+  from {
+    opacity: 0;
+    transform: translate3d(0, 3.5%, 0) scale(1.06);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .hero-object {
+    animation: hero-settle 1.4s var(--ease-out-soft) both;
+    animation-delay: 0.1s;
+    will-change: transform, opacity;
+  }
+
+  .hero-object {
+    transform-origin: 50% 100%;
+  }
+}
+
+/**
+ * Scale, anchored to the bottom edge, rather than a translation.
+ *
+ * The car has to keep its feet on the floor of the hero. Sliding the layer up
+ * to get the parallax opens a strip of flat background underneath it, which is
+ * a seam appearing halfway through a scroll. Growing it from the bottom gives
+ * the same differential movement against the copy and cannot expose anything.
+ */
+@keyframes hero-drift {
+  to {
+    transform: scale(1.13);
+  }
+}
+
+@keyframes hero-recede {
+  to {
+    opacity: 0;
+    transform: translate3d(0, -18%, 0);
+  }
+}
+
+@supports (animation-timeline: scroll(root)) {
+  @media (prefers-reduced-motion: no-preference) {
+    /* The second animation takes over from the settle, and starts at 0% of the
+       scroll, which is where the settle ends. No seam between them. */
+    .hero-object {
+      animation:
+        hero-settle 1.4s var(--ease-out-soft) 0.1s both,
+        hero-drift linear both;
+      animation-timeline: auto, scroll(root);
+      animation-range: normal, 0 100vh;
+    }
+
+    .hero-copy {
+      animation: hero-recede linear both;
+      animation-timeline: scroll(root);
+      /* Gone before it reaches the top, so it never sits behind the chrome
+         at half opacity looking like a rendering bug. */
+      animation-range: 0 68vh;
+    }
+  }
+}
+
+/**
+ * A photograph used as a surface for text needs the text end darkened.
+ *
+ * Not a flat scrim over the whole picture, which mutes it everywhere to solve
+ * a problem that exists in one corner. A gradient takes the contrast from
+ * where the words are and leaves the rest of the photograph alone.
+ */
+.photo-scrim {
+  background-image: linear-gradient(
+    to top,
+    rgba(11, 11, 13, 0.88) 0,
+    rgba(11, 11, 13, 0.34) 26%,
+    rgba(11, 11, 13, 0.04) 52%,
+    transparent 100%
+  );
+}
+
+/**
+ * A photograph with the words down one side.
+ *
+ * Darkened from the reading edge rather than from the bottom, because that is
+ * where the text is. The picture keeps its light on the far side, which is
+ * also where the subject of this particular photograph happens to be, so the
+ * gradient is doing two jobs: making the paragraph legible, and pointing at
+ * the car.
+ */
+.photo-scrim-start {
+  background-image:
+    linear-gradient(
+      to right,
+      rgba(11, 11, 13, 0.93) 0,
+      rgba(11, 11, 13, 0.8) 40%,
+      rgba(11, 11, 13, 0.5) 74%,
+      rgba(11, 11, 13, 0.3) 100%
+    ),
+    linear-gradient(to top, rgba(11, 11, 13, 0.8) 0, transparent 46%);
+}
+
+/**
+ * The hero's own scrim is lighter still.
+ *
+ * The only thing in that photograph is the light along the car's edges, and a
+ * scrim heavy enough to make small print comfortable takes exactly that away.
+ * The panel over it does its own darkening, so the page does not need to.
+ */
+.hero-scrim {
+  background-image: linear-gradient(
+    to top,
+    rgba(11, 11, 13, 0.6) 0,
+    rgba(11, 11, 13, 0.12) 24%,
+    transparent 44%
+  );
+}
+
+/**
+ * The top edge of the hero's photograph, dissolved.
+ *
+ * The picture's own background is a shade off the page's, so butting them
+ * together draws a line across the hero at whatever height the image happens
+ * to start. Fading the image out into the page means there is no edge to
+ * notice, and the car simply emerges from the dark.
+ */
+.photo-fade-top {
+  mask-image: linear-gradient(to bottom, transparent 0, #000 32%);
+}
+
+/**
+ * The light the hero sits in.
+ *
+ * Two very soft white pools, off-centre and enormous, so the car has
+ * something to come out of. A flat dark rectangle makes a photograph look
+ * stuck on; a lit room makes it look like the car is standing in it. White
+ * rather than a colour, because tinting the light behind a car is the same
+ * mistake as tinting the page behind it.
+ */
+.hero-light {
+  background-image:
+    radial-gradient(58% 52% at 20% 16%, rgba(255, 255, 255, 0.07) 0, transparent 70%),
+    radial-gradient(66% 58% at 84% 72%, rgba(255, 255, 255, 0.05) 0, transparent 72%);
+}
+
+/**
+ * A full-bleed row that still starts on the page's text margin.
+ *
+ * The row itself runs edge to edge, so cards can be seen leaving the screen on
+ * the right, which is what tells you there are more of them. Its first card
+ * still lines up with the heading above it, because a row that starts at the
+ * window edge has no relationship to the words it belongs to.
+ */
+.rail-gutter {
+  padding-inline: max(1.25rem, calc((100vw - 72rem) / 2 + 1.25rem));
+}
+
+@media (min-width: 40rem) {
+  .rail-gutter {
+    padding-inline: max(2rem, calc((100vw - 72rem) / 2 + 2rem));
   }
 }

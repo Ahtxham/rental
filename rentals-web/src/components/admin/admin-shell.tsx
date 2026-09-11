@@ -62,7 +62,7 @@ export const AdminShell = ({
         >
           {open ? <X className="size-5" /> : <Menu className="size-5" />}
         </button>
-        <span className="font-display text-lg font-semibold text-forest">Musafir</span>
+        <span className="font-display text-lg font-semibold text-ink">Musafir</span>
         <span className="ms-auto text-xs text-muted">{name}</span>
       </header>
 
@@ -75,8 +75,8 @@ export const AdminShell = ({
         >
           <div className="sticky top-0 flex h-screen flex-col p-4">
             <Link href="/admin" className="hidden items-baseline gap-2 px-2 py-2 lg:flex">
-              <span className="font-display text-xl font-semibold text-forest">Musafir</span>
-              <span className="text-[9px] font-semibold uppercase tracking-[0.2em] text-brass">
+              <span className="font-display text-xl font-semibold text-ink">Musafir</span>
+              <span className="text-[9px] font-semibold uppercase tracking-[0.2em] text-muted">
                 Office
               </span>
             </Link>
@@ -93,7 +93,7 @@ export const AdminShell = ({
                     onClick={() => setOpen(false)}
                     className={cn(
                       "flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium transition-colors duration-150",
-                      active ? "bg-forest text-paper" : "text-ink-soft hover:bg-ink/5",
+                      active ? "bg-night text-paper" : "text-ink-soft hover:bg-ink/5",
                     )}
                   >
                     <item.icon className="size-4 shrink-0" aria-hidden />

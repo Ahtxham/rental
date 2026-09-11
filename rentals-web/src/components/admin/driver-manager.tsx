@@ -91,7 +91,7 @@ export const DriverManager = ({ drivers }: { drivers: AdminDriver[] }) => {
         <button
           type="button"
           onClick={() => setAdding((value) => !value)}
-          className="inline-flex items-center gap-2 rounded-full bg-brass px-5 py-2.5 text-sm font-semibold text-white hover:bg-brass-bright"
+          className="inline-flex items-center gap-2 rounded-full bg-action px-5 py-2.5 text-sm font-semibold text-white hover:bg-action-deep"
         >
           <Plus className="size-4" aria-hidden />
           Add a driver
@@ -149,7 +149,7 @@ export const DriverManager = ({ drivers }: { drivers: AdminDriver[] }) => {
           <button
             type="submit"
             disabled={busy}
-            className="mt-5 inline-flex items-center gap-2 rounded-full bg-forest px-5 py-2.5 text-sm font-semibold text-paper hover:bg-forest-mid disabled:opacity-60"
+            className="mt-5 inline-flex items-center gap-2 rounded-full bg-night px-5 py-2.5 text-sm font-semibold text-paper hover:bg-action-deep disabled:opacity-60"
           >
             {busy ? <Loader2 className="size-4 animate-spin" aria-hidden /> : null}
             Add

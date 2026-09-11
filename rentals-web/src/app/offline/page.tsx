@@ -23,7 +23,7 @@ const OfflinePage = async () => {
   return (
   <Container className="py-24">
     <div className="mx-auto max-w-md text-center">
-      <WifiOff className="mx-auto size-8 text-brass" aria-hidden />
+      <WifiOff className="mx-auto size-8 text-muted" aria-hidden />
       <h1 className="font-display mt-4 text-3xl font-semibold">You are offline</h1>
       <p className="mt-3 text-sm leading-relaxed text-ink-soft">
         The pages you have already visited will still open. Anything new needs a

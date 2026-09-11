@@ -5,6 +5,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
 
+import { PressAnchor, PressLink } from "@/components/motion/pressable";
 import type { Contact } from "@/lib/config";
 import { telHref } from "@/lib/config";
 import { cn } from "@/lib/cn";
@@ -24,43 +25,136 @@ const LINKS = [
   { href: "/rent-your-car", label: "Earn with your car", owners: true },
 ];
 
+/**
+ * Chrome that floats over the page rather than taking a strip off the top of it.
+ *
+ * Two states, and which one it is in depends on what is underneath. Over the
+ * hero it is not there at all: no panel, no line, just the words, because the
+ * hero is a photograph and putting a bar across the top of a photograph is
+ * taking a slice out of it. Once the page proper is underneath, the glass comes
+ * in and the content softens as it passes below, which is the honest way to
+ * show one surface lying over another. A hard 1px divider claims they are
+ * separate regions, and they are not.
+ *
+ * The swap is driven by an element at the foot of the hero rather than by a
+ * scroll position: a number in pixels is a guess about a layout that changes
+ * with the viewport, the text size and how long the headline wraps to.
+ */
 export const SiteHeader = ({ contact }: { contact: Contact }) => {
   const pathname = usePathname();
   const [open, setOpen] = useState(false);
+  /**
+   * Starts in the state the route is going to need, rather than in one state
+   * and correcting itself.
+   *
+   * The sentinel can only be found after the first paint, so a header that
+   * waits to be told flashes the wrong colours over the hero on every load,
+   * which is the one moment somebody is definitely looking at it.
+   */
+  const [onGlass, setOnGlass] = useState(() => pathname !== "/");
 
   useEffect(() => setOpen(false), [pathname]);
+
+  useEffect(() => {
+    const sentinel = document.getElementById("hero-end");
+    if (!sentinel) {
+      setOnGlass(true);
+      return;
+    }
+    const observer = new IntersectionObserver(
+      ([entry]) => setOnGlass(!entry.isIntersecting || entry.boundingClientRect.top < 0),
+      { rootMargin: "-64px 0px 0px 0px" },
+    );
+    observer.observe(sentinel);
+    return () => observer.disconnect();
+  }, [pathname]);
 
   // The admin and the car owner's portal are tools, not the shop window. They
   // get their own chrome and would only confuse a customer looking for a car.
   if (pathname?.startsWith("/admin") || pathname?.startsWith("/lender")) return null;
 
+  const dark = !onGlass;
+
+  /**
+   * Floating chrome takes no space, so a page without a hero under it has to
+   * be given the space back.
+   *
+   * Decided from the route rather than from whether the sentinel turned up,
+   * because the sentinel is only known after the first paint and the page
+   * would visibly drop by 68 pixels on load.
+   */
+  const overlaid = pathname === "/";
+
   return (
-    <header className="sticky top-0 z-40 border-b border-line/70 bg-paper/90 backdrop-blur">
-      <div className="mx-auto flex w-full max-w-6xl items-center gap-4 px-5 py-3.5 sm:px-8">
-        <Link href="/" className="flex items-baseline gap-2" aria-label="Musafir Rent A Car, home">
-          <span className="font-display text-2xl font-semibold text-forest">Musafir</span>
-          <span className="hidden text-[10px] font-semibold uppercase tracking-[0.22em] text-brass sm:block">
+    <>
+    <header
+      className={cn(
+        "fixed inset-x-0 top-0 z-40 transition-colors duration-500",
+        onGlass ? "material" : "bg-transparent",
+      )}
+    >
+      {/* Over the hero there is no panel, which leaves the words with whatever
+          the photograph happens to put behind them, and what it puts behind
+          them changes as the page moves. A short gradient off the top edge
+          buys the contrast back without drawing a bar across the picture. It
+          is a layer of its own rather than a background on the header, because
+          `transition-colors` cannot cross-fade a gradient and the swap would
+          arrive as a pop. */}
+      <div
+        aria-hidden
+        className={cn(
+          "pointer-events-none absolute inset-0 bg-gradient-to-b from-night/65 via-night/25 to-transparent transition-opacity duration-500",
+          onGlass ? "opacity-0" : "opacity-100",
+        )}
+      />
+      <div className="relative mx-auto flex w-full max-w-6xl items-center gap-5 px-5 py-3 sm:px-8">
+        <PressLink
+          href="/"
+          className="flex items-baseline gap-2"
+          aria-label="Musafir Rent A Car, home"
+        >
+          <span
+            className={cn(
+              "font-display text-[1.375rem] font-semibold tracking-[-0.02em] transition-colors duration-500",
+              dark ? "text-paper" : "text-ink",
+            )}
+          >
+            Musafir
+          </span>
+          <span
+            className={cn(
+              "t-eyebrow hidden transition-colors duration-500 sm:block",
+              dark ? "text-paper/55" : "text-muted",
+            )}
+          >
             Rent A Car
           </span>
-        </Link>
+        </PressLink>
 
         <nav className="ms-auto hidden items-center gap-7 lg:flex" aria-label="Main">
           {LINKS.map((link) => (
-            <Link
+            <PressLink
               key={link.href}
               href={link.href}
               className={cn(
-                "text-sm font-medium transition-colors duration-150",
+                "text-[0.8125rem] font-medium tracking-[0.01em]",
                 link.owners
-                  ? "rounded-full border border-brass/35 bg-brass-wash px-3.5 py-1.5 text-brass hover:border-brass hover:bg-brass/15"
-                  : pathname === link.href
-                    ? "text-forest"
-                    : "text-ink-soft hover:text-forest",
-                link.owners && pathname === link.href && "border-brass bg-brass/15",
+                  ? cn(
+                      "rounded-full border px-3.5 py-1.5",
+                      dark
+                        ? "border-paper/25 bg-paper/10 text-paper/55"
+                        : "border-line bg-paper-deep text-muted hover:border-ink/30",
+                    )
+                  : dark
+                    ? cn("text-paper/75 hover:text-paper", pathname === link.href && "text-paper")
+                    : cn(
+                        "text-ink-soft hover:text-ink",
+                        pathname === link.href && "text-ink",
+                      ),
               )}
             >
               {link.label}
-            </Link>
+            </PressLink>
           ))}
         </nav>
 
@@ -72,35 +166,46 @@ export const SiteHeader = ({ contact }: { contact: Contact }) => {
         {/* No number set means no number shown. A placeholder here would be a
             phone number a customer actually dials. */}
         {contact.phone ? (
-          <a
+          <PressAnchor
             href={telHref(contact.phone)}
-            className="ms-auto hidden items-center gap-2 text-sm font-semibold text-ink-soft transition-colors duration-150 hover:text-forest xl:inline-flex"
+            className={cn(
+              "ms-auto hidden items-center gap-2 text-[0.8125rem] font-semibold xl:inline-flex",
+              dark ? "text-paper/80 hover:text-paper" : "text-ink-soft hover:text-ink",
+            )}
           >
             <Phone className="size-4" aria-hidden />
             <span className="tnum">{contact.phone}</span>
-          </a>
+          </PressAnchor>
         ) : null}
 
-        <Link
+        <PressLink
           href="/book"
           className={cn(
-            "ms-auto inline-flex items-center gap-2 rounded-full bg-brass px-5 py-2.5 text-sm font-semibold text-white transition-colors duration-150 hover:bg-brass-bright",
+            "ms-auto inline-flex items-center gap-2 rounded-full px-5 py-2 text-[0.8125rem] font-semibold",
+            // The accent, at whichever of its two values the surface can
+            // carry. Same colour, same meaning, legible on both.
+            dark
+              ? "bg-action-invert text-night hover:bg-action-invert-deep"
+              : "bg-action text-white hover:bg-action-deep",
             // Only give up the auto-margin when the phone link before it is
             // there to take over pushing this to the right.
             contact.phone && "xl:ms-4",
           )}
         >
           Book a car
-        </Link>
+        </PressLink>
 
         {contact.phone ? (
-          <a
+          <PressAnchor
             href={telHref(contact.phone)}
             aria-label={`Call ${contact.phone}`}
-            className="hidden size-10 items-center justify-center rounded-full border border-line text-forest transition-colors duration-150 hover:bg-forest hover:text-paper min-[340px]:inline-flex xl:hidden"
+            className={cn(
+              "hidden size-10 items-center justify-center rounded-full border min-[340px]:inline-flex xl:hidden",
+              dark ? "edge-light text-paper" : "border-line text-ink",
+            )}
           >
             <Phone className="size-4" aria-hidden />
-          </a>
+          </PressAnchor>
         ) : null}
 
         <button
@@ -108,34 +213,37 @@ export const SiteHeader = ({ contact }: { contact: Contact }) => {
           onClick={() => setOpen((value) => !value)}
           aria-expanded={open}
           aria-label={open ? "Close menu" : "Open menu"}
-          className="rounded-full p-2 text-ink transition-colors duration-150 hover:bg-ink/5 lg:hidden"
+          data-pressable="control"
+          className={cn("rounded-full p-2 lg:hidden", dark ? "text-paper" : "text-ink")}
         >
           {open ? <X className="size-5" /> : <Menu className="size-5" />}
         </button>
       </div>
 
       {open ? (
-        <nav className="border-t border-line bg-paper px-5 pb-4 lg:hidden" aria-label="Main">
+        <nav className="material border-t border-line/60 px-5 pb-5 lg:hidden" aria-label="Main">
           {LINKS.map((link) => (
-            <Link
+            <PressLink
               key={link.href}
               href={link.href}
               className={cn(
-                "block border-b border-line/60 py-3 text-sm font-medium",
-                link.owners ? "text-brass" : "text-ink",
+                "block border-b border-line/60 py-3.5 text-[0.9375rem] font-medium",
+                link.owners ? "text-muted" : "text-ink",
               )}
             >
               {link.label}
-            </Link>
+            </PressLink>
           ))}
-          <Link
+          <PressLink
             href="/book"
-            className="mt-3 block rounded-full bg-brass px-5 py-3 text-center text-sm font-semibold text-white"
+            className="mt-4 block rounded-full bg-action px-5 py-3 text-center text-sm font-semibold text-white"
           >
             Book a car
-          </Link>
+          </PressLink>
         </nav>
       ) : null}
     </header>
+    {overlaid ? null : <div className="h-[3.75rem] sm:h-[4rem]" aria-hidden />}
+    </>
   );
 };

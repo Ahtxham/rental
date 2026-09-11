@@ -72,7 +72,7 @@ const CarsPage = async ({
           </Suspense>
 
           {dated ? (
-            <p className="mt-4 text-sm font-semibold text-forest tnum">
+            <p className="mt-4 text-sm font-semibold text-ink tnum">
               {freeCount} of {cars.length} free from {shortDate(params.from!)} to{" "}
               {shortDate(params.to!)}
             </p>
@@ -94,7 +94,7 @@ const CarsPage = async ({
                 "Call or WhatsApp us with your dates and we will tell you exactly what is free, the phone is faster than this page on a busy week anyway."
               ) : (
                 <>
-                  <Link href="/book" className="font-semibold text-forest underline underline-offset-4">
+                  <Link href="/book" className="font-semibold text-ink underline underline-offset-4">
                     Send us your dates
                   </Link>{" "}
                   and we will come back with exactly what is free.
@@ -124,9 +124,9 @@ const CarsPage = async ({
         {/* Aimed at somebody who came to rent and owns a car of their own.
             This page is where that thought occurs, because they have just
             spent a minute looking at what cars like theirs go out for. */}
-        <div className="reveal mt-10 flex flex-wrap items-center justify-between gap-5 rounded-2xl border border-brass/25 bg-brass-wash/60 p-6">
+        <div className="reveal mt-10 flex flex-wrap items-center justify-between gap-5 rounded-2xl border border-line bg-paper-deep/60 p-6">
           <div className="flex items-start gap-4">
-            <KeyRound className="mt-0.5 size-5 shrink-0 text-brass" aria-hidden />
+            <KeyRound className="mt-0.5 size-5 shrink-0 text-muted" aria-hidden />
             <div>
               <h2 className="font-display text-xl font-semibold text-ink">
                 Some of these belong to people like you
@@ -138,7 +138,7 @@ const CarsPage = async ({
               </p>
             </div>
           </div>
-          <Button href="/rent-your-car" variant="brass">
+          <Button href="/rent-your-car">
             Earn with your car
           </Button>
         </div>

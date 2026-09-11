@@ -45,8 +45,8 @@ export const AdminLoginForm = () => {
         onSubmit={submit}
         className="w-full max-w-sm rounded-2xl border border-line bg-card p-7"
       >
-        <p className="font-display text-2xl font-semibold text-forest">Musafir</p>
-        <p className="mt-0.5 text-[10px] font-semibold uppercase tracking-[0.22em] text-brass">
+        <p className="font-display text-2xl font-semibold text-ink">Musafir</p>
+        <p className="mt-0.5 text-[10px] font-semibold uppercase tracking-[0.22em] text-muted">
           Office
         </p>
 
@@ -89,7 +89,7 @@ export const AdminLoginForm = () => {
         <button
           type="submit"
           disabled={busy}
-          className="mt-6 inline-flex w-full items-center justify-center gap-2 rounded-full bg-forest px-6 py-3 text-sm font-semibold text-paper transition-colors duration-150 hover:bg-forest-mid disabled:opacity-60"
+          className="mt-6 inline-flex w-full items-center justify-center gap-2 rounded-full bg-night px-6 py-3 text-sm font-semibold text-paper transition-colors duration-150 hover:bg-action-deep disabled:opacity-60"
         >
           {busy ? <Loader2 className="size-4 animate-spin" aria-hidden /> : null}
           Sign in

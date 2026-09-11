@@ -93,16 +93,16 @@ const HowItWorksPage = async () => {
           {STAGES.map((stage, index) => (
             <li key={stage.title} className="reveal grid gap-5 sm:grid-cols-[auto_1fr]">
               <div className="flex items-start gap-4">
-                <span className="font-display text-3xl font-semibold text-brass/40 tnum">
+                <span className="font-display text-3xl font-semibold text-ink/15 tnum">
                   {String(index + 1).padStart(2, "0")}
                 </span>
-                <stage.icon className="mt-1.5 size-5 shrink-0 text-brass" aria-hidden />
+                <stage.icon className="mt-1.5 size-5 shrink-0 text-muted" aria-hidden />
               </div>
               <div className="max-w-2xl">
                 <h2 className="font-display text-2xl font-semibold">{stage.title}</h2>
                 <p className="mt-2 text-base leading-relaxed text-ink-soft">{stage.body}</p>
                 {stage.note ? (
-                  <p className="mt-2 text-sm font-semibold text-forest">{stage.note}</p>
+                  <p className="mt-2 text-sm font-semibold text-ink">{stage.note}</p>
                 ) : null}
               </div>
             </li>
@@ -123,20 +123,20 @@ const HowItWorksPage = async () => {
           </dl>
           <p className="mt-8 text-sm text-muted">
             Anything we have not covered is in the{" "}
-            <Link href="/policies" className="font-semibold text-forest underline underline-offset-4">
+            <Link href="/policies" className="font-semibold text-ink underline underline-offset-4">
               full terms
             </Link>
             {contact.phone ? (
               <>
                 , or you can just call{" "}
-                <a href={telHref(contact.phone)} className="font-semibold text-forest tnum">
+                <a href={telHref(contact.phone)} className="font-semibold text-ink tnum">
                   {contact.phone}
                 </a>
               </>
             ) : (
               <>
                 , or{" "}
-                <Link href="/contact" className="font-semibold text-forest underline underline-offset-4">
+                <Link href="/contact" className="font-semibold text-ink underline underline-offset-4">
                   get in touch
                 </Link>
               </>
@@ -154,7 +154,7 @@ const HowItWorksPage = async () => {
             costs.
           </p>
         </div>
-        <Button href="/book" variant="brass" size="lg">
+        <Button href="/book" size="lg">
           Book a car
         </Button>
       </Container>

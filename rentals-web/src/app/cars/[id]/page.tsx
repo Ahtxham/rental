@@ -68,7 +68,7 @@ const CarPage = async ({ params }: { params: Promise<{ id: string }> }) => {
         <Container className="py-10 sm:py-14">
           <Link
             href="/cars"
-            className="inline-flex items-center gap-2 text-sm font-semibold text-forest hover:underline"
+            className="inline-flex items-center gap-2 text-sm font-semibold text-ink hover:underline"
           >
             <ArrowLeft className="size-4" aria-hidden />
             All cars
@@ -88,7 +88,7 @@ const CarPage = async ({ params }: { params: Promise<{ id: string }> }) => {
                   <span className="font-display text-4xl font-semibold text-paper/85">
                     {car.make}
                   </span>
-                  <span className="text-xs font-semibold uppercase tracking-[0.24em] text-brass-bright">
+                  <span className="text-xs font-semibold uppercase tracking-[0.24em] text-paper/55">
                     {car.model}
                   </span>
                 </div>
@@ -119,22 +119,22 @@ const CarPage = async ({ params }: { params: Promise<{ id: string }> }) => {
 
               <ul className="mt-5 flex flex-wrap gap-x-5 gap-y-2 text-sm text-ink-soft">
                 <li className="flex items-center gap-2">
-                  <Users className="size-4 text-brass" aria-hidden />
+                  <Users className="size-4 text-muted" aria-hidden />
                   {car.seats} seats
                 </li>
                 {car.transmission ? (
                   <li className="flex items-center gap-2">
-                    <Settings2 className="size-4 text-brass" aria-hidden />
+                    <Settings2 className="size-4 text-muted" aria-hidden />
                     {titleCase(car.transmission)}
                   </li>
                 ) : null}
                 <li className="flex items-center gap-2">
-                  <Fuel className="size-4 text-brass" aria-hidden />
+                  <Fuel className="size-4 text-muted" aria-hidden />
                   {titleCase(car.fuelType)}
                 </li>
                 {car.kmIncludedPerDay ? (
                   <li className="flex items-center gap-2 tnum">
-                    <Gauge className="size-4 text-brass" aria-hidden />
+                    <Gauge className="size-4 text-muted" aria-hidden />
                     {car.kmIncludedPerDay} km a day
                   </li>
                 ) : null}
@@ -147,7 +147,7 @@ const CarPage = async ({ params }: { params: Promise<{ id: string }> }) => {
               {car.features.length > 0 ? (
                 <div className="mt-5 flex flex-wrap gap-2">
                   {car.features.map((feature) => (
-                    <Badge key={feature} tone="brass">
+                    <Badge key={feature} tone="neutral">
                       <Check className="size-3" aria-hidden />
                       {feature}
                     </Badge>
@@ -159,11 +159,11 @@ const CarPage = async ({ params }: { params: Promise<{ id: string }> }) => {
                   rather than a line of small print, because "which of these
                   two am I paying" is the decision this page exists for. */}
               <div className="mt-7 grid gap-3 sm:grid-cols-2">
-                <div className="rounded-2xl border border-forest/20 bg-card p-5">
+                <div className="rounded-2xl border border-ink/15 bg-card p-5">
                   <p className="text-[11px] font-semibold uppercase tracking-[0.14em] text-muted">
                     With a driver
                   </p>
-                  <p className="font-display mt-1 text-3xl font-semibold text-forest tnum">
+                  <p className="font-display mt-1 text-3xl font-semibold text-ink tnum">
                     {pkr(car.withDriverRate)}
                     <span className="ms-1 font-body text-xs font-medium text-muted">/ day</span>
                   </p>
@@ -204,7 +204,7 @@ const CarPage = async ({ params }: { params: Promise<{ id: string }> }) => {
               ) : null}
 
               <div className="mt-7 flex flex-wrap gap-3">
-                <Button href={`/book?car=${car.id}`} variant="brass" size="lg">
+                <Button href={`/book?car=${car.id}`} size="lg">
                   Check dates and book
                 </Button>
                 {contact.whatsapp ? (
@@ -226,7 +226,7 @@ const CarPage = async ({ params }: { params: Promise<{ id: string }> }) => {
                 {contact.phone ? (
                   <>
                     Or call{" "}
-                    <a href={telHref(contact.phone)} className="font-semibold text-forest tnum">
+                    <a href={telHref(contact.phone)} className="font-semibold text-ink tnum">
                       {contact.phone}
                     </a>
                     .{" "}

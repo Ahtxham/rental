@@ -160,7 +160,7 @@ export const CarEditor = ({
           <select
             value={form.fuelType}
             onChange={(event) => set("fuelType", event.target.value)}
-            className="w-full rounded-xl border border-line bg-card px-3.5 py-2.5 text-sm outline-none focus:border-brass"
+            className="w-full rounded-xl border border-line bg-card px-3.5 py-2.5 text-sm outline-none focus:border-ink"
           >
             {FUELS.map((fuel) => (
               <option key={fuel} value={fuel}>
@@ -173,7 +173,7 @@ export const CarEditor = ({
           <select
             value={form.transmission}
             onChange={(event) => set("transmission", event.target.value as "manual" | "automatic")}
-            className="w-full rounded-xl border border-line bg-card px-3.5 py-2.5 text-sm outline-none focus:border-brass"
+            className="w-full rounded-xl border border-line bg-card px-3.5 py-2.5 text-sm outline-none focus:border-ink"
           >
             <option value="automatic">automatic</option>
             <option value="manual">manual</option>
@@ -192,7 +192,7 @@ export const CarEditor = ({
           <select
             value={form.status}
             onChange={(event) => set("status", event.target.value as AdminCar["status"])}
-            className="w-full rounded-xl border border-line bg-card px-3.5 py-2.5 text-sm outline-none focus:border-brass"
+            className="w-full rounded-xl border border-line bg-card px-3.5 py-2.5 text-sm outline-none focus:border-ink"
           >
             <option value="active">active</option>
             <option value="maintenance">in for service</option>
@@ -228,7 +228,7 @@ export const CarEditor = ({
             type="checkbox"
             checked={form.listed}
             onChange={(event) => set("listed", event.target.checked)}
-            className="mt-1 size-4 accent-[#0f3a2f]"
+            className="mt-1 size-4 accent-[#1d1d20]"
           />
           <span>
             <span className="text-sm font-semibold text-ink">Show this car on musafircars.com</span>
@@ -298,7 +298,7 @@ export const CarEditor = ({
         <button
           type="submit"
           disabled={busy}
-          className="inline-flex items-center gap-2 rounded-full bg-forest px-5 py-2.5 text-sm font-semibold text-paper hover:bg-forest-mid disabled:opacity-60"
+          className="inline-flex items-center gap-2 rounded-full bg-night px-5 py-2.5 text-sm font-semibold text-paper hover:bg-action-deep disabled:opacity-60"
         >
           {busy ? <Loader2 className="size-4 animate-spin" aria-hidden /> : null}
           {car ? "Save" : "Add the car"}
@@ -385,7 +385,7 @@ export const CarManager = ({ cars }: { cars: AdminCar[] }) => {
         <button
           type="button"
           onClick={() => setEditing(editing === "new" ? null : "new")}
-          className="inline-flex items-center gap-2 rounded-full bg-brass px-5 py-2.5 text-sm font-semibold text-white hover:bg-brass-bright"
+          className="inline-flex items-center gap-2 rounded-full bg-action px-5 py-2.5 text-sm font-semibold text-white hover:bg-action-deep"
         >
           <Plus className="size-4" aria-hidden />
           Add a car
@@ -452,7 +452,7 @@ export const CarManager = ({ cars }: { cars: AdminCar[] }) => {
                 <span
                   className={cn(
                     "text-xs font-semibold",
-                    (pending[car._id] ?? car.listed) ? "text-forest" : "text-muted",
+                    (pending[car._id] ?? car.listed) ? "text-ink" : "text-muted",
                   )}
                 >
                   {(pending[car._id] ?? car.listed) ? "Bookable" : "Off the site"}

@@ -7,17 +7,27 @@ export const Container = ({ className, ...props }: ComponentProps<"div">) => (
   <div className={cn("mx-auto w-full max-w-6xl px-5 sm:px-8", className)} {...props} />
 );
 
-/** A small brass label above a heading. Used where the section needs naming. */
+/** A small grey label above a heading. Used where the section needs naming. */
 export const Eyebrow = ({ className, ...props }: ComponentProps<"p">) => (
   <p
-    className={cn("text-[11px] font-semibold uppercase tracking-[0.18em] text-brass", className)}
+    className={cn("text-[11px] font-semibold uppercase tracking-[0.18em] text-muted", className)}
     {...props}
   />
 );
 
 type ButtonProps = ComponentProps<"button"> & {
   href?: string;
-  variant?: "solid" | "outline" | "brass" | "ghost";
+  /**
+   * `solid` is near-black with white text, and it is the only thing on a page
+   * that should look pressable at full strength. `outline` and `ghost` are the
+   * second and third choice beside it.
+   *
+   * `onDark` is the same button on a dark surface, inverted: white with
+   * near-black text. There is no third colour to reach for, and that is the
+   * point. On a page whose only colour comes from the photographs, one black
+   * rectangle is unmissable and nothing has to be explained.
+   */
+  variant?: "solid" | "onDark" | "outline" | "ghost";
   size?: "md" | "lg";
 };
 
@@ -31,10 +41,10 @@ export const Button = ({
   const classes = cn(
     "inline-flex items-center justify-center gap-2 rounded-full font-semibold transition-colors duration-150",
     size === "md" ? "px-6 py-3 text-sm" : "px-7 py-3.5 text-[15px]",
-    variant === "solid" && "bg-forest text-paper hover:bg-forest-mid",
-    variant === "brass" && "bg-brass text-white hover:bg-brass-bright",
+    variant === "solid" && "bg-action text-white hover:bg-action-deep",
+    variant === "onDark" && "bg-action-invert text-night hover:bg-action-invert-deep",
     variant === "outline" && "border border-ink/20 text-ink hover:bg-ink/5",
-    variant === "ghost" && "text-forest hover:bg-forest/5",
+    variant === "ghost" && "text-ink hover:bg-ink/5",
     "disabled:cursor-not-allowed disabled:opacity-50",
     className,
   );
@@ -52,7 +62,7 @@ export const Button = ({
 export const Card = ({ className, ...props }: ComponentProps<"div">) => (
   <div
     className={cn(
-      "rounded-2xl border border-line bg-card p-6 shadow-[0_1px_2px_rgba(23,20,15,0.04)]",
+      "rounded-2xl border border-line bg-card p-6 shadow-[0_1px_2px_rgba(16, 22, 20,0.04)]",
       className,
     )}
     {...props}
@@ -64,14 +74,16 @@ export const Badge = ({
   tone = "neutral",
   className,
   ...props
-}: ComponentProps<"span"> & { tone?: "neutral" | "good" | "warn" | "brass" }) => (
+}: ComponentProps<"span"> & { tone?: "neutral" | "good" | "warn" }) => (
   <span
     className={cn(
       "inline-flex items-center gap-1.5 rounded-full px-2.5 py-1 text-[11px] font-semibold",
+      // Filled, tinted, tinted-red. With no accent colour left, the difference
+      // between "yes" and "just a fact" has to be carried by weight rather
+      // than by hue, so the affirmative one is solid and the rest are not.
       tone === "neutral" && "bg-ink/[0.06] text-ink-soft",
-      tone === "good" && "bg-forest-soft text-forest",
-      tone === "warn" && "bg-alert/10 text-alert",
-      tone === "brass" && "bg-brass-wash text-brass",
+      tone === "good" && "bg-ink text-paper",
+      tone === "warn" && "bg-alert-wash text-alert",
       className,
     )}
     {...props}
@@ -107,7 +119,7 @@ export const Field = ({
 );
 
 export const inputStyles =
-  "w-full rounded-xl border border-line bg-card px-3.5 py-2.5 text-sm text-ink outline-none transition-colors duration-150 placeholder:text-muted/70 focus:border-brass";
+  "w-full rounded-xl border border-line bg-card px-3.5 py-2.5 text-sm text-ink outline-none transition-colors duration-150 placeholder:text-muted/70 focus:border-ink";
 
 export const Input = ({ className, ...props }: ComponentProps<"input">) => (
   <input className={cn(inputStyles, className)} {...props} />
@@ -167,7 +179,7 @@ export const Switch = ({
     onClick={() => onChange(!checked)}
     className={cn(
       "relative inline-flex h-6 w-11 shrink-0 items-center rounded-full transition-colors duration-200",
-      checked ? "bg-forest" : "bg-ink/15",
+      checked ? "bg-night" : "bg-ink/15",
       (disabled || busy) && "cursor-not-allowed opacity-50",
     )}
   >

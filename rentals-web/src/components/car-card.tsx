@@ -52,45 +52,41 @@ export const CarCard = ({
     );
 
   return (
-    <article
-      className={cn(
-        "group flex flex-col overflow-hidden rounded-2xl border border-line bg-card transition-shadow duration-200",
-        unavailable ? "opacity-60" : "hover:shadow-[0_8px_28px_rgba(23,20,15,0.10)]",
-        className,
-      )}
-    >
-      <Wrap className="relative block aspect-[16/10] overflow-hidden">
+    <article className={cn("group flex flex-col", unavailable && "opacity-60", className)}>
+      <Wrap className="relative block aspect-[4/3] overflow-hidden rounded-[26px] bg-night">
         {photo ? (
           // eslint-disable-next-line @next/next/no-img-element
           <img
             src={photo}
             alt={`${car.make} ${car.model}`}
-            className="size-full object-cover transition-transform duration-300 group-hover:scale-[1.03]"
+            draggable={false}
+            loading="lazy"
+            decoding="async"
+            className="size-full select-none object-cover transition-transform duration-[600ms] ease-[cubic-bezier(0.22,0.61,0.36,1)] group-hover:scale-[1.04]"
           />
         ) : (
           <div className="car-placeholder flex size-full flex-col items-center justify-center gap-1">
-            <span className="font-display text-2xl font-semibold text-paper/85">
-              {car.make}
-            </span>
-            <span className="text-[10px] font-semibold uppercase tracking-[0.24em] text-brass-bright">
-              {car.model}
-            </span>
+            <span className="font-display text-3xl font-semibold text-paper/85">{car.make}</span>
+            <span className="t-eyebrow text-paper/55">{car.model}</span>
           </div>
         )}
         {unavailable ? (
-          <span className="absolute end-3 top-3 rounded-full bg-ink/85 px-3 py-1 text-[11px] font-semibold text-paper">
+          <span className="vibrant material-night absolute end-4 top-4 rounded-full px-3 py-1.5 text-[11px] font-semibold text-paper">
             Taken on these dates
           </span>
         ) : car.available === true ? (
-          <span className="absolute end-3 top-3 rounded-full bg-forest px-3 py-1 text-[11px] font-semibold text-paper">
+          <span className="absolute end-4 top-4 rounded-full bg-paper/90 px-3 py-1.5 text-[11px] font-semibold text-ink">
             Free on your dates
           </span>
         ) : null}
       </Wrap>
 
-      <div className="flex flex-1 flex-col p-5">
-        <h3 className="font-display text-xl font-semibold text-ink">
-          <Wrap className={linked ? "hover:text-forest" : undefined}>
+      {/* The words sit on the page rather than inside a panel with the
+          picture. A border round every car turns a list of cars into a list
+          of boxes, and the photograph is the thing being chosen between. */}
+      <div className="flex flex-1 flex-col pt-5">
+        <h3 className="t-headline font-display text-ink">
+          <Wrap className={linked ? "hover:text-ink" : undefined}>
             {car.make} {car.model}
           </Wrap>
         </h3>
@@ -100,17 +96,17 @@ export const CarCard = ({
 
         <ul className="mt-3 flex flex-wrap gap-x-4 gap-y-1.5 text-xs text-ink-soft">
           <li className="flex items-center gap-1.5">
-            <Users className="size-3.5 text-brass" aria-hidden />
+            <Users className="size-3.5 text-muted" aria-hidden />
             {car.seats} seats
           </li>
           {car.transmission ? (
             <li className="flex items-center gap-1.5">
-              <Settings2 className="size-3.5 text-brass" aria-hidden />
+              <Settings2 className="size-3.5 text-muted" aria-hidden />
               {titleCase(car.transmission)}
             </li>
           ) : null}
           <li className="flex items-center gap-1.5">
-            <Fuel className="size-3.5 text-brass" aria-hidden />
+            <Fuel className="size-3.5 text-muted" aria-hidden />
             {titleCase(car.fuelType)}
           </li>
         </ul>
@@ -128,12 +124,12 @@ export const CarCard = ({
         ) : null}
 
         <div className="mt-auto pt-5">
-          <div className="flex items-end justify-between gap-3 border-t border-line pt-4">
+          <div className="flex items-end justify-between gap-3 border-t border-line/80 pt-4">
             <div>
               <p className="text-[11px] font-semibold uppercase tracking-[0.14em] text-muted">
                 With a driver
               </p>
-              <p className="font-display text-2xl font-semibold text-forest tnum">
+              <p className="font-display text-2xl font-semibold text-ink tnum">
                 {pkr(car.withDriverRate)}
                 <span className="ms-1 font-body text-xs font-medium text-muted">/ day</span>
               </p>
@@ -149,7 +145,7 @@ export const CarCard = ({
             {linked ? (
               <Link
                 href={target}
-                className="rounded-full border border-forest/25 px-4 py-2 text-xs font-semibold text-forest transition-colors duration-150 hover:bg-forest hover:text-paper"
+                className="rounded-full border border-ink/20 px-4 py-2 text-xs font-semibold text-ink transition-colors duration-150 hover:bg-ink hover:text-paper"
               >
                 {unavailable ? "Details" : "Book"}
               </Link>

@@ -113,7 +113,7 @@ const PoliciesPage = () => (
           <ul className="mt-3 space-y-2 text-sm">
             {SECTIONS.map((section) => (
               <li key={section.id}>
-                <a href={`#${section.id}`} className="text-ink-soft transition-colors hover:text-forest">
+                <a href={`#${section.id}`} className="text-ink-soft transition-colors hover:text-ink">
                   {section.title}
                 </a>
               </li>
@@ -128,7 +128,7 @@ const PoliciesPage = () => (
               <ul className="mt-4 space-y-3.5">
                 {section.points.map((point) => (
                   <li key={point} className="flex gap-3 text-sm leading-relaxed text-ink-soft">
-                    <span className="mt-2 size-1.5 shrink-0 rounded-full bg-brass" aria-hidden />
+                    <span className="mt-2 size-1.5 shrink-0 rounded-full bg-action" aria-hidden />
                     {point}
                   </li>
                 ))}

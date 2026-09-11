@@ -16,8 +16,8 @@ const manifest = (): MetadataRoute.Manifest => ({
   start_url: "/book",
   scope: "/",
   display: "standalone",
-  background_color: "#faf7f2",
-  theme_color: "#0f3a2f",
+  background_color: "#f7f7f8",
+  theme_color: "#0b0b0d",
   lang: "en",
   categories: ["travel", "business"],
   icons: [

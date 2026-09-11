@@ -26,8 +26,12 @@ export const SearchForm = ({
   destination = "/book",
   className,
 }: {
-  /** `dark` sits on the forest hero; `light` on a paper page. */
-  tone?: "dark" | "light";
+  /**
+   * `light` on a paper page, `dark` on a coloured panel, `glass` on the hero,
+   * where the form lies on top of a photograph and has to be a material rather
+   * than a box.
+   */
+  tone?: "dark" | "light" | "glass";
   selfDriveEnabled?: boolean;
   destination?: string;
   className?: string;
@@ -51,13 +55,14 @@ export const SearchForm = ({
     router.push(`${destination}${next.toString() ? `?${next.toString()}` : ""}`);
   };
 
-  const dark = tone === "dark";
+  const dark = tone !== "light";
+  const glass = tone === "glass";
 
   const inputClass = cn(
-    "w-full rounded-xl px-3 py-2.5 text-sm outline-none transition-colors duration-150 tnum",
+    "w-full rounded-xl px-3.5 py-3 text-sm outline-none transition-colors duration-150 tnum",
     dark
-      ? "border border-paper/20 bg-forest/40 text-paper focus:border-brass-bright"
-      : "border border-line bg-card text-ink focus:border-brass",
+      ? "border border-paper/20 bg-paper/10 text-paper focus:border-paper/25"
+      : "border border-line bg-card text-ink focus:border-ink",
   );
   const labelClass = cn(
     "text-[11px] font-semibold uppercase tracking-[0.14em]",
@@ -68,8 +73,12 @@ export const SearchForm = ({
     <form
       onSubmit={go}
       className={cn(
-        "rounded-2xl p-4",
-        dark ? "border border-paper/15 bg-paper/10 backdrop-blur" : "border border-line bg-paper-deep",
+        "rounded-[22px] p-4",
+        glass
+          ? "material-night vibrant"
+          : dark
+            ? "border border-paper/15 bg-paper/10 backdrop-blur"
+            : "border border-line bg-paper-deep",
         className,
       )}
     >
@@ -102,7 +111,13 @@ export const SearchForm = ({
         </label>
         <button
           type="submit"
-          className="mt-1 inline-flex items-center justify-center gap-2 rounded-xl bg-brass px-6 py-2.5 text-sm font-semibold text-white transition-colors duration-150 hover:bg-brass-bright sm:mt-[22px]"
+          data-pressable="control"
+          className={cn(
+            "mt-1 inline-flex items-center justify-center gap-2 rounded-xl px-6 py-3 text-sm font-semibold sm:mt-[23px]",
+            dark
+              ? "bg-action-invert text-night hover:bg-action-invert-deep"
+              : "bg-action text-white hover:bg-action-deep",
+          )}
         >
           See cars
           <ArrowRight className="size-4" aria-hidden />
@@ -111,10 +126,16 @@ export const SearchForm = ({
 
       <div className="mt-3 flex flex-wrap items-center justify-between gap-3">
         {selfDriveEnabled ? (
+          /* A segmented control, not two buttons.
+           *
+           * The chosen side is a raised neutral pill rather than the accent:
+           * picking which of two things you are looking at is not an action,
+           * and painting it the same colour as the button that submits the
+           * form makes the page look like it has two things to press. */
           <div
             className={cn(
               "inline-flex rounded-full p-1",
-              dark ? "bg-forest/50" : "bg-ink/[0.05]",
+              dark ? "bg-paper/10" : "bg-ink/[0.06]",
             )}
             role="radiogroup"
             aria-label="How you will drive"
@@ -129,10 +150,13 @@ export const SearchForm = ({
                 role="radio"
                 aria-checked={withDriver === option.value}
                 onClick={() => setWithDriver(option.value)}
+                data-pressable="control"
                 className={cn(
-                  "rounded-full px-4 py-1.5 text-xs font-semibold transition-colors duration-150",
+                  "rounded-full px-4 py-1.5 text-xs font-semibold",
                   withDriver === option.value
-                    ? "bg-brass text-white"
+                    ? dark
+                      ? "bg-paper text-night shadow-sm"
+                      : "bg-card text-ink shadow-[0_1px_2px_rgba(16, 22, 20,0.16)]"
                     : dark
                       ? "text-paper/70 hover:text-paper"
                       : "text-ink-soft hover:text-ink",

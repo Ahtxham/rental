@@ -62,9 +62,9 @@ const REVEAL = ["reveal", "reveal reveal-2", "reveal reveal-3", "reveal reveal-4
 
 const RentYourCarPage = () => (
   <>
-    <section className="bg-forest text-paper">
+    <section className="bg-night text-paper">
       <Container className="py-16 sm:py-20">
-        <Eyebrow className="text-brass-bright">For car owners</Eyebrow>
+        <Eyebrow className="text-paper/55">For car owners</Eyebrow>
         <h1 className="font-display mt-3 max-w-3xl text-4xl font-semibold leading-tight sm:text-5xl">
           Your car is parked five days a week. It could be working three of them.
         </h1>
@@ -74,7 +74,7 @@ const RentYourCarPage = () => (
           those days, and not one more.
         </p>
         <div className="mt-8 flex flex-wrap gap-3">
-          <Button href="#start" variant="brass">
+          <Button href="#start" variant="onDark">
             List your car
           </Button>
           <Button
@@ -94,10 +94,10 @@ const RentYourCarPage = () => (
       <ol className="mt-10 grid gap-8 sm:grid-cols-2 lg:grid-cols-4">
         {STEPS.map((step, index) => (
           <li key={step.title} className={REVEAL[Math.min(index, 3)]}>
-            <span className="font-display text-4xl font-semibold text-brass/40 tnum">
+            <span className="font-display text-4xl font-semibold text-ink/15 tnum">
               {String(index + 1).padStart(2, "0")}
             </span>
-            <step.icon className="mt-3 size-5 text-brass" aria-hidden />
+            <step.icon className="mt-3 size-5 text-muted" aria-hidden />
             <h3 className="font-display mt-2 text-xl font-semibold">{step.title}</h3>
             <p className="mt-2 text-sm leading-relaxed text-ink-soft">{step.body}</p>
           </li>
@@ -105,7 +105,7 @@ const RentYourCarPage = () => (
       </ol>
     </Container>
 
-    <section className="border-y border-line bg-brass-wash/50">
+    <section className="border-y border-line bg-paper-deep/50">
       <Container className="py-16">
         <Eyebrow>The money</Eyebrow>
         <h2 className="font-display mt-2 max-w-2xl text-3xl font-semibold sm:text-4xl">
@@ -136,7 +136,7 @@ const RentYourCarPage = () => (
                 "We agree the rate with you before the car is listed, and it does not change without you.",
               ].map((item) => (
                 <li key={item} className="flex gap-3">
-                  <span className="mt-2 size-1.5 shrink-0 rounded-full bg-brass" aria-hidden />
+                  <span className="mt-2 size-1.5 shrink-0 rounded-full bg-action" aria-hidden />
                   {item}
                 </li>
               ))}
@@ -152,7 +152,7 @@ const RentYourCarPage = () => (
             <h2 className="font-display mt-2 text-3xl font-semibold">The part to check</h2>
             <div className="mt-5 space-y-4 text-sm leading-relaxed text-ink-soft">
               <p className="flex gap-3">
-                <ShieldCheck className="mt-0.5 size-5 shrink-0 text-brass" aria-hidden />
+                <ShieldCheck className="mt-0.5 size-5 shrink-0 text-muted" aria-hidden />
                 <span>
                   <strong className="text-ink">Insurance.</strong> A normal private
                   motor policy usually does not cover a car while it is rented out.
@@ -163,7 +163,7 @@ const RentYourCarPage = () => (
                 </span>
               </p>
               <p className="flex gap-3">
-                <Wallet className="mt-0.5 size-5 shrink-0 text-brass" aria-hidden />
+                <Wallet className="mt-0.5 size-5 shrink-0 text-muted" aria-hidden />
                 <span>
                   <strong className="text-ink">Wear and tear.</strong> A rented car
                   does the kilometres of a working car. The rate accounts for it,
@@ -198,7 +198,7 @@ const RentYourCarPage = () => (
                 "You set the dates it is free, and change them whenever you like.",
               ].map((item, index) => (
                 <li key={item} className="flex gap-3">
-                  <span className="font-display text-lg font-semibold text-brass/60 tnum">
+                  <span className="font-display text-lg font-semibold text-ink/20 tnum">
                     {index + 1}
                   </span>
                   {item}
@@ -210,7 +210,7 @@ const RentYourCarPage = () => (
               Rather talk to somebody first?{" "}
               <Link
                 href="/contact"
-                className="font-semibold text-forest underline underline-offset-4"
+                className="font-semibold text-ink underline underline-offset-4"
               >
                 Get in touch
               </Link>

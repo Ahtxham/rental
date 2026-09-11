@@ -38,7 +38,7 @@ export const LenderCarForm = () => {
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  const field = "mt-1.5 w-full rounded-xl border border-line bg-card px-3 py-2.5 text-sm outline-none focus:border-forest";
+  const field = "mt-1.5 w-full rounded-xl border border-line bg-card px-3 py-2.5 text-sm outline-none focus:border-ink/20";
   const label = "text-[11px] font-semibold uppercase tracking-[0.14em] text-muted";
 
   const submit = async (event: React.FormEvent) => {
@@ -137,8 +137,8 @@ export const LenderCarForm = () => {
                       className={cn(
                         "flex-1 rounded-xl border px-4 py-2.5 text-sm font-semibold capitalize transition-colors",
                         transmission === option
-                          ? "border-forest bg-forest text-paper"
-                          : "border-line text-ink-soft hover:border-forest/40",
+                          ? "border-ink/20 bg-night text-paper"
+                          : "border-line text-ink-soft hover:border-line",
                       )}
                     >
                       {option}
@@ -225,8 +225,8 @@ export const LenderCarForm = () => {
                       className={cn(
                         "flex-1 rounded-xl border px-3 py-2.5 text-sm font-semibold transition-colors",
                         driverBy === option.value
-                          ? "border-forest bg-forest text-paper"
-                          : "border-line text-ink-soft hover:border-forest/40",
+                          ? "border-ink/20 bg-night text-paper"
+                          : "border-line text-ink-soft hover:border-line",
                       )}
                     >
                       {option.label}
@@ -247,7 +247,7 @@ export const LenderCarForm = () => {
           <button
             type="submit"
             disabled={busy}
-            className="inline-flex w-full items-center justify-center gap-2 rounded-full bg-brass px-6 py-3 text-sm font-semibold text-white transition-colors hover:bg-brass-bright disabled:opacity-60 sm:w-auto"
+            className="inline-flex w-full items-center justify-center gap-2 rounded-full bg-action px-6 py-3 text-sm font-semibold text-white transition-colors hover:bg-action-deep disabled:opacity-60 sm:w-auto"
           >
             {busy ? <Loader2 className="size-4 animate-spin" aria-hidden /> : null}
             Send for review

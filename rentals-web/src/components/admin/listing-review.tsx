@@ -18,7 +18,7 @@ import { pkr, shortDate } from "@/lib/format";
  * before they can approve is what stops a car going live at cost.
  */
 const TONE = {
-  pending: "brass",
+  pending: "neutral",
   approved: "good",
   rejected: "warn",
   paused: "neutral",
@@ -191,7 +191,7 @@ export const ListingReview = ({ listing }: { listing: AdminListing }) => {
           type="button"
           disabled={busy !== null || publicRate.trim() === ""}
           onClick={() => void decide("approved")}
-          className="inline-flex items-center gap-2 rounded-full bg-forest px-5 py-2.5 text-sm font-semibold text-paper hover:bg-forest-mid disabled:opacity-40"
+          className="inline-flex items-center gap-2 rounded-full bg-night px-5 py-2.5 text-sm font-semibold text-paper hover:bg-action-deep disabled:opacity-40"
         >
           {busy === "approved" ? <Loader2 className="size-4 animate-spin" aria-hidden /> : null}
           {listing.status === "approved" ? "Save and keep published" : "Approve and publish"}

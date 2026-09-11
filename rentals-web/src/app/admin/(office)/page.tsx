@@ -49,7 +49,7 @@ const Row = ({ rental }: { rental: AdminRental }) => (
     <div className="min-w-40 text-sm text-ink-soft">
       {carLabel(rental.car ?? rental.listedCar)}
       {rental.listedCar ? (
-        <span className="ms-2 text-[11px] font-semibold text-brass">partner</span>
+        <span className="ms-2 text-[11px] font-semibold text-muted">partner</span>
       ) : null}
     </div>
     <div className="min-w-44 text-sm text-ink-soft tnum">

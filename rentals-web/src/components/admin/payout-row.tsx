@@ -73,13 +73,13 @@ export const PayoutRow = ({ payout }: { payout: AdminPayout }) => {
       </div>
 
       <div className="min-w-28 text-end">
-        <span className="font-display text-lg font-semibold text-forest tnum">
+        <span className="font-display text-lg font-semibold text-ink tnum">
           {pkr(payout.ownerPayout)}
         </span>
       </div>
 
       {payout.ownerPaidAt ? (
-        <p className="inline-flex min-w-40 items-center gap-1.5 text-xs font-semibold text-forest">
+        <p className="inline-flex min-w-40 items-center gap-1.5 text-xs font-semibold text-ink">
           <Check className="size-3.5" aria-hidden />
           Paid {shortDate(payout.ownerPaidAt)}
           {payout.ownerPaymentRef ? (
@@ -98,7 +98,7 @@ export const PayoutRow = ({ payout }: { payout: AdminPayout }) => {
             type="button"
             disabled={busy}
             onClick={() => void settle()}
-            className="inline-flex shrink-0 items-center gap-2 rounded-full bg-forest px-4 py-2 text-xs font-semibold text-paper hover:bg-forest-mid disabled:opacity-50"
+            className="inline-flex shrink-0 items-center gap-2 rounded-full bg-night px-4 py-2 text-xs font-semibold text-paper hover:bg-action-deep disabled:opacity-50"
           >
             {busy ? <Loader2 className="size-3.5 animate-spin" aria-hidden /> : null}
             Mark paid

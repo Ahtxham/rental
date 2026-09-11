@@ -51,7 +51,7 @@ export const AvailabilityEditor = ({
               value={window.from ? ymdInKarachi(window.from) : ""}
               min={today}
               onChange={(event) => update(index, { from: karachiDay(event.target.value) })}
-              className="mt-1.5 w-full rounded-lg border border-line bg-paper px-3 py-2 text-sm outline-none focus:border-forest tnum"
+              className="mt-1.5 w-full rounded-lg border border-line bg-paper px-3 py-2 text-sm outline-none focus:border-ink/20 tnum"
             />
           </label>
           <label className="flex-1">
@@ -63,7 +63,7 @@ export const AvailabilityEditor = ({
               value={window.to ? ymdInKarachi(window.to) : ""}
               min={window.from ? ymdInKarachi(window.from) : today}
               onChange={(event) => update(index, { to: karachiDay(event.target.value, true) })}
-              className="mt-1.5 w-full rounded-lg border border-line bg-paper px-3 py-2 text-sm outline-none focus:border-forest tnum"
+              className="mt-1.5 w-full rounded-lg border border-line bg-paper px-3 py-2 text-sm outline-none focus:border-ink/20 tnum"
             />
           </label>
           <button
@@ -80,7 +80,7 @@ export const AvailabilityEditor = ({
       <button
         type="button"
         onClick={() => onChange([...windows, { from: "", to: "" }])}
-        className="inline-flex items-center gap-2 rounded-full border border-line px-4 py-2 text-sm font-semibold text-forest transition-colors hover:bg-forest hover:text-paper"
+        className="inline-flex items-center gap-2 rounded-full border border-line px-4 py-2 text-sm font-semibold text-ink transition-colors hover:bg-ink hover:text-paper"
       >
         <CalendarPlus className="size-4" aria-hidden />
         Add dates

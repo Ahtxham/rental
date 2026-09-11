@@ -11,9 +11,9 @@ export const metadata: Metadata = {
 
 const AboutPage = () => (
   <>
-    <section className="bg-forest text-paper">
+    <section className="bg-night text-paper">
       <Container className="py-16 sm:py-20">
-        <Eyebrow className="text-brass-bright">About</Eyebrow>
+        <Eyebrow className="text-paper/55">About</Eyebrow>
         <h1 className="font-display mt-3 max-w-3xl text-4xl font-semibold leading-tight sm:text-5xl">
           Renting a car should not feel like a negotiation.
         </h1>

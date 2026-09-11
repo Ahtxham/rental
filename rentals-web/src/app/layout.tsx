@@ -95,10 +95,10 @@ export const metadata: Metadata = {
 
 /**
  * The browser chrome takes the hero's colour, so an installed Musafir opens
- * as one surface rather than a green page under a white bar.
+ * as one surface rather than a dark page under a white bar.
  */
 export const viewport: Viewport = {
-  themeColor: "#0f3a2f",
+  themeColor: "#0b0b0d",
   width: "device-width",
   initialScale: 1,
   viewportFit: "cover",

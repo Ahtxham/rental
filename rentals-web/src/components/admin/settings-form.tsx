@@ -160,7 +160,7 @@ export const SettingsForm = ({ agency }: { agency: Agency }) => {
             type="checkbox"
             checked={form.selfDriveEnabled}
             onChange={(event) => set("selfDriveEnabled", event.target.checked)}
-            className="mt-1 size-4 accent-[#0f3a2f]"
+            className="mt-1 size-4 accent-[#1d1d20]"
           />
           <span>
             <span className="text-sm font-semibold text-ink">Offer self-drive</span>
@@ -227,12 +227,12 @@ export const SettingsForm = ({ agency }: { agency: Agency }) => {
         <button
           type="submit"
           disabled={busy}
-          className="inline-flex items-center gap-2 rounded-full bg-forest px-6 py-3 text-sm font-semibold text-paper hover:bg-forest-mid disabled:opacity-60"
+          className="inline-flex items-center gap-2 rounded-full bg-night px-6 py-3 text-sm font-semibold text-paper hover:bg-action-deep disabled:opacity-60"
         >
           {busy ? <Loader2 className="size-4 animate-spin" aria-hidden /> : null}
           Save
         </button>
-        {saved ? <p className="text-sm font-semibold text-forest">Saved.</p> : null}
+        {saved ? <p className="text-sm font-semibold text-ink">Saved.</p> : null}
       </div>
     </form>
   );

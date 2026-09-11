@@ -115,7 +115,7 @@ export const BookingDetail = ({
     <div className="space-y-6">
       <Link
         href="/admin"
-        className="inline-flex items-center gap-2 text-sm font-semibold text-forest hover:underline"
+        className="inline-flex items-center gap-2 text-sm font-semibold text-ink hover:underline"
       >
         <ArrowLeft className="size-4" aria-hidden />
         All bookings
@@ -126,12 +126,12 @@ export const BookingDetail = ({
           <div className="flex flex-wrap items-center gap-3">
             <h1 className="font-display text-3xl font-semibold">{rental.customer.fullName}</h1>
             <Badge tone={STATUS_TONE[rental.status]}>{STATUS_LABEL[rental.status]}</Badge>
-            {listed ? <Badge tone="brass">Partner car</Badge> : null}
+            {listed ? <Badge tone="neutral">Partner car</Badge> : null}
           </div>
           <p className="mt-1 flex flex-wrap items-center gap-x-4 text-sm text-muted">
             <a
               href={`tel:${rental.customer.phone.replace(/[^\d+]/g, "")}`}
-              className="inline-flex items-center gap-1.5 font-semibold text-forest tnum"
+              className="inline-flex items-center gap-1.5 font-semibold text-ink tnum"
             >
               <Phone className="size-3.5" aria-hidden />
               {rental.customer.phone}
@@ -147,7 +147,7 @@ export const BookingDetail = ({
           <span className="block text-[11px] font-semibold uppercase tracking-[0.14em] text-muted">
             Total
           </span>
-          <span className="font-display text-3xl font-semibold text-forest tnum">
+          <span className="font-display text-3xl font-semibold text-ink tnum">
             {pkr(rental.totalAmount)}
           </span>
           {rental.balanceDue ? (
@@ -168,7 +168,7 @@ export const BookingDetail = ({
         </p>
       ) : null}
       {message ? (
-        <p className="rounded-xl border border-forest/25 bg-forest-soft p-3 text-sm text-forest" role="status">
+        <p className="rounded-xl border border-ink/20 bg-paper-deep p-3 text-sm text-ink" role="status">
           {message}
         </p>
       ) : null}
@@ -188,7 +188,7 @@ export const BookingDetail = ({
                   <select
                     value={carId}
                     onChange={(event) => setCarId(event.target.value)}
-                    className="w-full rounded-xl border border-line bg-card px-3.5 py-2.5 text-sm outline-none focus:border-brass"
+                    className="w-full rounded-xl border border-line bg-card px-3.5 py-2.5 text-sm outline-none focus:border-ink"
                   >
                     <option value="">
                       {listed ? `${listed.make} ${listed.model} (partner)` : "Not chosen"}
@@ -206,7 +206,7 @@ export const BookingDetail = ({
                     value={driverId}
                     onChange={(event) => setDriverId(event.target.value)}
                     disabled={!withDriver}
-                    className="w-full rounded-xl border border-line bg-card px-3.5 py-2.5 text-sm outline-none focus:border-brass disabled:opacity-50"
+                    className="w-full rounded-xl border border-line bg-card px-3.5 py-2.5 text-sm outline-none focus:border-ink disabled:opacity-50"
                   >
                     <option value="">Not assigned</option>
                     {drivers.map((option) => (
@@ -231,8 +231,8 @@ export const BookingDetail = ({
                         className={cn(
                           "rounded-full border px-4 py-2 text-sm font-semibold transition-colors duration-150",
                           withDriver === option.value
-                            ? "border-forest bg-forest text-paper"
-                            : "border-line text-ink-soft hover:border-forest/40",
+                            ? "border-ink/20 bg-night text-paper"
+                            : "border-line text-ink-soft hover:border-line",
                         )}
                       >
                         {option.label}
@@ -343,7 +343,7 @@ export const BookingDetail = ({
                     onClick={() =>
                       void call(`${rental._id}/confirm`, "POST", priceBody(), "confirm")
                     }
-                    className="inline-flex items-center gap-2 rounded-full bg-forest px-5 py-2.5 text-sm font-semibold text-paper hover:bg-forest-mid disabled:opacity-60"
+                    className="inline-flex items-center gap-2 rounded-full bg-night px-5 py-2.5 text-sm font-semibold text-paper hover:bg-action-deep disabled:opacity-60"
                   >
                     {busy === "confirm" ? (
                       <Loader2 className="size-4 animate-spin" aria-hidden />
@@ -414,7 +414,7 @@ export const BookingDetail = ({
                     "check",
                   )
                 }
-                className="mt-5 inline-flex items-center gap-2 rounded-full bg-brass px-5 py-2.5 text-sm font-semibold text-white hover:bg-brass-bright disabled:opacity-60"
+                className="mt-5 inline-flex items-center gap-2 rounded-full bg-action px-5 py-2.5 text-sm font-semibold text-white hover:bg-action-deep disabled:opacity-60"
               >
                 {busy === "check" ? <Loader2 className="size-4 animate-spin" aria-hidden /> : null}
                 {rental.status === "confirmed" ? "Record the handover" : "Record the return"}
@@ -466,8 +466,8 @@ export const BookingDetail = ({
             </dl>
 
             {listed ? (
-              <div className="mt-4 rounded-xl bg-brass-wash p-3">
-                <p className="text-[11px] font-semibold uppercase tracking-[0.14em] text-brass">
+              <div className="mt-4 rounded-xl bg-paper-deep p-3">
+                <p className="text-[11px] font-semibold uppercase tracking-[0.14em] text-muted">
                   Owed to the car&apos;s owner
                 </p>
                 <p className="font-display mt-1 text-xl font-semibold text-ink tnum">

@@ -181,7 +181,7 @@ export const BookingFlow = ({
     return (
       <Container className="py-20">
         <div className="mx-auto max-w-lg rounded-2xl border border-line bg-card p-8 text-center">
-          <CheckCircle2 className="mx-auto size-10 text-forest" aria-hidden />
+          <CheckCircle2 className="mx-auto size-10 text-ink" aria-hidden />
           <h1 className="font-display mt-4 text-3xl font-semibold">Request sent</h1>
           <p className="mt-3 text-sm leading-relaxed text-ink-soft">
             We have your dates and we will call you back to confirm the car and
@@ -191,7 +191,7 @@ export const BookingFlow = ({
           <p className="mt-6 text-[11px] font-semibold uppercase tracking-[0.18em] text-muted">
             Your reference
           </p>
-          <p className="font-display text-2xl font-semibold tracking-[0.2em] text-forest tnum">
+          <p className="font-display text-2xl font-semibold tracking-[0.2em] text-ink tnum">
             {reference}
           </p>
           <Button href="/" className="mt-7">
@@ -214,7 +214,7 @@ export const BookingFlow = ({
           {/* 1, dates */}
           <section>
             <h2 className="font-display flex items-baseline gap-3 text-2xl font-semibold">
-              <span className="text-brass/50 tnum">01</span> When do you need it?
+              <span className="text-ink/15 tnum">01</span> When do you need it?
             </h2>
             <div className="mt-4 grid gap-4 sm:grid-cols-2">
               <Field label="Pick-up">
@@ -263,7 +263,7 @@ export const BookingFlow = ({
           {/* 2, the car */}
           <section>
             <h2 className="font-display flex items-baseline gap-3 text-2xl font-semibold">
-              <span className="text-brass/50 tnum">02</span> Which car?
+              <span className="text-ink/15 tnum">02</span> Which car?
             </h2>
             <p className="mt-2 text-sm text-muted">
               {datesReady
@@ -272,7 +272,14 @@ export const BookingFlow = ({
             </p>
 
             {selfDriveEnabled ? (
-              <div className="mt-4 flex gap-2">
+              // The same control as the one on the front page, because it
+              // asks the same question. Two different-looking switches for one
+              // choice is two things to learn instead of one.
+              <div
+                className="mt-4 inline-flex rounded-full bg-ink/[0.06] p-1"
+                role="radiogroup"
+                aria-label="How you will drive"
+              >
                 {[
                   { value: true, label: "With a driver" },
                   { value: false, label: "Self-drive" },
@@ -282,15 +289,17 @@ export const BookingFlow = ({
                     <button
                       key={String(option.value)}
                       type="button"
+                      role="radio"
                       disabled={disabled}
                       onClick={() => setWithDriver(option.value)}
-                      aria-pressed={withDriver === option.value}
+                      aria-checked={withDriver === option.value}
+                      data-pressable="control"
                       className={cn(
-                        "rounded-full border px-4 py-2 text-sm font-semibold transition-colors duration-150",
+                        "rounded-full px-4 py-1.5 text-sm font-semibold",
                         withDriver === option.value
-                          ? "border-forest bg-forest text-paper"
-                          : "border-line text-ink-soft hover:border-forest/40",
-                        disabled && "cursor-not-allowed opacity-40 hover:border-line",
+                          ? "bg-card text-ink shadow-[0_1px_2px_rgba(16, 22, 20,0.16)]"
+                          : "text-ink-soft hover:text-ink",
+                        disabled && "cursor-not-allowed opacity-40",
                       )}
                     >
                       {option.label}
@@ -307,8 +316,8 @@ export const BookingFlow = ({
             ) : null}
 
             {selfDriveEnabled && !withDriver ? (
-              <p className="mt-3 flex gap-2 rounded-xl border border-brass/30 bg-brass-wash p-3 text-xs leading-relaxed text-ink-soft">
-                <AlertCircle className="mt-0.5 size-4 shrink-0 text-brass" aria-hidden />
+              <p className="mt-3 flex gap-2 rounded-xl border border-line bg-paper-deep p-3 text-xs leading-relaxed text-ink-soft">
+                <AlertCircle className="mt-0.5 size-4 shrink-0 text-muted" aria-hidden />
                 Self-drive needs a valid licence, your original CNIC and a larger
                 refundable deposit. We confirm all three before the keys change
                 hands.
@@ -337,10 +346,15 @@ export const BookingFlow = ({
                       disabled={disabled}
                       onClick={() => setCarId(selected ? "" : car.id)}
                       aria-pressed={selected}
+                      data-pressable="card"
                       className={cn(
-                        "rounded-2xl text-start transition-shadow duration-150",
-                        selected && "ring-2 ring-forest ring-offset-2 ring-offset-paper",
-                        disabled ? "cursor-not-allowed" : "hover:shadow-md",
+                        // Padded so the selection ring has somewhere to sit:
+                        // the card has no panel of its own any more, and a
+                        // ring drawn tight against a photograph reads as a
+                        // border on the photograph.
+                        "-m-2 rounded-[32px] p-2 text-start transition-colors duration-150",
+                        selected && "ring-2 ring-ink",
+                        disabled ? "cursor-not-allowed" : "hover:bg-ink/[0.04]",
                       )}
                     >
                       {/* The whole card IS the control here, so the card
@@ -360,7 +374,7 @@ export const BookingFlow = ({
           {/* 3, who you are */}
           <section>
             <h2 className="font-display flex items-baseline gap-3 text-2xl font-semibold">
-              <span className="text-brass/50 tnum">03</span> How do we reach you?
+              <span className="text-ink/15 tnum">03</span> How do we reach you?
             </h2>
             <div className="mt-4 grid gap-4 sm:grid-cols-2">
               <Field label="Your name">
@@ -458,7 +472,7 @@ export const BookingFlow = ({
 
                 <div className="mt-3 flex items-baseline justify-between border-t border-line pt-3">
                   <span className="text-sm font-semibold">Rent for the booking</span>
-                  <span className="font-display text-2xl font-semibold text-forest tnum">
+                  <span className="font-display text-2xl font-semibold text-ink tnum">
                     {pkr(quote.rentAmount)}
                   </span>
                 </div>
@@ -481,7 +495,7 @@ export const BookingFlow = ({
             <button
               type="submit"
               disabled={sending}
-              className="mt-5 inline-flex w-full items-center justify-center gap-2 rounded-full bg-brass px-6 py-3 text-sm font-semibold text-white transition-colors duration-150 hover:bg-brass-bright disabled:cursor-not-allowed disabled:opacity-60"
+              className="mt-5 inline-flex w-full items-center justify-center gap-2 rounded-full bg-action px-6 py-3 text-sm font-semibold text-white transition-colors duration-150 hover:bg-action-deep disabled:cursor-not-allowed disabled:opacity-60"
             >
               {sending ? <Loader2 className="size-4 animate-spin" aria-hidden /> : null}
               Send the request
@@ -496,7 +510,7 @@ export const BookingFlow = ({
               In a hurry?{" "}
               <Link
                 href="/contact"
-                className="font-semibold text-forest underline underline-offset-4"
+                className="font-semibold text-ink underline underline-offset-4"
               >
                 Call us instead
               </Link>

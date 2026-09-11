@@ -21,13 +21,23 @@ import { Lender } from "@/models/lender-model";
 import { ListedCar } from "@/models/listed-car-model";
 import { hashPassword } from "@/utils/password-helper";
 
+/**
+ * Where the stand-in photographs are served from.
+ *
+ * Absolute, and pointing at the local web server, so the backend hands them
+ * back untouched instead of looking for an upload by that name. These are
+ * stock pictures of cars that are not Musafir's: fine for a laptop, which is
+ * the only place this script is allowed to run.
+ */
+const PHOTO_BASE = process.env.DEMO_PHOTO_BASE ?? "http://localhost:3100";
+
 const CARS = [
   {
     registrationNumber: "LEA-2481",
     make: "Toyota",
     model: "Corolla Altis",
     year: 2022,
-    color: "white",
+    color: "black",
     seats: 5,
     fuelType: "petrol" as const,
     transmission: "automatic" as const,
@@ -37,13 +47,14 @@ const CARS = [
     kmIncludedPerDay: 200,
     extraKmRate: 35,
     description: "The default choice for a day of meetings or an airport run.",
+    photo: "/showcase/car-sedan.jpg",
   },
   {
     registrationNumber: "LEB-7742",
     make: "Honda",
     model: "City",
     year: 2021,
-    color: "silver",
+    color: "blue",
     seats: 5,
     fuelType: "petrol" as const,
     transmission: "automatic" as const,
@@ -53,13 +64,14 @@ const CARS = [
     kmIncludedPerDay: 200,
     extraKmRate: 30,
     description: "Lighter on fuel than the Corolla and easier through old Lahore.",
+    photo: "/showcase/car-compact.jpg",
   },
   {
     registrationNumber: "LEC-1109",
     make: "Suzuki",
     model: "Alto",
     year: 2023,
-    color: "grey",
+    color: "teal",
     seats: 4,
     fuelType: "petrol" as const,
     transmission: "manual" as const,
@@ -69,6 +81,7 @@ const CARS = [
     kmIncludedPerDay: 150,
     extraKmRate: 25,
     description: "Cheapest way to have a car and a driver for the whole day.",
+    photo: "/showcase/car-hatch.jpg",
   },
   {
     registrationNumber: "LED-3350",
@@ -84,6 +97,9 @@ const CARS = [
     kmIncludedPerDay: 250,
     extraKmRate: 55,
     description: "For a family, a wedding party, or a run up to Murree.",
+    // No photograph. One car has to be the one nobody has shot yet,
+    // and the card it produces is a state worth looking at.
+    photo: undefined as string | undefined,
   },
   {
     registrationNumber: "LEE-8890",
@@ -99,6 +115,7 @@ const CARS = [
     kmIncludedPerDay: 200,
     extraKmRate: 60,
     description: "When the car is part of the impression you are making.",
+    photo: "/showcase/car-suv.jpg",
   },
 ];
 
@@ -126,7 +143,9 @@ const seedDemo = async () => {
     agency.whatsapp = "923008888888";
     agency.email = "hello@musafircars.com";
     agency.city = "Lahore";
-    agency.address = "Gulberg III, Lahore";
+    // The street only. The city is its own field, and the website joins
+    // them; repeating it here prints "Gulberg III, Lahore, Lahore".
+    agency.address = "Gulberg III";
     agency.settings.selfDriveEnabled = true;
     agency.settings.defaultSecurityDeposit = 25_000;
     agency.settings.defaultKmIncludedPerDay = 200;
@@ -148,15 +167,31 @@ const seedDemo = async () => {
   for (const car of CARS) {
     const exists = await Car.findOne({ owner, registrationNumber: car.registrationNumber });
     if (exists) {
+      let touched = false;
       if (exists.isDeleted) {
         exists.isDeleted = false;
         exists.listed = true;
-        await exists.save();
+        touched = true;
         restored += 1;
       }
+      // Only ever fills a gap. A car you photographed yourself keeps its
+      // picture, this is the stand-in for one that has none.
+      if (car.photo && exists.photos.length === 0) {
+        exists.photos = [PHOTO_BASE + car.photo];
+        exists.color = car.color;
+        touched = true;
+      }
+      if (touched) await exists.save();
       continue;
     }
-    await Car.create({ ...car, owner, listed: true, currentOdometer: 40_000 });
+    const { photo, ...fields } = car;
+    await Car.create({
+      ...fields,
+      owner,
+      listed: true,
+      currentOdometer: 40_000,
+      photos: photo ? [PHOTO_BASE + photo] : [],
+    });
     added += 1;
   }
 

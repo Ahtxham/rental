@@ -103,8 +103,8 @@ export const LenderAuthForm = ({
             className={cn(
               "flex-1 rounded-full border px-4 py-2 text-sm font-semibold transition-colors duration-150",
               mode === value
-                ? "border-forest bg-forest text-paper"
-                : "border-line text-ink-soft hover:border-forest/40",
+                ? "border-ink/20 bg-night text-paper"
+                : "border-line text-ink-soft hover:border-line",
             )}
           >
             {value === "signup" ? "Create account" : "Sign in"}
@@ -172,7 +172,7 @@ export const LenderAuthForm = ({
         <button
           type="submit"
           disabled={busy}
-          className="inline-flex w-full items-center justify-center gap-2 rounded-full bg-brass px-6 py-3 text-sm font-semibold text-white transition-colors duration-150 hover:bg-brass-bright disabled:opacity-60"
+          className="inline-flex w-full items-center justify-center gap-2 rounded-full bg-action px-6 py-3 text-sm font-semibold text-white transition-colors duration-150 hover:bg-action-deep disabled:opacity-60"
         >
           {busy ? <Loader2 className="size-4 animate-spin" aria-hidden /> : null}
           {mode === "signup" ? "Create account" : "Sign in"}

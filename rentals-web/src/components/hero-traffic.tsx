@@ -116,19 +116,19 @@ export const HeroTraffic = ({ className }: { className?: string }) => (
         silhouette over ground reads as a scene. Two parts do that work: the
         surface, which deepens the green towards the bottom and so lifts the
         pale vehicles off it without touching the text above, and a single
-        brass hairline at the very bottom for the far kerb. Both sit BEHIND the
+        pale hairline at the very bottom for the far kerb. Both sit BEHIND the
         traffic. */}
     <div
       className="absolute inset-x-0 bottom-0 h-2/5"
       style={{
-        backgroundImage: "linear-gradient(to bottom, transparent, rgba(4,22,17,0.55))",
+        backgroundImage: "linear-gradient(to bottom, transparent, rgba(4, 21, 15,0.55))",
       }}
     />
     <div
       className="absolute inset-x-0 bottom-0 h-px"
       style={{
         backgroundImage:
-          "linear-gradient(to right, transparent, rgba(210,162,68,0.4) 22%, rgba(210,162,68,0.4) 78%, transparent)",
+          "linear-gradient(to right, transparent, rgba(240, 181, 63,0.4) 22%, rgba(240, 181, 63,0.4) 78%, transparent)",
       }}
     />
     {LANES.map((lane, index) => (

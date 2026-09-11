@@ -96,7 +96,7 @@ export const PhotoUploader = ({
           <button
             type="button"
             onClick={() => input.current?.click()}
-            className="flex size-24 flex-col items-center justify-center gap-1 rounded-xl border border-dashed border-line text-muted transition-colors hover:border-forest/40 hover:text-forest"
+            className="flex size-24 flex-col items-center justify-center gap-1 rounded-xl border border-dashed border-line text-muted transition-colors hover:border-line hover:text-ink"
           >
             <Camera className="size-5" aria-hidden />
             <span className="text-[10px] font-semibold">Add</span>

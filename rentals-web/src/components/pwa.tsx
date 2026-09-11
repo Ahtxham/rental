@@ -64,7 +64,7 @@ export const OfflineBanner = () => {
   return (
     <div
       role="status"
-      className="sticky top-[57px] z-30 flex items-center justify-center gap-2 bg-brass px-4 py-2 text-center text-xs font-semibold text-white"
+      className="sticky top-[57px] z-30 flex items-center justify-center gap-2 bg-action px-4 py-2 text-center text-xs font-semibold text-white"
     >
       <WifiOff className="size-3.5 shrink-0" aria-hidden />
       You are offline. Pages you have opened before will still work.
@@ -103,7 +103,7 @@ export const InstallPrompt = () => {
 
   return (
     <div className="fixed inset-x-4 bottom-4 z-40 mx-auto flex max-w-md items-center gap-3 rounded-2xl border border-line bg-card p-4 shadow-lg sm:inset-x-auto sm:end-6">
-      <Download className="size-5 shrink-0 text-brass" aria-hidden />
+      <Download className="size-5 shrink-0 text-muted" aria-hidden />
       <p className="flex-1 text-sm text-ink-soft">
         Add Musafir to your home screen for one-tap booking.
       </p>
@@ -114,7 +114,7 @@ export const InstallPrompt = () => {
           await prompt.userChoice;
           setPrompt(null);
         }}
-        className="rounded-full bg-forest px-4 py-2 text-xs font-semibold text-paper"
+        className="rounded-full bg-night px-4 py-2 text-xs font-semibold text-paper"
       >
         Add
       </button>
