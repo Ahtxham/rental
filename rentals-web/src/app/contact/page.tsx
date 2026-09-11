@@ -6,6 +6,7 @@ import { telHref, whatsappLink } from "@/lib/config";
 import { getContact } from "@/lib/site";
 
 export const metadata: Metadata = {
+  alternates: { canonical: "/contact" },
   title: "Contact",
   description: "Call, WhatsApp or email Musafir Rent A Car in Lahore.",
 };

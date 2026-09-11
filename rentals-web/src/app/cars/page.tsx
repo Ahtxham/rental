@@ -4,6 +4,7 @@ import Link from "next/link";
 import { Suspense } from "react";
 
 import { CarCard } from "@/components/car-card";
+import { BreadcrumbSchema } from "@/components/structured-data";
 import { SearchForm } from "@/components/search-form";
 import { Button, Container, Eyebrow } from "@/components/ui";
 import { getCars } from "@/lib/api";
@@ -11,6 +12,7 @@ import { getContact } from "@/lib/site";
 import { shortDate } from "@/lib/format";
 
 export const metadata: Metadata = {
+  alternates: { canonical: "/cars" },
   title: "Our cars",
   description:
     "Every car Musafir rents in Lahore, with the daily rate, the kilometre allowance and what each one seats.",
@@ -42,6 +44,12 @@ const CarsPage = async ({
 
   return (
     <>
+      <BreadcrumbSchema
+        trail={[
+          { name: "Musafir Rent A Car", path: "/" },
+          { name: "Cars", path: "/cars" },
+        ]}
+      />
       <section className="border-b border-line bg-paper-deep">
         <Container className="py-14 sm:py-16">
           <Eyebrow>The cars</Eyebrow>

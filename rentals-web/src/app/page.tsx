@@ -14,6 +14,7 @@ import Link from "next/link";
 import { Suspense } from "react";
 
 import { CarCard } from "@/components/car-card";
+import { BusinessSchema } from "@/components/structured-data";
 import { HeroTraffic } from "@/components/hero-traffic";
 import { SearchForm } from "@/components/search-form";
 import { Button, Container, Eyebrow, SectionHeading } from "@/components/ui";
@@ -91,6 +92,7 @@ const Home = async () => {
 
   return (
     <>
+      <BusinessSchema contact={contact} cheapestPerDay={cheapest} />
       {/* Hero. Dark, quiet, and led by the date form rather than a slogan,
           the slogan is above it because a page has to say what it is, but the
           form is what the page is for. */}

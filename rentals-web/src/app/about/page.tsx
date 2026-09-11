@@ -3,6 +3,7 @@ import type { Metadata } from "next";
 import { Button, Container, Eyebrow } from "@/components/ui";
 
 export const metadata: Metadata = {
+  alternates: { canonical: "/about" },
   title: "About us",
   description:
     "Musafir Rent A Car is a Lahore car rental built around one idea: quote the whole price once, write down what it covers, and photograph the car both ways.",

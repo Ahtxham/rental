@@ -3,6 +3,7 @@ import type { Metadata } from "next";
 import { Button, Container, Eyebrow } from "@/components/ui";
 
 export const metadata: Metadata = {
+  alternates: { canonical: "/policies" },
   title: "How it works & terms",
   description:
     "What a Musafir booking includes, what you need to bring, how fuel and kilometres are charged, and how to cancel.",

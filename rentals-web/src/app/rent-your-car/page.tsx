@@ -7,6 +7,7 @@ import { LenderAuthForm } from "@/components/lender-auth-form";
 import { Button, Container, Eyebrow } from "@/components/ui";
 
 export const metadata: Metadata = {
+  alternates: { canonical: "/rent-your-car" },
   title: "Rent your car when it is free",
   description:
     "Your car sits idle most of the week. List it with Musafir, pick the dates it is free, and earn from it, with our drivers, our customers and our paperwork.",

@@ -6,9 +6,11 @@ import { notFound } from "next/navigation";
 import { Badge, Button, Container, Eyebrow } from "@/components/ui";
 import { getCar, getCars } from "@/lib/api";
 import { telHref, whatsappLink } from "@/lib/config";
+import { SITE_URL } from "@/lib/config";
 import { getContact } from "@/lib/site";
 import { pkr, titleCase } from "@/lib/format";
 import { CarCard } from "@/components/car-card";
+import { BreadcrumbSchema, CarSchema } from "@/components/structured-data";
 
 /**
  * One car, on its own page.
@@ -24,11 +26,23 @@ export const generateMetadata = async ({
 }): Promise<Metadata> => {
   const car = await getCar((await params).id);
   if (!car) return { title: "Car not found" };
+  const title = `Rent a ${car.make} ${car.model} in Lahore`;
+  const description =
+    car.description ??
+    `Rent a ${car.make} ${car.model} in Lahore from Musafir, by the day, with a driver or self-drive.`;
+
   return {
-    title: `${car.make} ${car.model}`,
-    description:
-      car.description ??
-      `Rent a ${car.make} ${car.model} in Lahore from Musafir, by the day, with a driver or self-drive.`,
+    title,
+    description,
+    alternates: { canonical: `/cars/${car.id}` },
+    openGraph: {
+      title,
+      description,
+      url: `${SITE_URL}/cars/${car.id}`,
+      // The car's own photograph where there is one, so a shared link shows
+      // the car rather than the generic brand card.
+      images: car.photos.length ? [{ url: car.photos[0] }] : undefined,
+    },
   };
 };
 
@@ -42,6 +56,14 @@ const CarPage = async ({ params }: { params: Promise<{ id: string }> }) => {
 
   return (
     <>
+      <CarSchema car={car} />
+      <BreadcrumbSchema
+        trail={[
+          { name: "Musafir Rent A Car", path: "/" },
+          { name: "Cars", path: "/cars" },
+          { name: `${car.make} ${car.model}`, path: `/cars/${car.id}` },
+        ]}
+      />
       <section className="border-b border-line bg-paper-deep">
         <Container className="py-10 sm:py-14">
           <Link

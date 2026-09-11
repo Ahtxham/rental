@@ -55,6 +55,9 @@ export const metadata: Metadata = {
     ],
     apple: [{ url: "/icons/apple-touch-icon.png", sizes: "180x180" }],
   },
+  // The apex is canonical. Set here so every page inherits it and only the
+  // ones that differ have to say so, rather than each page remembering.
+  alternates: { canonical: "/" },
   openGraph: {
     type: "website",
     siteName: "Musafir Rent A Car",
@@ -62,7 +65,32 @@ export const metadata: Metadata = {
     description:
       "Rent a car in Lahore by the day, with a driver or self-drive. One quoted price, kilometres written down.",
     url: SITE_URL,
+    locale: "en_PK",
+    images: [
+      {
+        url: "/og.png",
+        width: 1200,
+        height: 630,
+        alt: "Musafir Rent A Car, Lahore",
+      },
+    ],
   },
+  /**
+   * Twitter's card type also drives the preview WhatsApp and most chat apps
+   * render, which is how a link to this site will actually be shared here.
+   */
+  twitter: {
+    card: "summary_large_image",
+    title: "Musafir Rent A Car, rent a car in Lahore",
+    description: "Rent a car in Lahore by the day, with a driver or self-drive.",
+    images: ["/og.png"],
+  },
+  robots: {
+    index: true,
+    follow: true,
+    googleBot: { index: true, follow: true, "max-image-preview": "large", "max-snippet": -1 },
+  },
+  category: "Car rental",
 };
 
 /**

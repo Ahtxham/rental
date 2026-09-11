@@ -4,6 +4,7 @@ import { BookingFlow } from "@/components/booking-flow";
 import { getContact } from "@/lib/site";
 
 export const metadata: Metadata = {
+  alternates: { canonical: "/book" },
   title: "Book a car",
   description:
     "Send Musafir your dates and we will come back with the cars that are free and a price for the whole booking.",
