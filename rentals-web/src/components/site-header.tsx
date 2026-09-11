@@ -69,28 +69,39 @@ export const SiteHeader = ({ contact }: { contact: Contact }) => {
             somebody, and losing that costs bookings. On a phone it collapses to
             the icon, because a number and a button fighting for the same 80
             pixels means neither gets tapped. */}
-        <a
-          href={telHref(contact.phone)}
-          className="ms-auto hidden items-center gap-2 text-sm font-semibold text-ink-soft transition-colors duration-150 hover:text-forest xl:inline-flex"
-        >
-          <Phone className="size-4" aria-hidden />
-          <span className="tnum">{contact.phone}</span>
-        </a>
+        {/* No number set means no number shown. A placeholder here would be a
+            phone number a customer actually dials. */}
+        {contact.phone ? (
+          <a
+            href={telHref(contact.phone)}
+            className="ms-auto hidden items-center gap-2 text-sm font-semibold text-ink-soft transition-colors duration-150 hover:text-forest xl:inline-flex"
+          >
+            <Phone className="size-4" aria-hidden />
+            <span className="tnum">{contact.phone}</span>
+          </a>
+        ) : null}
 
         <Link
           href="/book"
-          className="ms-auto inline-flex items-center gap-2 rounded-full bg-brass px-5 py-2.5 text-sm font-semibold text-white transition-colors duration-150 hover:bg-brass-bright xl:ms-4"
+          className={cn(
+            "ms-auto inline-flex items-center gap-2 rounded-full bg-brass px-5 py-2.5 text-sm font-semibold text-white transition-colors duration-150 hover:bg-brass-bright",
+            // Only give up the auto-margin when the phone link before it is
+            // there to take over pushing this to the right.
+            contact.phone && "xl:ms-4",
+          )}
         >
           Book a car
         </Link>
 
-        <a
-          href={telHref(contact.phone)}
-          aria-label={`Call ${contact.phone}`}
-          className="hidden size-10 items-center justify-center rounded-full border border-line text-forest transition-colors duration-150 hover:bg-forest hover:text-paper min-[340px]:inline-flex xl:hidden"
-        >
-          <Phone className="size-4" aria-hidden />
-        </a>
+        {contact.phone ? (
+          <a
+            href={telHref(contact.phone)}
+            aria-label={`Call ${contact.phone}`}
+            className="hidden size-10 items-center justify-center rounded-full border border-line text-forest transition-colors duration-150 hover:bg-forest hover:text-paper min-[340px]:inline-flex xl:hidden"
+          >
+            <Phone className="size-4" aria-hidden />
+          </a>
+        ) : null}
 
         <button
           type="button"

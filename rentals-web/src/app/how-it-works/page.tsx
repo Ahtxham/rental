@@ -146,10 +146,21 @@ const HowItWorksPage = async () => {
             <Link href="/policies" className="font-semibold text-forest underline underline-offset-4">
               full terms
             </Link>
-            , or you can just call{" "}
-            <a href={telHref(contact.phone)} className="font-semibold text-forest tnum">
-              {contact.phone}
-            </a>
+            {contact.phone ? (
+              <>
+                , or you can just call{" "}
+                <a href={telHref(contact.phone)} className="font-semibold text-forest tnum">
+                  {contact.phone}
+                </a>
+              </>
+            ) : (
+              <>
+                , or{" "}
+                <Link href="/contact" className="font-semibold text-forest underline underline-offset-4">
+                  get in touch
+                </Link>
+              </>
+            )}
             .
           </p>
         </Container>

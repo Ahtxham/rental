@@ -27,13 +27,14 @@ const OfflinePage = async () => {
       <h1 className="font-display mt-4 text-3xl font-semibold">You are offline</h1>
       <p className="mt-3 text-sm leading-relaxed text-ink-soft">
         The pages you have already visited will still open. Anything new needs a
-        connection, and if you need a car right now, calling works when this
-        does not.
+        connection.
       </p>
-      <Button href={telHref(contact.phone)} className="mt-6">
-        <PhoneCall className="size-4" aria-hidden />
-        {contact.phone}
-      </Button>
+      {contact.phone ? (
+        <Button href={telHref(contact.phone)} className="mt-6">
+          <PhoneCall className="size-4" aria-hidden />
+          {contact.phone}
+        </Button>
+      ) : null}
     </div>
   </Container>
   );

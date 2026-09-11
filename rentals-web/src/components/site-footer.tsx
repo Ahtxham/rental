@@ -106,45 +106,56 @@ export const SiteFooter = ({ contact }: { contact: Contact }) => {
           <h2 className="text-[11px] font-semibold uppercase tracking-[0.18em] text-brass-bright">
             Reach us
           </h2>
+          {/* Each row appears only if the office has set it. A footer with one
+              live contact method reads as a small business; a footer with four
+              placeholders reads as an abandoned one. */}
           <ul className="mt-4 space-y-2.5 text-sm text-paper/80">
-            <li>
-              <a
-                href={telHref(contact.phone)}
-                className="flex items-center gap-2 hover:text-brass-bright"
-              >
-                <Phone className="size-4 shrink-0" aria-hidden />
-                <span className="tnum">{contact.phone}</span>
-              </a>
-            </li>
-            <li>
-              <a
-                href={whatsappLink(
-                  contact.whatsapp,
-                  "Assalam o alaikum, I would like to book a car.",
-                )}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="flex items-center gap-2 hover:text-brass-bright"
-              >
-                <svg viewBox="0 0 24 24" className="size-4 shrink-0" fill="currentColor" aria-hidden>
-                  <path d="M17.5 14.4c-.3-.2-1.7-.9-2-1-.3-.1-.5-.2-.7.1s-.7 1-.9 1.2c-.2.2-.3.2-.6.1a8 8 0 0 1-4-3.5c-.3-.5.3-.5.8-1.5.1-.2 0-.4 0-.5l-1-2.2c-.2-.6-.5-.5-.7-.5h-.6c-.2 0-.5.1-.8.4a3.4 3.4 0 0 0-1 2.5c0 1.5 1 2.9 1.2 3.1a11.4 11.4 0 0 0 4.4 3.9c1.6.6 2.2.7 3 .6.5-.1 1.7-.7 2-1.4.2-.7.2-1.2.2-1.4-.1-.1-.3-.2-.6-.3M12 2a10 10 0 0 0-8.6 15L2 22l5.2-1.4A10 10 0 1 0 12 2" />
-                </svg>
-                WhatsApp
-              </a>
-            </li>
-            <li>
-              <a
-                href={`mailto:${contact.email}`}
-                className="flex items-center gap-2 hover:text-brass-bright"
-              >
-                <Mail className="size-4 shrink-0" aria-hidden />
-                {contact.email}
-              </a>
-            </li>
-            <li className="flex items-center gap-2">
-              <MapPin className="size-4 shrink-0" aria-hidden />
-              {contact.address}
-            </li>
+            {contact.phone ? (
+              <li>
+                <a
+                  href={telHref(contact.phone)}
+                  className="flex items-center gap-2 hover:text-brass-bright"
+                >
+                  <Phone className="size-4 shrink-0" aria-hidden />
+                  <span className="tnum">{contact.phone}</span>
+                </a>
+              </li>
+            ) : null}
+            {contact.whatsapp ? (
+              <li>
+                <a
+                  href={whatsappLink(
+                    contact.whatsapp,
+                    "Assalam o alaikum, I would like to book a car.",
+                  )}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="flex items-center gap-2 hover:text-brass-bright"
+                >
+                  <svg viewBox="0 0 24 24" className="size-4 shrink-0" fill="currentColor" aria-hidden>
+                    <path d="M17.5 14.4c-.3-.2-1.7-.9-2-1-.3-.1-.5-.2-.7.1s-.7 1-.9 1.2c-.2.2-.3.2-.6.1a8 8 0 0 1-4-3.5c-.3-.5.3-.5.8-1.5.1-.2 0-.4 0-.5l-1-2.2c-.2-.6-.5-.5-.7-.5h-.6c-.2 0-.5.1-.8.4a3.4 3.4 0 0 0-1 2.5c0 1.5 1 2.9 1.2 3.1a11.4 11.4 0 0 0 4.4 3.9c1.6.6 2.2.7 3 .6.5-.1 1.7-.7 2-1.4.2-.7.2-1.2.2-1.4-.1-.1-.3-.2-.6-.3M12 2a10 10 0 0 0-8.6 15L2 22l5.2-1.4A10 10 0 1 0 12 2" />
+                  </svg>
+                  WhatsApp
+                </a>
+              </li>
+            ) : null}
+            {contact.email ? (
+              <li>
+                <a
+                  href={`mailto:${contact.email}`}
+                  className="flex items-center gap-2 hover:text-brass-bright"
+                >
+                  <Mail className="size-4 shrink-0" aria-hidden />
+                  {contact.email}
+                </a>
+              </li>
+            ) : null}
+            {contact.address ? (
+              <li className="flex items-center gap-2">
+                <MapPin className="size-4 shrink-0" aria-hidden />
+                {contact.address}
+              </li>
+            ) : null}
           </ul>
         </div>
       </Container>
@@ -155,7 +166,8 @@ export const SiteFooter = ({ contact }: { contact: Contact }) => {
               the city meant the one line on the site the office could not
               change. */}
           <p>
-            © {new Date().getFullYear()} Musafir Rent A Car · {contact.address}
+            © {new Date().getFullYear()} Musafir Rent A Car
+            {contact.address ? ` · ${contact.address}` : ""}
           </p>
           <Link href="/policies" className="hover:text-brass-bright">
             Terms and charges

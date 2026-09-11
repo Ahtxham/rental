@@ -7,25 +7,37 @@
  * `lib/site.ts` and handed down as props.
  */
 export interface Contact {
-  phone: string;
-  whatsapp: string;
-  email: string;
-  address: string;
+  /**
+   * Null when the office has not set one yet.
+   *
+   * Nullable on purpose, and the distinction matters on a live site: an unset
+   * number must render as no number, not as a plausible-looking fake one. A
+   * customer who dials a placeholder and reaches a stranger is worse off than
+   * one who sees a WhatsApp button instead.
+   */
+  phone: string | null;
+  whatsapp: string | null;
+  email: string | null;
+  address: string | null;
   /** Whether the business offers self-drive at all. Hides every self-drive price. */
   selfDriveEnabled: boolean;
 }
 
 /**
- * What the page falls back to when the API is unreachable.
+ * What the page falls back to when the API is UNREACHABLE.
  *
  * A rental site whose phone number disappears because the backend restarted is
  * worse than one showing a number a week out of date.
+ *
+ * This is not the same as a field the office has left empty. That case returns
+ * null and the page renders nothing, see `getContact`. Conflating the two is
+ * how a placeholder ends up printed on a live site as though it were real.
  */
 export const FALLBACK_CONTACT: Contact = {
-  phone: process.env.NEXT_PUBLIC_CONTACT_PHONE || "+92 300 0000000",
-  whatsapp: process.env.NEXT_PUBLIC_CONTACT_WHATSAPP || "923000000000",
-  email: process.env.NEXT_PUBLIC_CONTACT_EMAIL || "hello@musafircars.com",
-  address: process.env.NEXT_PUBLIC_CONTACT_ADDRESS || "Lahore, Pakistan",
+  phone: process.env.NEXT_PUBLIC_CONTACT_PHONE || null,
+  whatsapp: process.env.NEXT_PUBLIC_CONTACT_WHATSAPP || null,
+  email: process.env.NEXT_PUBLIC_CONTACT_EMAIL || null,
+  address: process.env.NEXT_PUBLIC_CONTACT_ADDRESS || null,
   selfDriveEnabled: false,
 };
 

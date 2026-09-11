@@ -12,12 +12,17 @@ import { FALLBACK_CONTACT, type Contact } from "@/lib/config";
  */
 export const getContact = async (): Promise<Contact> => {
   const config = await getSiteConfig();
+  // Unreachable is the only case the env values are for.
   if (!config) return FALLBACK_CONTACT;
+
+  // Answered, so what it says is the truth, including the blanks. An empty
+  // field means the office has not set one, and the page renders nothing
+  // rather than a placeholder that looks like a real number.
   return {
-    phone: config.phone || FALLBACK_CONTACT.phone,
-    whatsapp: config.whatsapp || FALLBACK_CONTACT.whatsapp,
-    email: config.email || FALLBACK_CONTACT.email,
-    address: [config.address, config.city].filter(Boolean).join(", ") || FALLBACK_CONTACT.address,
+    phone: config.phone || null,
+    whatsapp: config.whatsapp || null,
+    email: config.email || null,
+    address: [config.address, config.city].filter(Boolean).join(", ") || null,
     selfDriveEnabled: config.selfDriveEnabled,
   };
 };

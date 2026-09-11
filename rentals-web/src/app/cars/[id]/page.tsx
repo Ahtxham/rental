@@ -185,6 +185,7 @@ const CarPage = async ({ params }: { params: Promise<{ id: string }> }) => {
                 <Button href={`/book?car=${car.id}`} variant="brass" size="lg">
                   Check dates and book
                 </Button>
+                {contact.whatsapp ? (
                 <a
                   href={whatsappLink(
                     contact.whatsapp,
@@ -196,14 +197,20 @@ const CarPage = async ({ params }: { params: Promise<{ id: string }> }) => {
                 >
                   Ask on WhatsApp
                 </a>
+                ) : null}
               </div>
 
               <p className="mt-4 text-xs text-muted">
-                Or call{" "}
-                <a href={telHref(contact.phone)} className="font-semibold text-forest tnum">
-                  {contact.phone}
-                </a>
-                . Nothing is held until we confirm it with you.
+                {contact.phone ? (
+                  <>
+                    Or call{" "}
+                    <a href={telHref(contact.phone)} className="font-semibold text-forest tnum">
+                      {contact.phone}
+                    </a>
+                    .{" "}
+                  </>
+                ) : null}
+                Nothing is held until we confirm it with you.
               </p>
             </div>
           </div>

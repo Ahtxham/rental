@@ -31,6 +31,7 @@ const ContactPage = async () => {
 
     <Container className="py-14">
       <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+        {contact.phone ? (
         <a
           href={telHref(contact.phone)}
           className="group rounded-2xl border border-line bg-card p-6 transition-colors duration-150 hover:border-forest/30"
@@ -40,7 +41,9 @@ const ContactPage = async () => {
           <p className="mt-1 text-sm text-muted">Fastest, and you get an answer straight away.</p>
           <p className="mt-3 font-semibold text-forest tnum">{contact.phone}</p>
         </a>
+        ) : null}
 
+        {contact.whatsapp ? (
         <a
           href={whatsappLink(contact.whatsapp, "Assalam o alaikum, I would like to book a car.")}
           target="_blank"
@@ -54,7 +57,9 @@ const ContactPage = async () => {
           </p>
           <p className="mt-3 font-semibold text-forest">Message us</p>
         </a>
+        ) : null}
 
+        {contact.email ? (
         <a
           href={`mailto:${contact.email}`}
           className="group rounded-2xl border border-line bg-card p-6 transition-colors duration-150 hover:border-forest/30"
@@ -64,13 +69,18 @@ const ContactPage = async () => {
           <p className="mt-1 text-sm text-muted">For corporate accounts and longer bookings.</p>
           <p className="mt-3 break-all font-semibold text-forest">{contact.email}</p>
         </a>
+        ) : null}
       </div>
 
       <div className="mt-10 flex flex-wrap items-center justify-between gap-6 rounded-2xl border border-line bg-paper-deep p-6">
-        <p className="flex items-center gap-2 text-sm text-ink-soft">
-          <MapPin className="size-4 text-brass" aria-hidden />
-          {contact.address}
-        </p>
+        {contact.address ? (
+          <p className="flex items-center gap-2 text-sm text-ink-soft">
+            <MapPin className="size-4 text-brass" aria-hidden />
+            {contact.address}
+          </p>
+        ) : (
+          <span />
+        )}
         <Button href="/book">Send your dates instead</Button>
       </div>
     </Container>
