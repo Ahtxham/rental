@@ -38,21 +38,33 @@ Check it has propagated before going further:
 dig +short musafircars.com A      # must print 159.65.228.41
 ```
 
-## TLS
+## nginx and TLS
 
-Only once DNS resolves to the droplet. Certbot's HTTP challenge has to reach
-this box, and it will fail confusingly if the domain still points at Amazon.
+The box has its own tool for this and it should be used rather than a
+hand-written vhost. It writes the config, symlinks it, runs `nginx -t`, and
+**removes both again if the test fails**, which matters here: a broken config
+takes down all seventeen sites the next time certbot restarts nginx, and it
+does that twice a day.
 
 ```bash
-certbot --nginx -d musafircars.com -d www.musafircars.com \
-  --redirect --agree-tos -m hello@musafircars.com --no-eff-email
-nginx -t && systemctl reload nginx
+cd /var/code/server
+./deploy-domain.sh musafircars.com 8013          # vhost + certbot, prompts for email
+./deploy-domain.sh musafircars.com 8013 --no-ssl # vhost only, if DNS is not ready
 ```
 
-**Use `--nginx`, never `--standalone`.** A standalone authenticator fully stops
-nginx to bind port 80, and this box already has one cert doing that: certbot
-runs twice a day and takes every site down with it for the duration. Two
-outages of about thirty hours each have been traced to exactly that path.
+It adds `www` automatically for an apex domain, so one run covers
+`musafircars.com` and `www.musafircars.com`, and the certificate covers both.
+Both names proxy to 8013 and the application redirects www to the apex itself
+(see `rentals-web/next.config.ts`), so nginx stays a dumb proxy to one port.
+
+`deploy-domain.sh` uses `certbot --nginx`. Keep it that way: a `--standalone`
+authenticator fully stops nginx to bind port 80, and this box already has one
+cert doing that on every run. Two outages of about thirty hours each have been
+traced to exactly that path.
+
+TLS can only be issued once DNS resolves to the droplet. Certbot's HTTP
+challenge has to reach this box, and it fails confusingly if the domain still
+points somewhere else.
 
 ## Deploying a change
 
