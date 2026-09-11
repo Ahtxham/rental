@@ -123,10 +123,19 @@ export const me = catchAsync(async (req: Request, res: Response) => {
 /**
  * PATCH /api/auth/me, explicit allowlists, never raw `req.body`.
  *
- * Business-wide settings (the commission, the currency, whether self-drive is
- * offered) live on the Agency, not on the person, so they are written there,
- * but from the same screen, because to whoever is using it there is one
- * settings page, not two.
+ * Two different things are editable here, the person and the business, and
+ * they are deliberately kept in **separate parts of the body**:
+ *
+ *   { fullName, phone, photo, currentPassword, newPassword,
+ *     agency: { name, phone, whatsapp, email, address, city, ...settings } }
+ *
+ * They used to be flat, and `phone` was in both allowlists. Saving the office
+ * Settings screen therefore wrote the BUSINESS number over the signed in
+ * person's own, silently, and clearing it answered 500 because `Admin.phone`
+ * is required. A single key must never mean two things.
+ *
+ * Both still travel in one request, because to whoever is using it there is
+ * one settings page, not two.
  */
 export const updateMe = catchAsync(async (req: Request, res: Response) => {
   const body = req.body ?? {};
@@ -142,6 +151,7 @@ export const updateMe = catchAsync(async (req: Request, res: Response) => {
     return;
   }
 
+  // The person. Their own name, their own number.
   const allowed = ["fullName", "phone", "photo"] as const;
   for (const key of allowed) {
     if (body[key] !== undefined) {
@@ -179,6 +189,9 @@ export const updateMe = catchAsync(async (req: Request, res: Response) => {
    * longer still on another instance.
    */
   let updatedAgency: AgencyDocument | null = null;
+  // The business, from its own part of the body. See the note above: flat
+  // fields shared here with the person's and one of them collided.
+  const agencyBody = (body.agency ?? {}) as Record<string, unknown>;
   if (req.ownerId) {
     const AGENCY_FIELDS = [
       "name",
@@ -200,20 +213,20 @@ export const updateMe = catchAsync(async (req: Request, res: Response) => {
     ] as const;
 
     const touchesAgency =
-      AGENCY_FIELDS.some((key) => body[key] !== undefined) ||
-      SETTINGS_FIELDS.some((key) => body[key] !== undefined);
+      AGENCY_FIELDS.some((key) => agencyBody[key] !== undefined) ||
+      SETTINGS_FIELDS.some((key) => agencyBody[key] !== undefined);
 
     if (touchesAgency) {
       updatedAgency = await Agency.findById(req.ownerId);
       if (updatedAgency) {
         for (const key of AGENCY_FIELDS) {
-          if (body[key] !== undefined) {
-            (updatedAgency as unknown as Record<string, unknown>)[key] = body[key];
+          if (agencyBody[key] !== undefined) {
+            (updatedAgency as unknown as Record<string, unknown>)[key] = agencyBody[key];
           }
         }
         for (const key of SETTINGS_FIELDS) {
-          if (body[key] !== undefined) {
-            (updatedAgency.settings as unknown as Record<string, unknown>)[key] = body[key];
+          if (agencyBody[key] !== undefined) {
+            (updatedAgency.settings as unknown as Record<string, unknown>)[key] = agencyBody[key];
           }
         }
         await updatedAgency.save();

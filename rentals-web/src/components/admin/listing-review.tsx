@@ -54,7 +54,7 @@ export const ListingReview = ({ listing }: { listing: AdminListing }) => {
       if (!response.ok) setError(body.message ?? "That did not work.");
       else router.refresh();
     } catch {
-      setError("Could not reach the API.");
+      setError("Could not reach the server. Try again.");
     }
     setBusy(null);
   };

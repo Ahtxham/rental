@@ -12,7 +12,7 @@ const SettingsPage = async () => {
   if (!agency) {
     return (
       <p className="rounded-2xl border border-dashed border-line p-8 text-sm text-muted">
-        Could not load the business record. The API may be down.
+        Could not load the business record. The server may be down.
       </p>
     );
   }

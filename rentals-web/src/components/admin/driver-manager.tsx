@@ -60,7 +60,7 @@ export const DriverManager = ({ drivers }: { drivers: AdminDriver[] }) => {
         router.refresh();
       }
     } catch {
-      setError("Could not reach the API.");
+      setError("Could not reach the server. Try again.");
     }
     setBusy(false);
   };
@@ -74,7 +74,7 @@ export const DriverManager = ({ drivers }: { drivers: AdminDriver[] }) => {
       if (!response.ok) setError(body.message ?? "That did not work.");
       else router.refresh();
     } catch {
-      setError("Could not reach the API.");
+      setError("Could not reach the server. Try again.");
     }
     setBusy(false);
   };

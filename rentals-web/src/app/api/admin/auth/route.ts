@@ -22,7 +22,7 @@ export const POST = async (request: NextRequest) => {
       cache: "no-store",
     });
   } catch {
-    return NextResponse.json({ message: "Could not reach the API. Try again." }, { status: 503 });
+    return NextResponse.json({ message: "Could not reach the server. Try again." }, { status: 503 });
   }
 
   const data = (await response.json().catch(() => ({}))) as {

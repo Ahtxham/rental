@@ -66,19 +66,25 @@ export const SettingsForm = ({ agency }: { agency: Agency }) => {
       const response = await fetch("/api/admin/auth/me", {
         method: "PATCH",
         headers: { "Content-Type": "application/json" },
+        // Nested under `agency`, because these are the BUSINESS's details, not
+        // the signed-in person's. Sent flat, `phone` used to mean both and
+        // saving this screen quietly overwrote your own number with the
+        // office's.
         body: JSON.stringify({
-          name: form.name.trim(),
-          legalName: form.legalName.trim(),
-          phone: form.phone.trim(),
-          whatsapp: form.whatsapp.replace(/\D/g, ""),
-          email: form.email.trim(),
-          address: form.address.trim(),
-          city: form.city.trim(),
-          commissionPercent: Number(form.commissionPercent) || 0,
-          defaultSecurityDeposit: Number(form.defaultSecurityDeposit) || 0,
-          defaultKmIncludedPerDay: Number(form.defaultKmIncludedPerDay) || 0,
-          defaultExtraKmRate: Number(form.defaultExtraKmRate) || 0,
-          selfDriveEnabled: form.selfDriveEnabled,
+          agency: {
+            name: form.name.trim(),
+            legalName: form.legalName.trim(),
+            phone: form.phone.trim(),
+            whatsapp: form.whatsapp.replace(/\D/g, ""),
+            email: form.email.trim(),
+            address: form.address.trim(),
+            city: form.city.trim(),
+            commissionPercent: Number(form.commissionPercent) || 0,
+            defaultSecurityDeposit: Number(form.defaultSecurityDeposit) || 0,
+            defaultKmIncludedPerDay: Number(form.defaultKmIncludedPerDay) || 0,
+            defaultExtraKmRate: Number(form.defaultExtraKmRate) || 0,
+            selfDriveEnabled: form.selfDriveEnabled,
+          },
         }),
       });
       const body = (await response.json()) as { message?: string };
@@ -89,7 +95,7 @@ export const SettingsForm = ({ agency }: { agency: Agency }) => {
         router.refresh();
       }
     } catch {
-      setError("Could not reach the API.");
+      setError("Could not reach the server. Try again.");
     }
     setBusy(false);
   };

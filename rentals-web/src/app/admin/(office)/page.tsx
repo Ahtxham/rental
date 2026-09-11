@@ -124,7 +124,7 @@ const AdminBookingsPage = async () => {
       {rentals.length === 0 ? (
         <p className="flex items-start gap-2 rounded-2xl border border-dashed border-line p-6 text-sm text-muted">
           <CircleAlert className="mt-0.5 size-4 shrink-0" aria-hidden />
-          No bookings yet, or the API did not answer. Requests from
+          Nothing here yet, or the server did not answer. Requests from
           musafircars.com land here as enquiries the moment somebody sends one.
         </p>
       ) : null}

@@ -29,7 +29,7 @@ export const adminFetch = async (
     });
     return { status: response.status, body: await response.json().catch(() => ({})) };
   } catch {
-    return { status: 503, body: { message: "Could not reach the API. Try again." } };
+    return { status: 503, body: { message: "Could not reach the server. Try again." } };
   }
 };
 

@@ -106,7 +106,7 @@ export const CarEditor = ({
         router.refresh();
       }
     } catch {
-      setError("Could not reach the API.");
+      setError("Could not reach the server. Try again.");
     }
     setBusy(false);
   };
@@ -351,7 +351,7 @@ export const CarManager = ({ cars }: { cars: AdminCar[] }) => {
       }
       router.refresh();
     } catch {
-      setError("Could not reach the API.");
+      setError("Could not reach the server. Try again.");
       setPending((current) => {
         const { [car._id]: _dropped, ...rest } = current;
         return rest;
@@ -368,7 +368,7 @@ export const CarManager = ({ cars }: { cars: AdminCar[] }) => {
       if (!response.ok) setError(body.message ?? "That did not work.");
       else router.refresh();
     } catch {
-      setError("Could not reach the API.");
+      setError("Could not reach the server. Try again.");
     }
     setRemoving(null);
   };

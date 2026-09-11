@@ -87,7 +87,7 @@ export const BookingDetail = ({
         router.refresh();
       }
     } catch {
-      setError("Could not reach the API.");
+      setError("Could not reach the server. Try again.");
     }
     setBusy(null);
   };
