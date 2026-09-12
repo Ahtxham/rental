@@ -110,7 +110,7 @@ export const CarCard = ({
         ) : (
           <div className="car-placeholder flex size-full flex-col items-center justify-center gap-1">
             <span className="font-display text-3xl font-semibold text-paper/85">{car.make}</span>
-            <span className="t-eyebrow text-paper/55">{car.model}</span>
+            <span className="t-eyebrow text-amber">{car.model}</span>
           </div>
         )}
         {unavailable ? (

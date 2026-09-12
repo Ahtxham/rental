@@ -440,7 +440,7 @@ export const BookingFlow = ({
                     that have not. */}
                 {featured ? (
                   <div className="mt-6">
-                    <h3 className="t-eyebrow text-muted">
+                    <h3 className="t-eyebrow text-amber-ink">
                       {carId === featured.id
                         ? "Your car"
                         : arrived
@@ -496,7 +496,7 @@ export const BookingFlow = ({
                 {others.length > 0 ? (
                   <div className={featured ? "mt-10" : "mt-6"}>
                     {featured ? (
-                      <h3 className="t-eyebrow text-muted">
+                      <h3 className="t-eyebrow text-amber-ink">
                         {datesReady ? "Other cars on those dates" : "Other cars"}
                       </h3>
                     ) : null}

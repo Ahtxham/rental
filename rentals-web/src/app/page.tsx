@@ -133,7 +133,7 @@ const Home = async () => {
 
         <Container className="relative flex flex-1 flex-col pt-28 sm:pt-36">
           <div className="hero-copy">
-            <p className="t-eyebrow intro intro-1 text-paper/55">Lahore, by the day</p>
+            <p className="t-eyebrow intro intro-1 text-amber">Lahore, by the day</p>
             <h1 className="t-display font-display intro intro-2 mt-5 max-w-[16ch]">
               Rent a car for the days you need it.
             </h1>
@@ -166,11 +166,11 @@ const Home = async () => {
                 href="/rent-your-car"
                 className="group inline-flex items-center gap-2 rounded-full border border-paper/25 px-4 py-2 text-[0.8125rem] text-paper/85 hover:border-paper/40"
               >
-                <KeyRound className="size-4 shrink-0 text-paper/55" aria-hidden />
+                <KeyRound className="size-4 shrink-0 text-amber" aria-hidden />
                 <span>
                   <strong className="font-semibold text-paper">Own a car?</strong> Earn from it
                 </span>
-                <ArrowRight className="lean size-4 shrink-0 text-paper/55" aria-hidden />
+                <ArrowRight className="lean size-4 shrink-0 text-amber" aria-hidden />
               </PressLink>
             </div>
           </div>
@@ -271,7 +271,7 @@ const Home = async () => {
 
         <Container className="relative">
           <div className="reveal max-w-xl">
-            <Eyebrow className="text-paper/55">How it works</Eyebrow>
+            <Eyebrow className="text-amber">How it works</Eyebrow>
             <h2 className="t-title font-display mt-3">
               Three steps, and one of them is us calling you back.
             </h2>
@@ -316,7 +316,7 @@ const Home = async () => {
 
         <Container className="relative py-28 sm:py-36">
           <div className="reveal max-w-xl">
-            <Eyebrow className="text-paper/55">Own a car?</Eyebrow>
+            <Eyebrow className="text-amber">Own a car?</Eyebrow>
             <h2 className="t-title font-display mt-3">
               Your car earns nothing sitting outside.
             </h2>
@@ -364,7 +364,7 @@ const Home = async () => {
               },
             ].map((item, index) => (
               <li key={item.title} className={cn("max-w-xs", revealAt(index))}>
-                <item.icon className="size-5 text-paper/55" aria-hidden />
+                <item.icon className="size-5 text-amber" aria-hidden />
                 <h3 className="font-display mt-3.5 text-lg font-semibold tracking-[-0.01em]">
                   {item.title}
                 </h3>

@@ -260,7 +260,7 @@ export const LenderDashboard = ({
                     findable from across the room. */}
                 {car.status === "offered" && car.offer && !car.offer.response ? (
                   <div className="border-t border-line bg-night p-5 text-paper">
-                    <p className="t-eyebrow text-paper/55">Musafir has offered a rent</p>
+                    <p className="t-eyebrow text-amber">Musafir has offered a rent</p>
                     <p className="font-display mt-2 text-2xl font-semibold tnum">
                       {pkr(car.offer.dailyRate)} a day
                     </p>

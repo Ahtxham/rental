@@ -39,7 +39,7 @@ export const SiteFooter = ({ contact }: { contact: Contact }) => {
       <Container className="grid gap-10 pb-14 pt-20 sm:grid-cols-2 lg:grid-cols-5">
         <div className="lg:col-span-2">
           <p className="font-display text-3xl font-semibold">Musafir</p>
-          <p className="mt-1 text-[10px] font-semibold uppercase tracking-[0.22em] text-paper/55">
+          <p className="mt-1 text-[10px] font-semibold uppercase tracking-[0.22em] text-amber">
             Rent A Car
           </p>
           <p className="mt-4 max-w-sm text-sm leading-relaxed text-paper/70">
@@ -50,7 +50,7 @@ export const SiteFooter = ({ contact }: { contact: Contact }) => {
         </div>
 
         <div>
-          <h2 className="text-[11px] font-semibold uppercase tracking-[0.18em] text-paper/55">
+          <h2 className="text-[11px] font-semibold uppercase tracking-[0.18em] text-amber">
             Renting
           </h2>
           <ul className="mt-4 space-y-2.5 text-sm text-paper/80">
@@ -58,7 +58,7 @@ export const SiteFooter = ({ contact }: { contact: Contact }) => {
               <li key={link.href}>
                 <Link
                   href={link.href}
-                  className="transition-colors duration-150 hover:text-paper/55"
+                  className="transition-colors duration-150 hover:text-amber"
                 >
                   {link.label}
                 </Link>
@@ -66,7 +66,7 @@ export const SiteFooter = ({ contact }: { contact: Contact }) => {
             ))}
           </ul>
 
-          <h2 className="mt-7 text-[11px] font-semibold uppercase tracking-[0.18em] text-paper/55">
+          <h2 className="mt-7 text-[11px] font-semibold uppercase tracking-[0.18em] text-amber">
             Musafir
           </h2>
           <ul className="mt-4 space-y-2.5 text-sm text-paper/80">
@@ -74,7 +74,7 @@ export const SiteFooter = ({ contact }: { contact: Contact }) => {
               <li key={link.href}>
                 <Link
                   href={link.href}
-                  className="transition-colors duration-150 hover:text-paper/55"
+                  className="transition-colors duration-150 hover:text-amber"
                 >
                   {link.label}
                 </Link>
@@ -86,7 +86,7 @@ export const SiteFooter = ({ contact }: { contact: Contact }) => {
         {/* Its own column, not a footnote under the renting links. The people
             this is for are not reading the rest of the footer. */}
         <div>
-          <h2 className="text-[11px] font-semibold uppercase tracking-[0.18em] text-paper/55">
+          <h2 className="text-[11px] font-semibold uppercase tracking-[0.18em] text-amber">
             Own a car?
           </h2>
           <ul className="mt-4 space-y-2.5 text-sm text-paper/80">
@@ -94,7 +94,7 @@ export const SiteFooter = ({ contact }: { contact: Contact }) => {
               <li key={link.href}>
                 <Link
                   href={link.href}
-                  className="transition-colors duration-150 hover:text-paper/55"
+                  className="transition-colors duration-150 hover:text-amber"
                 >
                   {link.label}
                 </Link>
@@ -107,7 +107,7 @@ export const SiteFooter = ({ contact }: { contact: Contact }) => {
         </div>
 
         <div>
-          <h2 className="text-[11px] font-semibold uppercase tracking-[0.18em] text-paper/55">
+          <h2 className="text-[11px] font-semibold uppercase tracking-[0.18em] text-amber">
             Reach us
           </h2>
           {/* Each row appears only if the office has set it. A footer with one
@@ -118,7 +118,7 @@ export const SiteFooter = ({ contact }: { contact: Contact }) => {
               <li>
                 <a
                   href={telHref(contact.phone)}
-                  className="flex items-center gap-2 hover:text-paper/55"
+                  className="flex items-center gap-2 hover:text-amber"
                 >
                   <Phone className="size-4 shrink-0" aria-hidden />
                   <span className="tnum">{contact.phone}</span>
@@ -134,7 +134,7 @@ export const SiteFooter = ({ contact }: { contact: Contact }) => {
                   )}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="flex items-center gap-2 hover:text-paper/55"
+                  className="flex items-center gap-2 hover:text-amber"
                 >
                   <svg viewBox="0 0 24 24" className="size-4 shrink-0" fill="currentColor" aria-hidden>
                     <path d="M17.5 14.4c-.3-.2-1.7-.9-2-1-.3-.1-.5-.2-.7.1s-.7 1-.9 1.2c-.2.2-.3.2-.6.1a8 8 0 0 1-4-3.5c-.3-.5.3-.5.8-1.5.1-.2 0-.4 0-.5l-1-2.2c-.2-.6-.5-.5-.7-.5h-.6c-.2 0-.5.1-.8.4a3.4 3.4 0 0 0-1 2.5c0 1.5 1 2.9 1.2 3.1a11.4 11.4 0 0 0 4.4 3.9c1.6.6 2.2.7 3 .6.5-.1 1.7-.7 2-1.4.2-.7.2-1.2.2-1.4-.1-.1-.3-.2-.6-.3M12 2a10 10 0 0 0-8.6 15L2 22l5.2-1.4A10 10 0 1 0 12 2" />
@@ -147,7 +147,7 @@ export const SiteFooter = ({ contact }: { contact: Contact }) => {
               <li>
                 <a
                   href={`mailto:${contact.email}`}
-                  className="flex items-center gap-2 hover:text-paper/55"
+                  className="flex items-center gap-2 hover:text-amber"
                 >
                   <Mail className="size-4 shrink-0" aria-hidden />
                   {contact.email}
@@ -173,7 +173,7 @@ export const SiteFooter = ({ contact }: { contact: Contact }) => {
             © {new Date().getFullYear()} Musafir Rent A Car
             {contact.address ? ` · ${contact.address}` : ""}
           </p>
-          <Link href="/policies" className="hover:text-paper/55">
+          <Link href="/policies" className="hover:text-amber">
             Terms and charges
           </Link>
         </Container>

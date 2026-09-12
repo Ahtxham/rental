@@ -70,10 +70,41 @@
      further from the surface they sit on rather than toward it. */
   --action: #1d1d20;
   --action-deep: #000000;
-  --action-invert: #ffffff;
-  --action-invert-deep: #e6e6e9;
+  /* On a dark surface the primary control is amber, not white. One token, so
+     every on-dark button on the site moves together and none can be missed. */
+  --action-invert: var(--amber);
+  --action-invert-deep: var(--amber-deep);
 
-  /* The only hue in the system. It means a problem, never emphasis. */
+  /**
+   * The warm one, and where it is allowed to be.
+   *
+   * On a near-white page the most salient thing that exists is a near-black
+   * rectangle, at 15.7:1 against the paper. Amber cannot beat that, and worse,
+   * a bright amber pill on white clears only 1.9:1 against the background,
+   * which is under the 3:1 a control needs for its own edge to be findable. So
+   * the light surfaces keep their black button.
+   *
+   * On the dark surfaces the arithmetic inverts. White was the only option
+   * there and white is cold; amber sits at 10.75:1 against the near-black,
+   * carries near-black text at the same ratio, and is the first warm thing
+   * anybody sees on this site. That is the hero, the closing band and the
+   * owner's pitch, which between them are most of what a visitor looks at.
+   *
+   * Amber rather than any other hue for one practical reason: cars are white,
+   * silver, black, grey, blue and red. Amber is the one warm colour that is
+   * not already in the photographs it has to sit beside. It is also not green,
+   * which was tried twice, and not red, which already means a problem here.
+   *
+   * `amber-ink` is the same colour dragged down until it can be read as text
+   * on paper. It exists for one job, the car owner's pill, and should not
+   * become a general-purpose text colour.
+   */
+  --amber: #ffb020;
+  --amber-deep: #f0a012;
+  --amber-ink: #8a5a08;
+  --amber-wash: #faeaca;
+
+  /* The only hue that means something has gone wrong, never emphasis. */
   --alert: #a3261b;
   --alert-wash: #f8e9e7;
 
@@ -96,6 +127,10 @@
   --color-action-deep: var(--action-deep);
   --color-action-invert: var(--action-invert);
   --color-action-invert-deep: var(--action-invert-deep);
+  --color-amber: var(--amber);
+  --color-amber-deep: var(--amber-deep);
+  --color-amber-ink: var(--amber-ink);
+  --color-amber-wash: var(--amber-wash);
   --color-alert-wash: var(--alert-wash);
   --color-alert: var(--alert);
   --font-display: var(--font-fraunces);
@@ -865,7 +900,11 @@ body {
  */
 .hero-light {
   background-image:
-    radial-gradient(58% 52% at 20% 16%, rgba(255, 255, 255, 0.07) 0, transparent 70%),
+    /* One small warm pool where the headline begins, which is the only place
+       on this page a colour is worth spending on: the first thing anybody
+       sees, before they have read a word. */
+    radial-gradient(52% 44% at 16% 12%, rgba(255, 176, 32, 0.11) 0, transparent 72%),
+    radial-gradient(58% 52% at 20% 16%, rgba(255, 255, 255, 0.05) 0, transparent 70%),
     radial-gradient(66% 58% at 84% 72%, rgba(255, 255, 255, 0.05) 0, transparent 72%);
 }
 

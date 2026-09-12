@@ -7,10 +7,18 @@ export const Container = ({ className, ...props }: ComponentProps<"div">) => (
   <div className={cn("mx-auto w-full max-w-6xl px-5 sm:px-8", className)} {...props} />
 );
 
-/** A small grey label above a heading. Used where the section needs naming. */
+/**
+ * The small label above a heading, and the only warm thing on a light page.
+ *
+ * `amber-ink` is the accent dragged down until it can legally be read as text
+ * on paper, at 5.5:1. It exists so that a light section and a dark one belong
+ * to the same site: the dark bands carry amber at full strength, and without
+ * this the light ones would be pure grey and the colour would look like it had
+ * been applied to half the page. Dark sections override it to `text-amber`.
+ */
 export const Eyebrow = ({ className, ...props }: ComponentProps<"p">) => (
   <p
-    className={cn("text-[11px] font-semibold uppercase tracking-[0.18em] text-muted", className)}
+    className={cn("text-[11px] font-semibold uppercase tracking-[0.18em] text-amber-ink", className)}
     {...props}
   />
 );

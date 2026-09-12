@@ -107,7 +107,7 @@ const CarPage = async ({
                   <span className="font-display text-4xl font-semibold text-paper/85">
                     {car.make}
                   </span>
-                  <span className="text-xs font-semibold uppercase tracking-[0.24em] text-paper/55">
+                  <span className="text-xs font-semibold uppercase tracking-[0.24em] text-amber">
                     {car.model}
                   </span>
                 </div>

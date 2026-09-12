@@ -32,7 +32,7 @@ export const HeroDates = ({ selfDriveEnabled }: { selfDriveEnabled: boolean }) =
         onClick={() => setOpen(true)}
         className="material-night vibrant flex w-full items-center gap-3 rounded-[20px] px-5 py-4 text-start text-paper lg:hidden"
       >
-        <CalendarDays className="size-5 shrink-0 text-paper/55" aria-hidden />
+        <CalendarDays className="size-5 shrink-0 text-amber" aria-hidden />
         <span className="flex-1">
           <span className="block text-[0.9375rem] font-semibold">When do you need it?</span>
           <span className="t-caption block text-paper/65">

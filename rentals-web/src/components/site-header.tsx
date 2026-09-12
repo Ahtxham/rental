@@ -141,7 +141,7 @@ export const SiteHeader = ({ contact }: { contact: Contact }) => {
             <span
               className={cn(
                 "t-eyebrow hidden transition-colors duration-[260ms] sm:block",
-                dark ? "text-paper/55" : "text-muted",
+                dark ? "text-amber" : "text-muted",
               )}
             >
               Rent A Car
@@ -160,10 +160,15 @@ export const SiteHeader = ({ contact }: { contact: Contact }) => {
                   "text-[0.8125rem] font-medium tracking-[0.01em]",
                   link.owners
                     ? cn(
+                        // The one link on this bar aimed at somebody who is
+                        // not here to rent, and now the one warm thing on a
+                        // grey page. Colour is doing the job the outline was
+                        // doing alone: telling a car owner that this line is
+                        // for them before they have read it.
                         "rounded-full border px-3.5 py-1.5",
                         dark
-                          ? "border-paper/25 bg-paper/10 text-paper/55"
-                          : "border-line bg-paper-deep text-muted hover:border-ink/30",
+                          ? "border-amber/35 bg-amber/10 text-amber"
+                          : "border-amber-ink/25 bg-amber-wash text-amber-ink hover:border-amber-ink/45",
                       )
                     : dark
                       ? cn(
