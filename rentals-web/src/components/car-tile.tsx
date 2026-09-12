@@ -1,6 +1,7 @@
 import { PressLink } from "@/components/motion/pressable";
 import type { PublicCar } from "@/lib/api";
 import { cn } from "@/lib/cn";
+import { withSearch } from "@/lib/search-params";
 import { pkr, titleCase } from "@/lib/format";
 
 /**
@@ -16,10 +17,22 @@ import { pkr, titleCase } from "@/lib/format";
  * registration number, and nothing about whether the car belongs to Musafir or
  * to somebody lending it. See `car-card.tsx`, which says the same at length.
  */
-export const CarTile = ({ car, className }: { car: PublicCar; className?: string }) => {
+export const CarTile = ({
+  car,
+  search = "",
+  className,
+}: {
+  car: PublicCar;
+  /** The dates the visitor has already chosen, carried on to the next page. */
+  search?: string;
+  className?: string;
+}) => {
   const photo = car.photos?.[0];
   const unavailable = car.available === false;
-  const href = car.source === "fleet" ? `/cars/${car.id}` : `/book?car=${car.id}`;
+  const href = withSearch(
+    car.source === "fleet" ? `/cars/${car.id}` : `/book?car=${car.id}`,
+    search,
+  );
 
   const spec = [
     `${car.seats} seats`,

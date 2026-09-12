@@ -10,6 +10,7 @@ import { LenderEarnings, type LenderEarning, type LenderTotals } from "@/compone
 import { Container, Eyebrow } from "@/components/ui";
 import { cn } from "@/lib/cn";
 import { pkr, shortDate } from "@/lib/format";
+import { type ListingOffer, type ListingStatus, ownerDailyShare } from "@/lib/listing";
 import { photoSrc } from "@/lib/photos";
 
 export interface LenderCar {
@@ -19,10 +20,12 @@ export interface LenderCar {
   year?: number;
   color?: string;
   photos: string[];
-  status: "pending" | "approved" | "rejected" | "paused";
+  status: ListingStatus;
   reviewNote?: string;
   expectedDailyRate?: number;
   publicDailyRate?: number;
+  commissionPercent?: number;
+  offer?: ListingOffer;
   availability: Window[];
 }
 
@@ -36,7 +39,12 @@ const STATUS: Record<LenderCar["status"], { label: string; tone: string; help: s
   pending: {
     label: "With the office",
     tone: "bg-paper-deep text-muted border-line",
-    help: "Somebody is looking at it. We will call you to agree a rate.",
+    help: "Somebody is looking at it. We will come back to you with a rate.",
+  },
+  offered: {
+    label: "Waiting on you",
+    tone: "bg-ink text-paper border-ink",
+    help: "We have put a rate to you. Nothing goes on the website until you agree.",
   },
   approved: {
     label: "On the website",
@@ -78,6 +86,25 @@ export const LenderDashboard = ({
   const [editing, setEditing] = useState<string | null>(null);
   const [draft, setDraft] = useState<Window[]>([]);
   const [busy, setBusy] = useState<string | null>(null);
+  const [reply, setReply] = useState<Record<string, string>>({});
+
+  /**
+   * Answering the office's offer.
+   *
+   * The note only travels with a decline. On an agreement there is nothing to
+   * explain, and asking somebody to justify saying yes is a good way to make
+   * them stop.
+   */
+  const respond = async (id: string, accept: boolean) => {
+    setBusy(id);
+    await fetch(`/api/lender/cars/${id}/offer`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ accept, note: accept ? undefined : reply[id]?.trim() || undefined }),
+    });
+    setBusy(null);
+    router.refresh();
+  };
 
   const saveDates = async (id: string) => {
     setBusy(id);
@@ -192,17 +219,117 @@ export const LenderDashboard = ({
                     </p>
                     <p className="mt-2 text-sm text-ink-soft">{car.reviewNote || status.help}</p>
 
+                    {/* What was agreed, once it has been. Shown on the car
+                        rather than buried in earnings, because "what do I get
+                        for this one" is a question about this one. */}
+                    {car.status === "approved" && car.publicDailyRate && car.commissionPercent !== undefined ? (
+                      <p className="mt-1 text-sm text-ink-soft tnum">
+                        You keep{" "}
+                        <strong className="font-semibold text-ink">
+                          {pkr(ownerDailyShare(car.publicDailyRate, car.commissionPercent))}
+                        </strong>{" "}
+                        a day, after our {car.commissionPercent}% commission.
+                      </p>
+                    ) : null}
+
                     {/* Two prices, never conflated: what the owner asked for,
-                        and what the office agreed to pay out. */}
-                    <p className="mt-2 text-sm text-ink-soft tnum">
-                      {car.publicDailyRate
-                        ? `Listed at ${pkr(car.publicDailyRate)} a day`
-                        : car.expectedDailyRate
-                          ? `You asked for ${pkr(car.expectedDailyRate)} a day`
-                          : "No rate agreed yet"}
-                    </p>
+                        and what the car is actually listed at.
+                        
+                        "Listed at" is tied to being listed, not to the field
+                        having a number in it. A car with an offer on the table
+                        is not on the website, and one that was taken off still
+                        carries the rate it used to have; saying "listed at"
+                        for either is telling somebody their car is earning
+                        when it is not. */}
+                    {car.status === "offered" ? null : (
+                      <p className="mt-2 text-sm text-ink-soft tnum">
+                        {car.status === "approved" && car.publicDailyRate
+                          ? `Listed at ${pkr(car.publicDailyRate)} a day`
+                          : car.expectedDailyRate
+                            ? `You asked for ${pkr(car.expectedDailyRate)} a day`
+                            : "No rate agreed yet"}
+                      </p>
+                    )}
                   </div>
                 </div>
+
+                {/* The offer, and the only thing on this page that is asking
+                    the owner for a decision. It sits above the dates because a
+                    decision outranks an edit, and it is dark because nothing
+                    else on this screen is: a car waiting on you should be
+                    findable from across the room. */}
+                {car.status === "offered" && car.offer && !car.offer.response ? (
+                  <div className="border-t border-line bg-night p-5 text-paper">
+                    <p className="t-eyebrow text-paper/55">Musafir has offered a rent</p>
+                    <p className="font-display mt-2 text-2xl font-semibold tnum">
+                      {pkr(car.offer.dailyRate)} a day
+                    </p>
+                    <p className="mt-1 text-sm text-paper/75 tnum">
+                      You keep{" "}
+                      <strong className="font-semibold text-paper">
+                        {pkr(ownerDailyShare(car.offer.dailyRate, car.offer.commissionPercent))}
+                      </strong>{" "}
+                      of every day it is rented, after our {car.offer.commissionPercent}%
+                      commission.
+                      {car.offer.kmIncludedPerDay
+                        ? ` Includes ${car.offer.kmIncludedPerDay} km a day.`
+                        : ""}
+                    </p>
+                    {car.offer.note ? (
+                      <p className="mt-3 rounded-xl bg-paper/10 p-3 text-sm leading-relaxed text-paper/80">
+                        {car.offer.note}
+                      </p>
+                    ) : null}
+
+                    <label className="mt-4 block">
+                      <span className="t-caption text-paper/55">
+                        Not right? Tell us what would work. Optional, and only sent if you decline.
+                      </span>
+                      <textarea
+                        value={reply[car._id] ?? ""}
+                        onChange={(event) =>
+                          setReply((current) => ({ ...current, [car._id]: event.target.value }))
+                        }
+                        rows={2}
+                        className="mt-1.5 w-full rounded-xl border border-paper/20 bg-paper/10 px-3 py-2 text-sm text-paper outline-none placeholder:text-paper/40 focus:border-paper/50"
+                        placeholder="I was hoping for a bit more on weekends"
+                      />
+                    </label>
+
+                    <div className="mt-4 flex flex-wrap gap-2">
+                      <button
+                        data-pressable="control"
+                        type="button"
+                        disabled={busy === car._id}
+                        onClick={() => respond(car._id, true)}
+                        className="inline-flex items-center gap-2 rounded-full bg-action-invert px-5 py-2.5 text-sm font-semibold text-night disabled:opacity-50"
+                      >
+                        {busy === car._id ? <Loader2 className="size-4 animate-spin" aria-hidden /> : null}
+                        Agree, put it on the website
+                      </button>
+                      <button
+                        data-pressable="control"
+                        type="button"
+                        disabled={busy === car._id}
+                        onClick={() => respond(car._id, false)}
+                        className="rounded-full border border-paper/30 px-5 py-2.5 text-sm font-semibold text-paper disabled:opacity-50 hover:bg-paper/10"
+                      >
+                        Not for me
+                      </button>
+                    </div>
+                  </div>
+                ) : null}
+
+                {/* What they said last time, so a second offer has context. */}
+                {car.offer?.response === "declined" && car.status !== "offered" ? (
+                  <div className="border-t border-line bg-paper-deep px-5 py-3">
+                    <p className="t-caption text-muted">
+                      You turned down {pkr(car.offer.dailyRate)} a day
+                      {car.offer.responseNote ? `: "${car.offer.responseNote}"` : ""}. The office
+                      may come back with a different number.
+                    </p>
+                  </div>
+                ) : null}
 
                 <div className="border-t border-line bg-paper/40 p-5">
                   <div className="flex flex-wrap items-center justify-between gap-3">
@@ -211,7 +338,14 @@ export const LenderDashboard = ({
                       Free dates
                     </h3>
                     {!isEditing ? (
-                      <div className="flex gap-2">
+                      <div className="flex flex-wrap gap-2">
+                        <Link
+                          href={`/lender/cars/${car._id}/edit`}
+                          data-pressable="control"
+                          className="rounded-full border border-line px-4 py-2 text-xs font-semibold text-ink transition-colors hover:bg-ink hover:text-paper"
+                        >
+                          Edit this car
+                        </Link>
                         <button data-pressable="control"
                           type="button"
                           onClick={() => {

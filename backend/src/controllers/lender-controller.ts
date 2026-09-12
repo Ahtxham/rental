@@ -5,9 +5,14 @@ import { statusCodes } from "@/constants/statusCodes";
 import { PUBLIC_AGENCY_ID } from "@/constants/env";
 import { Agency } from "@/models/agency-model";
 import { Lender, LenderDocument } from "@/models/lender-model";
-import { ListedCar, LISTING_STATUSES } from "@/models/listed-car-model";
+import {
+  ListedCar,
+  LISTING_STATUSES,
+  ownerDailyShare,
+} from "@/models/listed-car-model";
 import { Rental } from "@/models/rental-model";
-import { notifyAgencyAdmins } from "@/services/notification-service";
+import { recordAudit } from "@/services/audit-service";
+import { notifyAgencyAdmins, notifyLender } from "@/services/notification-service";
 import { catchAsync } from "@/utils/catch-async";
 import { signToken } from "@/utils/jwt-helper";
 import { comparePassword, hashPassword } from "@/utils/password-helper";
@@ -30,6 +35,15 @@ const lenderAgencyId = (): Types.ObjectId | null =>
     : null;
 
 const me = (req: Request): LenderDocument => req.user as LenderDocument;
+
+/**
+ * Rupees, for a sentence rather than a table.
+ *
+ * The website has its own formatter; this one exists because a notification is
+ * written on the server and has to read as a sentence in an OS notification
+ * tray, where "9500" and "Rs 9,500" are not the same message.
+ */
+const rupees = (amount: number): string => `Rs ${Math.round(amount).toLocaleString("en-US")}`;
 
 const issue = async (lender: LenderDocument) => ({
   token: signToken({
@@ -272,18 +286,117 @@ export const updateMyCar = catchAsync(async (req: Request, res: Response) => {
   Object.assign(car, fields);
   if (body.availability !== undefined) car.availability = windowsFrom(body.availability);
 
-  if (detailsChanged && car.status === "approved") {
+  /**
+   * A changed car invalidates an offer made on the old one.
+   *
+   * The office priced a 2021 Honda City with two suitcases. If that becomes a
+   * 2016 Alto between the offer and the answer, the number attached to it is
+   * meaningless, and leaving it there would let somebody accept terms that
+   * were never meant for the car now standing in the driveway. Same reasoning
+   * as sending an approved car back for review: the office agreed to a
+   * specific thing.
+   */
+  const hadOffer = car.status === "offered";
+  if (detailsChanged && (car.status === "approved" || car.status === "offered")) {
     car.status = "pending";
     car.reviewNote = undefined;
+    car.offer = undefined;
   }
   await car.save();
 
   res.json({
     data: car,
-    message:
-      detailsChanged && car.status === "pending"
-        ? "Saved. Changes to the car go back to the office for a quick check."
-        : "Saved.",
+    message: !detailsChanged
+      ? "Saved."
+      : hadOffer
+        ? "Saved. Changing the car withdraws the offer on it, so the office will price it again."
+        : car.status === "pending"
+          ? "Saved. Changes to the car go back to the office for a quick check."
+          : "Saved.",
+  });
+});
+
+/**
+ * POST /api/lenders/cars/:id/offer, the owner's answer to the office's terms.
+ *
+ * Agreeing is what publishes the car. There is no separate approval step after
+ * it, because there is nothing left to approve: the office wrote the terms and
+ * the owner accepted them, and making somebody wait again after they have said
+ * yes is how a two-day negotiation becomes a two-week one.
+ *
+ * Declining sends the listing back to `pending` rather than killing it. A
+ * number being wrong is the most ordinary outcome of an offer and the office
+ * should be able to come back with a better one; ending the listing here would
+ * mean re-entering the whole car to continue a conversation about its price.
+ */
+export const respondToOffer = catchAsync(async (req: Request, res: Response) => {
+  const { id } = req.params;
+  if (typeof id !== "string" || !Types.ObjectId.isValid(id)) {
+    res.status(statusCodes.NOT_FOUND).json({ message: "Car not found." });
+    return;
+  }
+
+  const lender = me(req);
+  const car = await ListedCar.findOne({ _id: id, lender: lender._id });
+  if (!car) {
+    res.status(statusCodes.NOT_FOUND).json({ message: "Car not found." });
+    return;
+  }
+
+  // Both halves matter. An offer that has already been answered must not be
+  // answered twice, and a listing that has moved on since is not waiting on
+  // anybody, so a stale tab must not be able to publish a car.
+  if (car.status !== "offered" || !car.offer || car.offer.response) {
+    res
+      .status(statusCodes.CONFLICT)
+      .json({ message: "There is no offer waiting on this car at the moment." });
+    return;
+  }
+
+  const body = req.body as Record<string, unknown>;
+  if (typeof body.accept !== "boolean") {
+    res
+      .status(statusCodes.UNPROCESSABLE_ENTITY)
+      .json({ message: "Say whether you accept the offer." });
+    return;
+  }
+
+  const note =
+    typeof body.note === "string" && body.note.trim() ? body.note.trim().slice(0, 500) : undefined;
+
+  car.offer.response = body.accept ? "accepted" : "declined";
+  car.offer.respondedAt = new Date();
+  car.offer.responseNote = note;
+
+  if (body.accept) {
+    // The terms become the car's terms. Copied rather than read through the
+    // offer from here on, so that a later offer cannot retroactively change
+    // what a published car costs or what its owner is paid.
+    car.publicDailyRate = car.offer.dailyRate;
+    car.commissionPercent = car.offer.commissionPercent;
+    if (car.offer.kmIncludedPerDay !== undefined) car.kmIncludedPerDay = car.offer.kmIncludedPerDay;
+    if (car.offer.extraKmRate !== undefined) car.extraKmRate = car.offer.extraKmRate;
+    car.status = "approved";
+    car.reviewNote = undefined;
+  } else {
+    car.status = "pending";
+  }
+  await car.save();
+
+  const label = `${car.make} ${car.model}`.trim();
+  await notifyAgencyAdmins(lender.owner, {
+    title: body.accept ? "An owner accepted your offer" : "An owner declined your offer",
+    body: body.accept
+      ? `${label} is now live at ${rupees(car.publicDailyRate ?? 0)} a day.`
+      : `${label} is back in the review queue. ${note ? `They said: ${note}` : "No reason given."}`,
+    data: { type: body.accept ? "listing:accepted" : "listing:declined", listingId: String(car._id) },
+  }).catch(() => undefined);
+
+  res.json({
+    data: car,
+    message: body.accept
+      ? "Agreed. Your car is on the website."
+      : "Thanks, we have told the office. They may come back with a different offer.",
   });
 });
 
@@ -340,6 +453,93 @@ export const listListings = catchAsync(async (req: Request, res: Response) => {
 });
 
 /**
+ * PATCH /api/rentals/listings/:id/offer, put terms to the car's owner.
+ *
+ * The office names the price a customer will pay and the share Musafir keeps,
+ * and then waits. Nothing is published by this route: an owner's car going
+ * live on the strength of a number they have not seen is the single most
+ * avoidable argument in this business, and the whole point of the step is that
+ * the person whose car it is agreed to the terms in writing first.
+ *
+ * The commission is part of the offer rather than a setting applied later,
+ * because it is half of what the owner is actually being asked. "Rs 9,500 a
+ * day" and "Rs 9,500 a day, of which you keep Rs 7,600" are different
+ * propositions, and only the second one is an offer.
+ *
+ * Making a new offer replaces the old one whole, response and all. There is
+ * only ever one set of terms on the table.
+ */
+export const offerListing = catchAsync(async (req: Request, res: Response) => {
+  const { id } = req.params;
+  if (typeof id !== "string" || !Types.ObjectId.isValid(id)) {
+    res.status(statusCodes.NOT_FOUND).json({ message: "Listing not found." });
+    return;
+  }
+
+  const listing = await ListedCar.findOne({ _id: id, owner: req.ownerId });
+  if (!listing) {
+    res.status(statusCodes.NOT_FOUND).json({ message: "Listing not found." });
+    return;
+  }
+
+  const body = req.body as Record<string, unknown>;
+  const dailyRate = Number(body.dailyRate);
+  if (!Number.isFinite(dailyRate) || dailyRate <= 0) {
+    res
+      .status(statusCodes.UNPROCESSABLE_ENTITY)
+      .json({ message: "Name the daily rate a customer will pay." });
+    return;
+  }
+
+  // Falls back to the house default rather than to zero. A commission of zero
+  // is a real decision somebody might make, and it must be typed, not arrived
+  // at because a field was left empty.
+  const commissionPercent =
+    body.commissionPercent === undefined || body.commissionPercent === ""
+      ? (req.agency?.settings.commissionPercent ?? 0)
+      : Number(body.commissionPercent);
+  if (!Number.isFinite(commissionPercent) || commissionPercent < 0 || commissionPercent > 100) {
+    res
+      .status(statusCodes.UNPROCESSABLE_ENTITY)
+      .json({ message: "The commission has to be a percentage between 0 and 100." });
+    return;
+  }
+
+  const km = body.kmIncludedPerDay === undefined ? undefined : Number(body.kmIncludedPerDay) || undefined;
+  const extraKm = body.extraKmRate === undefined ? undefined : Number(body.extraKmRate) || undefined;
+
+  listing.offer = {
+    dailyRate: Math.round(dailyRate),
+    commissionPercent,
+    kmIncludedPerDay: km ?? listing.kmIncludedPerDay,
+    extraKmRate: extraKm ?? listing.extraKmRate,
+    note: typeof body.note === "string" && body.note.trim() ? body.note.trim().slice(0, 500) : undefined,
+    offeredAt: new Date(),
+    offeredBy: req.user?._id as Types.ObjectId,
+  };
+  listing.status = "offered";
+  listing.reviewNote = undefined;
+  listing.reviewedAt = new Date();
+  listing.reviewedBy = req.user?._id as Types.ObjectId;
+  await listing.save();
+
+  const share = ownerDailyShare(listing.offer.dailyRate, commissionPercent);
+  const label = `${listing.make} ${listing.model}`.trim();
+  await notifyLender(listing.lender, {
+    title: "Musafir has offered a rent for your car",
+    body: `${label}: ${rupees(listing.offer.dailyRate)} a day, and you keep ${rupees(share)} of it after our ${commissionPercent}% commission. Open your portal to accept or decline.`,
+    data: { type: "listing:offered", listingId: String(listing._id) },
+  }).catch(() => undefined);
+
+  await recordAudit(req, {
+    action: "listing.offered",
+    target: { type: "listing", id: String(listing._id), label },
+  });
+
+  res.json({ data: listing, message: "Offer sent to the owner." });
+});
+
+/**
  * PATCH /api/rentals/listings/:id, approve, reject or pause.
  *
  * Approving REQUIRES a public daily rate. The owner's expectation and the
@@ -375,6 +575,17 @@ export const reviewListing = catchAsync(async (req: Request, res: Response) => {
     listing.kmIncludedPerDay = Number(body.kmIncludedPerDay) || undefined;
   }
   if (body.extraKmRate !== undefined) listing.extraKmRate = Number(body.extraKmRate) || undefined;
+  if (body.commissionPercent !== undefined) {
+    const percent =
+      body.commissionPercent === "" ? undefined : Number(body.commissionPercent);
+    if (percent !== undefined && (!Number.isFinite(percent) || percent < 0 || percent > 100)) {
+      res
+        .status(statusCodes.UNPROCESSABLE_ENTITY)
+        .json({ message: "The commission has to be a percentage between 0 and 100." });
+      return;
+    }
+    listing.commissionPercent = percent;
+  }
 
   if (status === "approved" && !listing.publicDailyRate) {
     res

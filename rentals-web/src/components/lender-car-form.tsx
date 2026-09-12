@@ -11,30 +11,60 @@ import { cn } from "@/lib/cn";
 
 const FUELS = ["petrol", "diesel", "cng", "hybrid", "electric"] as const;
 
+/** What an existing car looks like coming back from the API. */
+export interface EditableCar {
+  _id: string;
+  make: string;
+  model: string;
+  year?: number;
+  color?: string;
+  seats?: number;
+  fuelType?: string;
+  transmission?: "manual" | "automatic";
+  registrationNumber: string;
+  description?: string;
+  expectedDailyRate?: number;
+  driverBy?: "fleet" | "owner";
+  photos?: string[];
+  availability?: Window[];
+  status?: string;
+}
+
 /**
- * Offering a car.
+ * Offering a car, and later correcting it.
  *
  * Asks for the least that lets the office make a decision and a customer make
  * a choice: what the car is, what it looks like, when it is free, and what the
- * owner hopes to be paid. Everything else, the customer's price, the
- * kilometre allowance, is agreed in the conversation that follows, and asking
- * for it here would imply the owner sets it.
+ * owner hopes to be paid. The customer's price and the kilometre allowance are
+ * not here, because the owner does not set those; they come back as an offer.
+ *
+ * One form for both jobs on purpose. An owner correcting a mileage or swapping
+ * a photograph is filling in the same fields they filled in the first time,
+ * and a second, subtly different screen for it is how the two drift apart.
  */
-export const LenderCarForm = () => {
+export const LenderCarForm = ({ car }: { car?: EditableCar } = {}) => {
   const router = useRouter();
-  const [make, setMake] = useState("");
-  const [model, setModel] = useState("");
-  const [year, setYear] = useState("");
-  const [color, setColor] = useState("");
-  const [seats, setSeats] = useState("4");
-  const [fuelType, setFuelType] = useState<(typeof FUELS)[number]>("petrol");
-  const [transmission, setTransmission] = useState<"manual" | "automatic">("manual");
-  const [registrationNumber, setRegistrationNumber] = useState("");
-  const [description, setDescription] = useState("");
-  const [expectedDailyRate, setExpectedDailyRate] = useState("");
-  const [driverBy, setDriverBy] = useState<"fleet" | "owner">("fleet");
-  const [photos, setPhotos] = useState<string[]>([]);
-  const [windows, setWindows] = useState<Window[]>([{ from: "", to: "" }]);
+  const [make, setMake] = useState(car?.make ?? "");
+  const [model, setModel] = useState(car?.model ?? "");
+  const [year, setYear] = useState(car?.year ? String(car.year) : "");
+  const [color, setColor] = useState(car?.color ?? "");
+  const [seats, setSeats] = useState(String(car?.seats ?? 4));
+  const [fuelType, setFuelType] = useState<(typeof FUELS)[number]>(
+    (car?.fuelType as (typeof FUELS)[number]) ?? "petrol",
+  );
+  const [transmission, setTransmission] = useState<"manual" | "automatic">(
+    car?.transmission ?? "manual",
+  );
+  const [registrationNumber, setRegistrationNumber] = useState(car?.registrationNumber ?? "");
+  const [description, setDescription] = useState(car?.description ?? "");
+  const [expectedDailyRate, setExpectedDailyRate] = useState(
+    car?.expectedDailyRate ? String(car.expectedDailyRate) : "",
+  );
+  const [driverBy, setDriverBy] = useState<"fleet" | "owner">(car?.driverBy ?? "fleet");
+  const [photos, setPhotos] = useState<string[]>(car?.photos ?? []);
+  const [windows, setWindows] = useState<Window[]>(
+    car?.availability?.length ? car.availability : [{ from: "", to: "" }],
+  );
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -52,8 +82,8 @@ export const LenderCarForm = () => {
 
     setBusy(true);
     try {
-      const response = await fetch("/api/lender/cars", {
-        method: "POST",
+      const response = await fetch(car ? `/api/lender/cars/${car._id}` : "/api/lender/cars", {
+        method: car ? "PATCH" : "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           make: make.trim(),
@@ -89,7 +119,19 @@ export const LenderCarForm = () => {
     <Container className="py-12 sm:py-16">
       <div className="mx-auto max-w-2xl">
         <Eyebrow>Your car</Eyebrow>
-        <h1 className="font-display mt-2 text-3xl font-semibold sm:text-4xl">Tell us about it</h1>
+        <h1 className="font-display mt-2 text-3xl font-semibold sm:text-4xl">
+          {car ? `${car.make} ${car.model}`.trim() : "Tell us about it"}
+        </h1>
+        {/* Said before they start typing, not after they press save. Finding
+            out that a change unpublished your car is the sort of surprise that
+            stops people editing anything again. */}
+        {car && (car.status === "approved" || car.status === "offered") ? (
+          <p className="mt-3 max-w-lg text-sm leading-relaxed text-ink-soft">
+            {car.status === "approved"
+              ? "This car is live. Changing what it is takes it off the website until the office has had another look. Dates are the exception, you can change those any time from your garage."
+              : "There is an offer waiting on this car. Changing it withdraws that offer, because the price was for the car as it was."}
+          </p>
+        ) : null}
 
         <form onSubmit={submit} className="mt-8 space-y-8">
           <section>
@@ -250,7 +292,7 @@ export const LenderCarForm = () => {
             className="inline-flex w-full items-center justify-center gap-2 rounded-full bg-action px-6 py-3 text-sm font-semibold text-white transition-colors hover:bg-action-deep disabled:opacity-60 sm:w-auto"
           >
             {busy ? <Loader2 className="size-4 animate-spin" aria-hidden /> : null}
-            Send for review
+            {car ? "Save changes" : "Send for review"}
           </button>
         </form>
       </div>

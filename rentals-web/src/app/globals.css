@@ -623,6 +623,25 @@ body {
 }
 
 /**
+ * Shown only where there is a pointer that can hover.
+ *
+ * Gallery arrows, chiefly. A touch device has a better way of moving through
+ * photographs and does not need a control sitting over a third of the picture
+ * in order to do it. Written as a class rather than as an arbitrary Tailwind
+ * variant because the escaped at-rule that variant generates is not valid CSS
+ * and takes the whole stylesheet down with it.
+ */
+.pointer-only {
+  display: none;
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .pointer-only {
+    display: flex;
+  }
+}
+
+/**
  * The slow push into a car's photograph on hover.
  *
  * A class rather than a `group-hover:` utility, because a utility cannot be

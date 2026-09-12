@@ -8,6 +8,7 @@ import { Badge, Field, Input, Textarea } from "@/components/ui";
 import { asObject, type AdminListing } from "@/lib/admin-types";
 import { photoSrc } from "@/lib/photos";
 import { pkr, shortDate } from "@/lib/format";
+import { ownerDailyShare } from "@/lib/listing";
 
 /**
  * One car somebody outside the business has offered, and the decision on it.
@@ -19,19 +20,33 @@ import { pkr, shortDate } from "@/lib/format";
  */
 const TONE = {
   pending: "neutral",
+  offered: "neutral",
   approved: "good",
   rejected: "warn",
   paused: "neutral",
 } as const;
 
-export const ListingReview = ({ listing }: { listing: AdminListing }) => {
+export const ListingReview = ({
+  listing,
+  houseCommission,
+}: {
+  listing: AdminListing;
+  /** The business's default, used when this car has not been given its own. */
+  houseCommission: number;
+}) => {
   const router = useRouter();
   const owner = asObject(listing.lender);
 
   const [publicRate, setPublicRate] = useState(String(listing.publicDailyRate ?? ""));
   const [kmIncluded, setKmIncluded] = useState(String(listing.kmIncludedPerDay ?? ""));
   const [extraKmRate, setExtraKmRate] = useState(String(listing.extraKmRate ?? ""));
-  const [note, setNote] = useState(listing.reviewNote ?? "");
+  const [commission, setCommission] = useState(
+    String(listing.commissionPercent ?? listing.offer?.commissionPercent ?? houseCommission),
+  );
+  // Seeded from the last offer as well as the review note, so that composing a
+  // second offer starts from what was actually said the first time rather than
+  // from an empty box.
+  const [note, setNote] = useState(listing.reviewNote ?? listing.offer?.note ?? "");
   const [busy, setBusy] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
 
@@ -47,6 +62,7 @@ export const ListingReview = ({ listing }: { listing: AdminListing }) => {
           publicDailyRate: publicRate.trim() === "" ? undefined : Number(publicRate),
           kmIncludedPerDay: kmIncluded.trim() === "" ? undefined : Number(kmIncluded),
           extraKmRate: extraKmRate.trim() === "" ? undefined : Number(extraKmRate),
+          commissionPercent: commission.trim() === "" ? undefined : Number(commission),
           reviewNote: note || undefined,
         }),
       });
@@ -58,6 +74,42 @@ export const ListingReview = ({ listing }: { listing: AdminListing }) => {
     }
     setBusy(null);
   };
+
+  /**
+   * Put the terms to the owner instead of publishing on their behalf.
+   *
+   * This is the route the office should normally take. Approving directly
+   * still exists below, because there are cars whose terms were agreed on the
+   * phone and typing them twice helps nobody, but it publishes somebody else's
+   * car on somebody else's say-so and is labelled accordingly.
+   */
+  const sendOffer = async () => {
+    setBusy("offer");
+    setError(null);
+    try {
+      const response = await fetch(`/api/admin/rentals/listings/${listing._id}/offer`, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          dailyRate: Number(publicRate),
+          commissionPercent: commission.trim() === "" ? undefined : Number(commission),
+          kmIncludedPerDay: kmIncluded.trim() === "" ? undefined : Number(kmIncluded),
+          extraKmRate: extraKmRate.trim() === "" ? undefined : Number(extraKmRate),
+          note: note || undefined,
+        }),
+      });
+      const body = (await response.json()) as { message?: string };
+      if (!response.ok) setError(body.message ?? "That did not work.");
+      else router.refresh();
+    } catch {
+      setError("Could not reach the server. Try again.");
+    }
+    setBusy(null);
+  };
+
+  const rate = Number(publicRate) || 0;
+  const percent = commission.trim() === "" ? houseCommission : Number(commission) || 0;
+  const share = ownerDailyShare(rate, percent);
 
   const margin =
     listing.expectedDailyRate && Number(publicRate)
@@ -160,6 +212,23 @@ export const ListingReview = ({ listing }: { listing: AdminListing }) => {
             className="tnum"
           />
         </Field>
+        <Field
+          label="Our commission %"
+          hint={
+            percent < 10 || percent > 20
+              ? "Outside the usual 10 to 20 percent. Deliberate?"
+              : "Of what the customer pays. Frozen onto every booking at confirmation."
+          }
+        >
+          <Input
+            type="number"
+            min={0}
+            max={100}
+            value={commission}
+            onChange={(event) => setCommission(event.target.value)}
+            className="tnum"
+          />
+        </Field>
         <Field label="Each km over">
           <Input
             type="number"
@@ -179,6 +248,30 @@ export const ListingReview = ({ listing }: { listing: AdminListing }) => {
         </Field>
       </div>
 
+      {/* The two numbers that matter to the owner, worked out where the
+          office is typing them. Guessing at somebody's pay in your head is how
+          an offer goes out that the office would not have made. */}
+      {rate > 0 ? (
+        <p className="mt-4 rounded-xl bg-paper-deep px-4 py-3 text-sm text-ink-soft tnum">
+          Customer pays <strong className="font-semibold text-ink">{pkr(rate)}</strong> a day. The
+          owner keeps <strong className="font-semibold text-ink">{pkr(share)}</strong>, we keep{" "}
+          <strong className="font-semibold text-ink">{pkr(rate - share)}</strong>.
+        </p>
+      ) : null}
+
+      {/* What the owner said last time, so the next number is an answer to it
+          rather than a repeat of the last one. */}
+      {listing.offer ? (
+        <p className="mt-3 text-sm text-muted">
+          {listing.offer.response === "declined"
+            ? `Offered ${pkr(listing.offer.dailyRate)} a day at ${listing.offer.commissionPercent}%, declined.`
+            : listing.offer.response === "accepted"
+              ? `Owner agreed to ${pkr(listing.offer.dailyRate)} a day at ${listing.offer.commissionPercent}%.`
+              : `Waiting on the owner: ${pkr(listing.offer.dailyRate)} a day at ${listing.offer.commissionPercent}%.`}
+          {listing.offer.responseNote ? ` They said: "${listing.offer.responseNote}"` : ""}
+        </p>
+      ) : null}
+
       {error ? (
         <p className="note-enter mt-4 flex gap-2 text-sm text-alert" role="alert">
           <AlertCircle className="mt-0.5 size-4 shrink-0" aria-hidden />
@@ -187,14 +280,26 @@ export const ListingReview = ({ listing }: { listing: AdminListing }) => {
       ) : null}
 
       <div className="mt-5 flex flex-wrap gap-3">
-        <button data-pressable="control"
+        <button
+          data-pressable="control"
+          type="button"
+          disabled={busy !== null || publicRate.trim() === ""}
+          onClick={() => void sendOffer()}
+          className="inline-flex items-center gap-2 rounded-full bg-action px-5 py-2.5 text-sm font-semibold text-white hover:bg-action-deep disabled:opacity-40"
+        >
+          {busy === "offer" ? <Loader2 className="size-4 animate-spin" aria-hidden /> : null}
+          {listing.status === "offered" ? "Send a new offer" : "Offer these terms to the owner"}
+        </button>
+        <button
+          data-pressable="control"
           type="button"
           disabled={busy !== null || publicRate.trim() === ""}
           onClick={() => void decide("approved")}
-          className="inline-flex items-center gap-2 rounded-full bg-night px-5 py-2.5 text-sm font-semibold text-paper hover:bg-action-deep disabled:opacity-40"
+          className="inline-flex items-center gap-2 rounded-full border border-ink/20 px-5 py-2.5 text-sm font-semibold text-ink hover:bg-ink/5 disabled:opacity-40"
+          title="Publishes without asking the owner. Only where the terms were already agreed."
         >
           {busy === "approved" ? <Loader2 className="size-4 animate-spin" aria-hidden /> : null}
-          {listing.status === "approved" ? "Save and keep published" : "Approve and publish"}
+          {listing.status === "approved" ? "Save and keep published" : "Publish without asking"}
         </button>
         {listing.status === "approved" ? (
           <button data-pressable="control"

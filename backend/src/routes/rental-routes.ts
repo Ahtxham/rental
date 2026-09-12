@@ -17,6 +17,7 @@ router.get("/availability", rentalController.checkAvailability);
 // them. Static paths, so they sit above "/:id".
 router.get("/listings", lenderController.listListings);
 router.patch("/listings/:id", lenderController.reviewListing);
+router.patch("/listings/:id/offer", lenderController.offerListing);
 router.get("/lenders", lenderController.listLenders);
 router.patch("/lenders/:id", lenderController.reviewLender);
 

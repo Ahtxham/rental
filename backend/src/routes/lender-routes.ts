@@ -27,6 +27,7 @@ router.get("/cars", lenderController.listMyCars);
 router.get("/earnings", lenderController.listMyEarnings);
 router.post("/cars", lenderController.createMyCar);
 router.patch("/cars/:id", lenderController.updateMyCar);
+router.post("/cars/:id/offer", lenderController.respondToOffer);
 router.delete("/cars/:id", lenderController.withdrawMyCar);
 
 export default router;

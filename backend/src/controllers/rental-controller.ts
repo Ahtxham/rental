@@ -442,7 +442,18 @@ export const confirmRental = catchAsync(async (req: Request, res: Response) => {
    * already: re-confirming must never silently move somebody's money.
    */
   if (rental.listedCar && rental.commissionPercent === undefined) {
-    rental.commissionPercent = req.agency?.settings.commissionPercent ?? 0;
+    /**
+     * The car's own commission wins over the house default.
+     *
+     * A listing carries a percentage when the office agreed one with that
+     * owner for that car, usually as part of the offer they accepted. Falling
+     * back to the house setting in that case would quietly pay somebody a
+     * different share from the one they said yes to in writing, which is the
+     * single worst bug this file could have.
+     */
+    const listing = await ListedCar.findById(rental.listedCar).select("commissionPercent").lean();
+    rental.commissionPercent =
+      listing?.commissionPercent ?? req.agency?.settings.commissionPercent ?? 0;
   }
 
   rental.status = "confirmed";

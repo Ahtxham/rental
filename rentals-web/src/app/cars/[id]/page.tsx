@@ -5,11 +5,13 @@ import { notFound } from "next/navigation";
 
 import { Badge, Button, Container, Eyebrow } from "@/components/ui";
 import { getCar, getCars } from "@/lib/api";
+import { carSearch, withSearch } from "@/lib/search-params";
 import { telHref, whatsappLink } from "@/lib/config";
 import { SITE_URL } from "@/lib/config";
 import { getContact } from "@/lib/site";
 import { pkr, titleCase } from "@/lib/format";
 import { CarCard } from "@/components/car-card";
+import { CarGallery } from "@/components/car-gallery";
 import { BreadcrumbSchema, CarSchema } from "@/components/structured-data";
 
 /**
@@ -46,10 +48,25 @@ export const generateMetadata = async ({
   };
 };
 
-const CarPage = async ({ params }: { params: Promise<{ id: string }> }) => {
+const CarPage = async ({
+  params,
+  searchParams,
+}: {
+  params: Promise<{ id: string }>;
+  /**
+   * The dates the visitor already chose, if they came from a search.
+   *
+   * Read here purely so they can be handed on. This page does not filter by
+   * them: it is one car's page and it exists whether or not that car is free
+   * next Tuesday. What it must not do is lose them.
+   */
+  searchParams: Promise<{ from?: string; to?: string; drive?: string }>;
+}) => {
   const { id } = await params;
-  const [car, contact] = await Promise.all([getCar(id), getContact()]);
+  const [car, contact, query] = await Promise.all([getCar(id), getContact(), searchParams]);
   if (!car) notFound();
+
+  const search = carSearch(query);
 
   const others = (await getCars()).filter((other) => other.id !== car.id).slice(0, 3);
   const selfDrive = contact.selfDriveEnabled && car.selfDriveRate;
@@ -75,16 +92,18 @@ const CarPage = async ({ params }: { params: Promise<{ id: string }> }) => {
           </Link>
 
           <div className="mt-6 grid items-start gap-10 lg:grid-cols-[1.1fr_1fr]">
-            <div className="overflow-hidden rounded-2xl border border-line">
-              {car.photos[0] ? (
-                // eslint-disable-next-line @next/next/no-img-element
-                <img
-                  src={car.photos[0]}
-                  alt={`${car.make} ${car.model}`}
-                  className="aspect-[16/10] w-full object-cover"
-                />
-              ) : (
-                <div className="car-placeholder flex aspect-[16/10] w-full flex-col items-center justify-center gap-1">
+            {/* One slider rather than a big photograph and a row of stamps
+                underneath it. The thumbnails were four pictures nobody could
+                see properly and a fifth that was simply not shown; this way
+                every photograph is the same size as the first one, and any of
+                them opens full screen. */}
+            <CarGallery
+              photos={car.photos}
+              alt={`${car.make} ${car.model}`}
+              aspect="aspect-[16/10]"
+              rounded="rounded-2xl"
+              fallback={
+                <div className="car-placeholder flex size-full flex-col items-center justify-center gap-1">
                   <span className="font-display text-4xl font-semibold text-paper/85">
                     {car.make}
                   </span>
@@ -92,21 +111,8 @@ const CarPage = async ({ params }: { params: Promise<{ id: string }> }) => {
                     {car.model}
                   </span>
                 </div>
-              )}
-              {car.photos.length > 1 ? (
-                <div className="grid grid-cols-4 gap-1 bg-line/40 p-1">
-                  {car.photos.slice(1, 5).map((photo) => (
-                    // eslint-disable-next-line @next/next/no-img-element
-                    <img
-                      key={photo}
-                      src={photo}
-                      alt=""
-                      className="aspect-[4/3] w-full object-cover"
-                    />
-                  ))}
-                </div>
-              ) : null}
-            </div>
+              }
+            />
 
             <div>
               <Eyebrow>Lahore · By the day</Eyebrow>
@@ -204,7 +210,7 @@ const CarPage = async ({ params }: { params: Promise<{ id: string }> }) => {
               ) : null}
 
               <div className="mt-7 flex flex-wrap gap-3">
-                <Button href={`/book?car=${car.id}`} size="lg">
+                <Button href={withSearch(`/book?car=${car.id}`, search)} size="lg">
                   Check dates and book
                 </Button>
                 {contact.whatsapp ? (
@@ -244,7 +250,7 @@ const CarPage = async ({ params }: { params: Promise<{ id: string }> }) => {
           <h2 className="font-display text-2xl font-semibold">Other cars</h2>
           <div className="mt-6 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
             {others.map((other) => (
-              <CarCard key={other.id} car={other} />
+              <CarCard key={other.id} car={other} search={search} />
             ))}
           </div>
         </Container>

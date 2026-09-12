@@ -8,6 +8,7 @@ import { BreadcrumbSchema } from "@/components/structured-data";
 import { SearchForm } from "@/components/search-form";
 import { Button, Container, Eyebrow } from "@/components/ui";
 import { getCars } from "@/lib/api";
+import { carSearch } from "@/lib/search-params";
 import { getContact } from "@/lib/site";
 import { shortDate } from "@/lib/format";
 
@@ -24,10 +25,13 @@ const REVEAL = ["reveal", "reveal reveal-2", "reveal reveal-3"] as const;
 const CarsPage = async ({
   searchParams,
 }: {
-  searchParams: Promise<{ from?: string; to?: string }>;
+  searchParams: Promise<{ from?: string; to?: string; drive?: string }>;
 }) => {
   const params = await searchParams;
   const dated = Boolean(params.from && params.to && params.to > params.from);
+  // Handed to every card, so that picking one carries the dates with it
+  // instead of dropping the visitor onto an empty booking form.
+  const search = carSearch(params);
 
   const [cars, contact] = await Promise.all([
     getCars(params.from, params.to),
@@ -107,6 +111,7 @@ const CarsPage = async ({
             {sorted.map((car, index) => (
               <CarCard
                 key={car.id}
+                search={search}
                 car={car}
                 className={REVEAL[Math.min(index % 3, 2)]}
               />

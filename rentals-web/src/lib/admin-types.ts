@@ -1,3 +1,5 @@
+import type { ListingOffer, ListingStatus } from "@/lib/listing";
+
 /**
  * The shapes the office screens read back from the API.
  *
@@ -132,7 +134,11 @@ export interface AdminListing {
   extraKmRate?: number;
   driverBy: "fleet" | "owner";
   availability: Array<{ from: string; to: string }>;
-  status: "pending" | "approved" | "rejected" | "paused";
+  status: ListingStatus;
+  /** Agreed for this car specifically. Undefined means the house default. */
+  commissionPercent?: number;
+  /** The terms last put to the owner, and their answer if they have given one. */
+  offer?: ListingOffer;
   reviewNote?: string;
   createdAt: string;
 }

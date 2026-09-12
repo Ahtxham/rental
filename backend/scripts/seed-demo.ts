@@ -47,7 +47,7 @@ const CARS = [
     kmIncludedPerDay: 200,
     extraKmRate: 35,
     description: "The default choice for a day of meetings or an airport run.",
-    photo: "/showcase/car-sedan.jpg",
+    photos: ["/showcase/car-sedan.jpg", "/showcase/drive.jpg", "/showcase/road.jpg"],
   },
   {
     registrationNumber: "LEB-7742",
@@ -64,7 +64,7 @@ const CARS = [
     kmIncludedPerDay: 200,
     extraKmRate: 30,
     description: "Lighter on fuel than the Corolla and easier through old Lahore.",
-    photo: "/showcase/car-compact.jpg",
+    photos: ["/showcase/car-compact.jpg", "/showcase/drive.jpg"],
   },
   {
     registrationNumber: "LEC-1109",
@@ -81,7 +81,7 @@ const CARS = [
     kmIncludedPerDay: 150,
     extraKmRate: 25,
     description: "Cheapest way to have a car and a driver for the whole day.",
-    photo: "/showcase/car-hatch.jpg",
+    photos: ["/showcase/car-hatch.jpg"],
   },
   {
     registrationNumber: "LED-3350",
@@ -99,7 +99,7 @@ const CARS = [
     description: "For a family, a wedding party, or a run up to Murree.",
     // No photograph. One car has to be the one nobody has shot yet,
     // and the card it produces is a state worth looking at.
-    photo: undefined as string | undefined,
+    photos: [] as string[],
   },
   {
     registrationNumber: "LEE-8890",
@@ -115,7 +115,7 @@ const CARS = [
     kmIncludedPerDay: 200,
     extraKmRate: 60,
     description: "When the car is part of the impression you are making.",
-    photo: "/showcase/car-suv.jpg",
+    photos: ["/showcase/car-suv.jpg", "/showcase/car-crossover.jpg"],
   },
 ];
 
@@ -176,21 +176,21 @@ const seedDemo = async () => {
       }
       // Only ever fills a gap. A car you photographed yourself keeps its
       // picture, this is the stand-in for one that has none.
-      if (car.photo && exists.photos.length === 0) {
-        exists.photos = [PHOTO_BASE + car.photo];
+      if (car.photos.length > 0 && exists.photos.length === 0) {
+        exists.photos = car.photos.map((photo) => PHOTO_BASE + photo);
         exists.color = car.color;
         touched = true;
       }
       if (touched) await exists.save();
       continue;
     }
-    const { photo, ...fields } = car;
+    const { photos, ...fields } = car;
     await Car.create({
       ...fields,
       owner,
       listed: true,
       currentOdometer: 40_000,
-      photos: photo ? [PHOTO_BASE + photo] : [],
+      photos: photos.map((photo) => PHOTO_BASE + photo),
     });
     added += 1;
   }

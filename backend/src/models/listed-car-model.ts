@@ -14,8 +14,56 @@ import mongoose, { Schema, Types } from "mongoose";
  * The registration number IS stored, the office needs it before it takes
  * custody of anything, and is never published. See the public controller.
  */
-export const LISTING_STATUSES = ["pending", "approved", "rejected", "paused"] as const;
+/**
+ * Where a listing has got to.
+ *
+ * `offered` is the office's half of a negotiation: terms have been put to the
+ * owner and nothing happens until they answer. It is a status rather than a
+ * flag on the side because the office's queue is read by status, and "waiting
+ * on the owner" is a different pile of work from "waiting on us".
+ */
+export const LISTING_STATUSES = [
+  "pending",
+  "offered",
+  "approved",
+  "rejected",
+  "paused",
+] as const;
 export type ListingStatus = (typeof LISTING_STATUSES)[number];
+
+export const OFFER_RESPONSES = ["accepted", "declined"] as const;
+export type OfferResponse = (typeof OFFER_RESPONSES)[number];
+
+/**
+ * Terms the office has put to a car's owner, and what they said.
+ *
+ * Kept as one object rather than as loose fields so that an offer is a thing
+ * that was made at a moment, by a person, and either answered or not. The
+ * owner's answer lives here beside the terms they were answering, which is the
+ * only arrangement that survives the office making a second, better offer
+ * later: the old one is overwritten whole, and there is never a half-replaced
+ * set of numbers with last week's response still attached.
+ *
+ * `commissionPercent` is part of the offer and not an afterthought. Agreeing
+ * to a daily rate without being told what share of it you keep is agreeing to
+ * nothing, and this is somebody's car.
+ */
+export interface ListingOffer {
+  /** What a customer will be charged per day if the owner agrees. */
+  dailyRate: number;
+  /** Musafir's share of that, as a percentage. The owner keeps the rest. */
+  commissionPercent: number;
+  kmIncludedPerDay?: number;
+  extraKmRate?: number;
+  /** The office's message to the owner. Shown verbatim in their portal. */
+  note?: string;
+  offeredAt: Date;
+  offeredBy?: Types.ObjectId;
+  respondedAt?: Date;
+  response?: OfferResponse;
+  /** The owner's reply, if they left one. Shown to the office. */
+  responseNote?: string;
+}
 
 /** A window the owner says the car is free. Half-open: [from, to). */
 export interface AvailabilityWindow {
@@ -48,8 +96,19 @@ export interface ListedCarAttrs {
    */
   expectedDailyRate?: number;
   publicDailyRate?: number;
+  /**
+   * Musafir's share of this particular car's earnings, if it was agreed
+   * separately from the house default.
+   *
+   * Undefined means "use the business's setting", which is what most cars do.
+   * A number here is a promise made to one owner about one car, and it is the
+   * number a booking freezes at confirmation. See `rental-model.ts`.
+   */
+  commissionPercent?: number;
   kmIncludedPerDay?: number;
   extraKmRate?: number;
+  /** The terms last put to the owner, and their answer. */
+  offer?: ListingOffer;
   /** Who drives it out: one of the fleet's drivers, or the owner themselves. */
   driverBy: "fleet" | "owner";
   availability: AvailabilityWindow[];
@@ -68,6 +127,22 @@ const windowSchema = new Schema<AvailabilityWindow>(
   {
     from: { type: Date, required: true },
     to: { type: Date, required: true },
+  },
+  { _id: false },
+);
+
+const offerSchema = new Schema<ListingOffer>(
+  {
+    dailyRate: { type: Number, required: true, min: 0 },
+    commissionPercent: { type: Number, required: true, min: 0, max: 100 },
+    kmIncludedPerDay: { type: Number, min: 0 },
+    extraKmRate: { type: Number, min: 0 },
+    note: { type: String, trim: true, maxlength: 500 },
+    offeredAt: { type: Date, required: true },
+    offeredBy: { type: Schema.Types.ObjectId, ref: "Admin" },
+    respondedAt: { type: Date },
+    response: { type: String, enum: OFFER_RESPONSES },
+    responseNote: { type: String, trim: true, maxlength: 500 },
   },
   { _id: false },
 );
@@ -92,6 +167,8 @@ const listedCarSchema = new Schema<ListedCarAttrs>(
     description: { type: String, trim: true, maxlength: 400 },
     expectedDailyRate: { type: Number, min: 0 },
     publicDailyRate: { type: Number, min: 0 },
+    commissionPercent: { type: Number, min: 0, max: 100 },
+    offer: { type: offerSchema },
     kmIncludedPerDay: { type: Number, min: 0 },
     extraKmRate: { type: Number, min: 0 },
     driverBy: { type: String, enum: ["fleet", "owner"], default: "fleet" },
@@ -118,6 +195,17 @@ listedCarSchema.index({ owner: 1, status: 1, createdAt: -1 });
 listedCarSchema.index({ lender: 1, createdAt: -1 });
 /** The public search: approved listings, then filtered by window in memory. */
 listedCarSchema.index({ owner: 1, status: 1, "availability.from": 1, "availability.to": 1 });
+
+/**
+ * What the owner keeps, per day, on a given rate and commission.
+ *
+ * One implementation, used by the office when it composes an offer, by the
+ * owner's portal when it shows them what they are agreeing to, and by the
+ * tests. Two places computing a person's pay is two places for it to drift,
+ * and the one that drifts is always the one they read.
+ */
+export const ownerDailyShare = (dailyRate: number, commissionPercent: number): number =>
+  Math.max(0, Math.round(dailyRate - (dailyRate * commissionPercent) / 100));
 
 /**
  * Is the whole requested window inside one of the offered windows?

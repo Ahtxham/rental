@@ -1,6 +1,6 @@
 "use client";
 
-import { AlertCircle, CheckCircle2, Loader2 } from "lucide-react";
+import { AlertCircle, Check, CheckCircle2, Loader2 } from "lucide-react";
 import Link from "next/link";
 import { useCallback, useEffect, useState } from "react";
 
@@ -23,6 +23,63 @@ import { pkr, rentalDays, shortDate } from "@/lib/format";
  * because a customer who thinks they have booked a car and finds out otherwise
  * on Thursday morning is a customer lost for good.
  */
+/**
+ * One car, as something you can choose.
+ *
+ * Lifted out because the list is now in two pieces and a control that appears
+ * twice must behave identically in both, which is not a thing you can promise
+ * by copying twenty lines of Tailwind from one branch to the other.
+ */
+const CarChoice = ({
+  car,
+  selected,
+  onToggle,
+}: {
+  car: PublicCar;
+  selected: boolean;
+  onToggle: () => void;
+}) => {
+  const disabled = car.available === false;
+  return (
+    <button
+      type="button"
+      disabled={disabled}
+      onClick={onToggle}
+      aria-pressed={selected}
+      data-pressable="card"
+      className={cn(
+        // Lifted rather than outlined.
+        //
+        // A hard ring is a line drawn around a photograph, and it competes
+        // with the photograph for the same edge. Raising the card off the page
+        // says the same thing using the one language every surface on this
+        // site already speaks, and it does not touch the picture at all.
+        //
+        // The padding is what the shadow needs to fall into; without it the
+        // card's own edges clip it.
+        "-m-2 w-full rounded-[32px] p-2 text-start",
+        "transition-[background-color,box-shadow,transform] duration-200 ease-[cubic-bezier(0.23,1,0.32,1)]",
+        selected
+          ? "bg-card shadow-[0_22px_48px_-20px_rgba(19,19,22,0.45),0_4px_12px_-6px_rgba(19,19,22,0.2)]"
+          : disabled
+            ? "cursor-not-allowed"
+            : "hover:bg-ink/[0.04]",
+      )}
+    >
+      {/* The whole card IS the control here, so it renders without links. */}
+      <CarCard car={car} linked={false} />
+      {/* Shadow alone is not a state. Somebody scanning quickly, or on a
+          screen where the shadow is washed out by sunlight, needs a word. */}
+      {selected ? (
+        <p className="mt-3 flex items-center gap-1.5 text-xs font-semibold text-ink">
+          <Check className="size-3.5" aria-hidden />
+          Chosen
+        </p>
+      ) : null}
+    </button>
+  );
+};
+
 const KARACHI = "+05:00";
 const instant = (ymd: string, hhmm: string) => `${ymd}T${hhmm}:00${KARACHI}`;
 
@@ -70,6 +127,23 @@ export const BookingFlow = ({
   const days = datesReady ? rentalDays(from, to) : 0;
 
   const chosen = cars.find((car) => car.id === carId) ?? null;
+
+  /**
+   * The car at the top of the list, and why it is pinned there.
+   *
+   * If the visitor arrived from a car's own page, that car holds the top slot
+   * for as long as they are here, whether or not it is currently selected.
+   * They came to look at that one; moving it back into the grid the moment
+   * they clear the tick would mean hunting for it again among four others, and
+   * the page would have quietly thrown away the only thing it knew about why
+   * they are on it.
+   *
+   * With no car in the URL there is nothing to pin, so the slot falls back to
+   * whatever they have chosen, which rises out of the grid as they pick it.
+   */
+  const arrived = initialCarId ? (cars.find((car) => car.id === initialCarId) ?? null) : null;
+  const featured = arrived ?? chosen;
+  const others = featured ? cars.filter((car) => car.id !== featured.id) : cars;
   const canSelfDrive = selfDriveEnabled && (!chosen || Boolean(chosen.selfDriveRate));
 
   const loadCars = useCallback(async () => {
@@ -209,6 +283,27 @@ export const BookingFlow = ({
         Tell us the dates and we will tell you what is free
       </h1>
 
+      {/* Says out loud that the choice survived the journey.
+      
+          Somebody who pressed "Book" on a car and landed on a page headed
+          "tell us the dates" has no reason to believe the car came with them,
+          and the only place that says otherwise is a summary panel that sits
+          below the fold on a phone. The car is named here, where the eye
+          already is, as soon as the list has loaded and confirmed it is real.
+          Nothing is asserted before then: a car named from a URL that turns
+          out not to exist is worse than saying nothing. */}
+      {initialCarId && chosen ? (
+        <p className="note-enter mt-4 max-w-2xl text-[0.9375rem] leading-relaxed text-ink-soft">
+          You picked the{" "}
+          <strong className="font-semibold text-ink">
+            {chosen.make} {chosen.model}
+          </strong>
+          {datesReady
+            ? ", and your dates came with you. Change either one below."
+            : ". Choose your dates and we will price it, or pick a different car below."}
+        </p>
+      ) : null}
+
       <form onSubmit={submit} className="mt-10 grid gap-10 lg:grid-cols-[1fr_360px]">
         <div className="space-y-10">
           {/* 1, dates */}
@@ -335,35 +430,89 @@ export const BookingFlow = ({
                 dates are what matter, and we will come back with a car.
               </p>
             ) : (
-              <div className="mt-5 grid gap-5 sm:grid-cols-2">
-                {cars.map((car) => {
-                  const disabled = car.available === false;
-                  const selected = carId === car.id;
-                  return (
-                    <button
-                      key={car.id}
-                      type="button"
-                      disabled={disabled}
-                      onClick={() => setCarId(selected ? "" : car.id)}
-                      aria-pressed={selected}
-                      data-pressable="card"
+              <>
+                {/* The chosen car, alone and first.
+                
+                    Sitting in the grid it was one ringed card among five, and
+                    on a phone it could be two screens below the thing that
+                    said a car had been chosen at all. A decision that has been
+                    made should not have to be hunted for among the decisions
+                    that have not. */}
+                {featured ? (
+                  <div className="mt-6">
+                    <h3 className="t-eyebrow text-muted">
+                      {carId === featured.id
+                        ? "Your car"
+                        : arrived
+                          ? "The car you came for"
+                          : "Your car"}
+                    </h3>
+
+                    {/* Not a button, unlike the cards in the grid below.
+                    
+                        This one carries a slider, and a slider inside a button
+                        means the tap you meant for the next photograph selects
+                        the car instead. So the card shows, and one plain
+                        control underneath it decides. */}
+                    <div
                       className={cn(
-                        // Padded so the selection ring has somewhere to sit:
-                        // the card has no panel of its own any more, and a
-                        // ring drawn tight against a photograph reads as a
-                        // border on the photograph.
-                        "-m-2 rounded-[32px] p-2 text-start transition-colors duration-150",
-                        selected && "ring-2 ring-ink",
-                        disabled ? "cursor-not-allowed" : "hover:bg-ink/[0.04]",
+                        "mt-3 rounded-[32px] p-3 sm:max-w-md",
+                        "transition-[background-color,box-shadow] duration-200 ease-[cubic-bezier(0.23,1,0.32,1)]",
+                        carId === featured.id
+                          ? "bg-card shadow-[0_22px_48px_-20px_rgba(19,19,22,0.45),0_4px_12px_-6px_rgba(19,19,22,0.2)]"
+                          : "bg-ink/[0.03]",
                       )}
                     >
-                      {/* The whole card IS the control here, so the card
-                          renders without its own links. */}
-                      <CarCard car={car} linked={false} />
-                    </button>
-                  );
-                })}
-              </div>
+                      <CarCard car={featured} linked={false} gallery />
+
+                      <button
+                        type="button"
+                        data-pressable="control"
+                        disabled={featured.available === false}
+                        onClick={() => setCarId(carId === featured.id ? "" : featured.id)}
+                        className={cn(
+                          "mt-5 inline-flex w-full items-center justify-center gap-2 rounded-full px-5 py-2.5 text-sm font-semibold",
+                          "disabled:cursor-not-allowed disabled:opacity-40",
+                          carId === featured.id
+                            ? "border border-ink/20 text-ink hover:bg-ink/5"
+                            : "bg-action text-white hover:bg-action-deep",
+                        )}
+                      >
+                        {carId === featured.id ? (
+                          <>
+                            <Check className="size-4" aria-hidden />
+                            Chosen, tap to clear
+                          </>
+                        ) : featured.available === false ? (
+                          "Taken on these dates"
+                        ) : (
+                          "Choose this car"
+                        )}
+                      </button>
+                    </div>
+                  </div>
+                ) : null}
+
+                {others.length > 0 ? (
+                  <div className={featured ? "mt-10" : "mt-6"}>
+                    {featured ? (
+                      <h3 className="t-eyebrow text-muted">
+                        {datesReady ? "Other cars on those dates" : "Other cars"}
+                      </h3>
+                    ) : null}
+                    <div className={cn("grid gap-5 sm:grid-cols-2", featured && "mt-3")}>
+                      {others.map((car) => (
+                        <CarChoice
+                          key={car.id}
+                          car={car}
+                          selected={carId === car.id}
+                          onToggle={() => setCarId(carId === car.id ? "" : car.id)}
+                        />
+                      ))}
+                    </div>
+                  </div>
+                ) : null}
+              </>
             )}
             <p className="mt-4 text-xs text-muted">
               Not fussy? Leave this blank and we will give you the best car free

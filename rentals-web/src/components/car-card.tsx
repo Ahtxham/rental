@@ -1,10 +1,12 @@
 import { Fuel, Settings2, Users } from "lucide-react";
 import Link from "next/link";
 
+import { CarGallery } from "@/components/car-gallery";
 import { Badge } from "@/components/ui";
 import type { PublicCar } from "@/lib/api";
 import { pkr, titleCase } from "@/lib/format";
 import { cn } from "@/lib/cn";
+import { withSearch } from "@/lib/search-params";
 
 /**
  * One car, as a customer is allowed to see it.
@@ -22,11 +24,30 @@ export const CarCard = ({
   car,
   href,
   linked = true,
+  search = "",
+  gallery = false,
   className,
 }: {
   car: PublicCar;
   /** Where the card goes. Defaults to the car's own page. */
   href?: string;
+  /**
+   * The dates the visitor has already chosen, as a query string.
+   *
+   * Passed on to wherever this card leads, so that choosing a car never costs
+   * somebody the dates they picked two screens ago.
+   */
+  search?: string;
+  /**
+   * Show every photograph instead of just the first one.
+   *
+   * Off by default, and off in lists on purpose. A slider inside a card that
+   * is itself a button puts controls inside a control, which is invalid markup
+   * and, more to the point, means a tap meant for the next photograph selects
+   * the car instead. Turn it on where the card is a showcase rather than a
+   * choice.
+   */
+  gallery?: boolean;
   /**
    * Whether the card is its own link.
    *
@@ -39,7 +60,10 @@ export const CarCard = ({
 }) => {
   const photo = car.photos?.[0];
   const unavailable = car.available === false;
-  const target = href ?? (car.source === "fleet" ? `/cars/${car.id}` : `/book?car=${car.id}`);
+  const target = withSearch(
+    href ?? (car.source === "fleet" ? `/cars/${car.id}` : `/book?car=${car.id}`),
+    search,
+  );
 
   // One wrapper for both shapes, so the layout cannot drift between them.
   const Wrap = ({ className: wrapClass, children }: { className?: string; children: React.ReactNode }) =>
@@ -53,6 +77,25 @@ export const CarCard = ({
 
   return (
     <article className={cn("group flex flex-col", unavailable && "opacity-60", className)}>
+      {gallery && car.photos.length > 0 ? (
+        <div className="relative">
+          <CarGallery
+            photos={car.photos}
+            alt={`${car.make} ${car.model}`}
+            aspect="aspect-[4/3]"
+          />
+          {car.available !== null ? (
+            <span
+              className={cn(
+                "pointer-events-none absolute end-4 top-4 rounded-full px-3 py-1.5 text-[11px] font-semibold",
+                unavailable ? "vibrant material-night text-paper" : "bg-paper/90 text-ink",
+              )}
+            >
+              {unavailable ? "Taken on these dates" : "Free on your dates"}
+            </span>
+          ) : null}
+        </div>
+      ) : (
       <Wrap className="relative block aspect-[4/3] overflow-hidden rounded-[26px] bg-night">
         {photo ? (
           // eslint-disable-next-line @next/next/no-img-element
@@ -80,6 +123,7 @@ export const CarCard = ({
           </span>
         ) : null}
       </Wrap>
+      )}
 
       {/* The words sit on the page rather than inside a panel with the
           picture. A border round every car turns a list of cars into a list
