@@ -13,11 +13,31 @@ starts second dies on EADDRINUSE, and which one survives is down to PM2's
 start order. Before adding anything here, check `ss -ltn` on the box rather
 than trusting this table.
 
-The API has **no public hostname and no certificate**, on purpose. Nothing in
-the browser talks to it: every call goes through the website's own `/api/*`
-route handlers, server to server over loopback. `ufw` allows only OpenSSH and
-Nginx Full, so 5013 and 8013 are unreachable from the internet. Verify with
-`nc -z 159.65.228.41 5013` from elsewhere; it should be refused.
+The API answers on **`api.musafircars.com`**, added 18 Sep 2026, with its own
+Let's Encrypt certificate. It replaced an earlier arrangement in which the API
+had no public hostname at all.
+
+**The website still does not use it.** Every call the site makes goes through
+its own `/api/*` route handlers, server to server over loopback at
+`127.0.0.1:5013`. That path is faster, needs no certificate and raises no CORS
+question, and routing the site's own traffic back out through the public
+hostname would be slower for nothing. `api.musafircars.com` exists for
+consumers outside the website: a future mobile client, an integration, a
+webhook, or a person debugging with curl.
+
+Exposing it is safe because the API defends itself rather than relying on the
+website in front of it. Every router mounts `authMiddleware` plus its role
+guard (`adminOnly`, `lenderOnly`, `requireAgencyScope`) at the router level,
+so an unauthenticated request to `/api/rentals` gets a 401 whichever hostname
+it arrived on. `/api/public/rentals/*` is the one deliberately open router.
+`globalApiRateLimiter` and `helmet` apply to everything. Browser callers are
+still filtered by the `ALLOWED_ORIGINS` allowlist in `backend/.env`; add an
+origin there before pointing a new browser client at the API.
+
+The raw ports stay shut. `ufw` allows only OpenSSH and Nginx Full, so 5013 and
+8013 are unreachable from the internet and nginx reaches the API over
+loopback. Verify with `nc -z 159.65.228.41 5013` from elsewhere; it should be
+refused.
 
 ## DNS
 
