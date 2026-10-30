@@ -25,6 +25,10 @@ const sitemap = async (): Promise<MetadataRoute.Sitemap> => {
     { url: `${SITE_URL}/about`, changeFrequency: "yearly", priority: 0.5 },
     { url: `${SITE_URL}/contact`, changeFrequency: "yearly", priority: 0.6 },
     { url: `${SITE_URL}/policies`, changeFrequency: "yearly", priority: 0.4 },
+    // The Musafir Fleet app's privacy policy and terms. Not about renting, but
+    // the app's store listings link to them and Google has to be able to read them.
+    { url: `${SITE_URL}/policy`, changeFrequency: "yearly", priority: 0.3 },
+    { url: `${SITE_URL}/terms`, changeFrequency: "yearly", priority: 0.3 },
   ];
 
   // A sitemap that throws takes the whole file down, and an empty sitemap is
