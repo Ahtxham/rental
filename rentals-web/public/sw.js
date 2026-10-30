@@ -19,7 +19,10 @@
  * straight to the network. A booking request must never be served from a
  * cache, and an availability answer least of all.
  */
-const VERSION = "musafir-v1";
+// Bump this whenever a file at a fixed URL changes, such as an icon: assets
+// are served cache first, so a returning visitor otherwise keeps the old one
+// for good. v2 is the Route M logo.
+const VERSION = "musafir-v2";
 const SHELL = `${VERSION}-shell`;
 const RUNTIME = `${VERSION}-runtime`;
 

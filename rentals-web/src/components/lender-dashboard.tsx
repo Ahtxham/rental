@@ -7,6 +7,7 @@ import { useState } from "react";
 
 import { AvailabilityEditor, cleanWindows, type Window } from "@/components/availability-editor";
 import { LenderEarnings, type LenderEarning, type LenderTotals } from "@/components/lender-earnings";
+import { Mark } from "@/components/logo";
 import { Container, Eyebrow } from "@/components/ui";
 import { cn } from "@/lib/cn";
 import { pkr, shortDate } from "@/lib/format";
@@ -201,7 +202,7 @@ export const LenderDashboard = ({
                     />
                   ) : (
                     <div className="flex size-24 shrink-0 items-center justify-center rounded-xl bg-paper-deep">
-                      <span className="font-display text-lg text-ink/20">Musafir</span>
+                      <Mark tone="mono" className="h-9 w-auto text-ink/20" />
                     </div>
                   )}
 

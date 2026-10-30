@@ -15,6 +15,7 @@ import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { useState } from "react";
 
+import { Logo } from "@/components/logo";
 import { cn } from "@/lib/cn";
 
 /**
@@ -62,7 +63,7 @@ export const AdminShell = ({
         >
           {open ? <X className="size-5" /> : <Menu className="size-5" />}
         </button>
-        <span className="font-display text-lg font-semibold text-ink">Musafir</span>
+        <Logo label="Musafir Cars" className="h-5 w-auto" />
         <span className="ms-auto text-xs text-muted">{name}</span>
       </header>
 
@@ -74,8 +75,8 @@ export const AdminShell = ({
           )}
         >
           <div className="sticky top-0 flex h-screen flex-col p-4">
-            <Link href="/admin" className="hidden items-baseline gap-2 px-2 py-2 lg:flex">
-              <span className="font-display text-xl font-semibold text-ink">Musafir</span>
+            <Link href="/admin" aria-label="Musafir Cars office, home" className="hidden flex-col gap-1.5 px-2 py-2 lg:flex">
+              <Logo className="h-5 w-auto self-start" />
               <span className="text-[9px] font-semibold uppercase tracking-[0.2em] text-muted">
                 Office
               </span>

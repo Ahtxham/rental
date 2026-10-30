@@ -4,6 +4,7 @@ import { Mail, MapPin, Phone } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 
+import { Logo } from "@/components/logo";
 import { Container } from "@/components/ui";
 import type { Contact } from "@/lib/config";
 import { telHref, whatsappLink } from "@/lib/config";
@@ -38,11 +39,8 @@ export const SiteFooter = ({ contact }: { contact: Contact }) => {
     <footer className="bg-night text-paper">
       <Container className="grid gap-10 pb-14 pt-20 sm:grid-cols-2 lg:grid-cols-5">
         <div className="lg:col-span-2">
-          <p className="font-display text-3xl font-semibold">Musafir</p>
-          <p className="mt-1 text-[10px] font-semibold uppercase tracking-[0.22em] text-amber">
-            Rent A Car
-          </p>
-          <p className="mt-4 max-w-sm text-sm leading-relaxed text-paper/70">
+          <Logo tone="dark" label="Musafir Cars" className="h-9 w-auto" />
+          <p className="mt-5 max-w-sm text-sm leading-relaxed text-paper/70">
             Cars for hire in Lahore, by the day, with one of our drivers or on
             your own. Every rate is quoted once, in full, before anything is
             held.

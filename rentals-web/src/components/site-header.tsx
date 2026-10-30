@@ -5,6 +5,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
 
+import { Logo, Mark } from "@/components/logo";
 import { PressAnchor, PressLink } from "@/components/motion/pressable";
 import type { Contact } from "@/lib/config";
 import { telHref } from "@/lib/config";
@@ -127,25 +128,13 @@ export const SiteHeader = ({ contact }: { contact: Contact }) => {
         <div className="relative mx-auto flex w-full max-w-6xl items-center gap-5 px-5 py-3 sm:px-8">
           <PressLink
             href="/"
-            className="flex items-baseline gap-2"
+            className="flex shrink-0 items-center"
             aria-label="Musafir Rent A Car, home"
           >
-            <span
-              className={cn(
-                "font-display text-[1.375rem] font-semibold tracking-[-0.02em] transition-colors duration-[260ms]",
-                dark ? "text-paper" : "text-ink",
-              )}
-            >
-              Musafir
-            </span>
-            <span
-              className={cn(
-                "t-eyebrow hidden transition-colors duration-[260ms] sm:block",
-                dark ? "text-amber" : "text-muted",
-              )}
-            >
-              Rent A Car
-            </span>
+            {/* The M alone on a phone: the whole name is 190 pixels, and the
+              row also has to carry the button, the call icon and the menu. */}
+            <Mark tone={dark ? "dark" : "light"} className="h-8 w-auto sm:hidden" />
+            <Logo tone={dark ? "dark" : "light"} className="hidden h-7 w-auto sm:block" />
           </PressLink>
 
           <nav

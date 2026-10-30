@@ -4,6 +4,7 @@ import { AlertCircle, Loader2 } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 
+import { Logo } from "@/components/logo";
 import { Field, Input } from "@/components/ui";
 
 export const AdminLoginForm = () => {
@@ -45,8 +46,8 @@ export const AdminLoginForm = () => {
         onSubmit={submit}
         className="w-full max-w-sm rounded-2xl border border-line bg-card p-7"
       >
-        <p className="font-display text-2xl font-semibold text-ink">Musafir</p>
-        <p className="mt-0.5 text-[10px] font-semibold uppercase tracking-[0.22em] text-muted">
+        <Logo label="Musafir Cars" className="h-7 w-auto" />
+        <p className="mt-2 text-[10px] font-semibold uppercase tracking-[0.22em] text-muted">
           Office
         </p>
 

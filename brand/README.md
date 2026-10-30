@@ -8,6 +8,27 @@ scripts in `src/`, so a change goes in one place and every piece picks it up.
 python src/marks.py && python src/codes.py && python src/pieces.py && python src/assets.py
 ```
 
+## The new logo: Route M, saffron and midnight
+
+Chosen 29 Oct 2026. On the website since 30 Oct 2026, where the mark is the M
+of Musafir and the lockup reads "Musafir Cars" as one word. Not yet on the
+decal or the cards, which are still the amber set described below.
+
+```bash
+python src/route_m.py          # logo/route-m/: marks, lockups, icons, WhatsApp photo
+python src/route_m_preview.py  # logo/route-m/PREVIEW.png: how it looks in use
+python src/route_m_fleet.py    # logo/musafir-fleet/: "M Fleet" for the fleet app
+```
+
+The website's logo component (`rentals-web/src/components/logo.tsx`) and its
+icons (`rentals-web/public/icons/`) are copied from `logo/route-m/`, and the
+link preview `rentals-web/public/og.png` is rendered from `web/og.html`.
+
+These need fontTools, uharfbuzz and Pillow, and render through headless Chrome.
+`logo/musafir-fleet/copy-to-mydriver.sh` copies the fleet set into the
+`mydriver` repo. Midnight `#0f1f3d`, saffron `#ff8a1f`; on white paper the pin
+and the second word take `#ab5c15`, because bright saffron is only 2.4:1 there.
+
 ## Before anything is printed
 
 `src/pieces.py` has `PHONE = "03XX XXXXXXX"`. That is a deliberate placeholder.
